@@ -70,3 +70,14 @@ code {
         font-size: smaller;
 }
 
+figure {
+        border-left: thick solid #888;
+        margin-left: 2em;
+        margin-right: 2em;
+}
+
+figcaption {
+        margin-left: 2em;
+        font-size: smaller;
+        font-style: italic;
+}

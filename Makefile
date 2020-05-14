@@ -14,6 +14,7 @@ pandoc_args += --toc-depth 1
 pandoc_args += --filter pandoc-bootstrap
 pandoc_args += --filter pandoc-eqnos
 pandoc_args += --filter pandoc-fignos
+pandoc_args += --filter pandoc-doctest
 pandoc_args += -f markdown+multiline_tables+simple_tables
 
 # Load syntax definitions for languages that are not supported
@@ -21,12 +22,16 @@ pandoc_args += -f markdown+multiline_tables+simple_tables
 pandoc_args += --syntax-definition style/elm.xml
 pandoc_args += --syntax-definition style/pure.xml
 
+# Run `pandoc --list-highlight-styles` to see built-in options
+pandoc_args += --highlight-style tango
+# pandoc_args += --highlight-style style/syntax.theme
+
 # Any file in the `lit` directory that is not a Markdown source 
 # is to be copied to the `docs` directory
 static_files := $(shell find lit -type f -not -name '*.md')
 static_targets := $(static_files:lit/%=docs/%)
 
-chapters := index cooley-tukey parity-splitting fma-codelets
+chapters := index cooley-tukey parity-splitting fma-codelets code-generator
 input_files := $(chapters:%=lit/%.md)
 
 # This should build everything needed to generate your web site. That includes

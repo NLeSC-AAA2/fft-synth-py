@@ -68,28 +68,88 @@ def channels(N: int, radix: int) -> Mapping[int, Iterator[int]]:
 
 For instance, for radix-2, size 16, this creates the following channels
 
-``` {.python .doctest #parity}
+``` {.python .eval #parity}
 from fftsynth.parity import channels
 
 for (g, i) in channels(16, 2):
     print(g, list(i))
----
-0 [0, 3, 5, 6, 9, 10, 12, 15]
-1 [1, 2, 4, 7, 8, 11, 13, 14]
 ```
 
 and for a radix-4, size 64 fft, this creates the following channels
 
-``` {.python .doctest #parity}
-from fftsynth.parity import channels
-
+``` {.python .eval #parity}
 for (g, i) in channels(16, 2):
     print(g, list(i))
----
-0 [0, 7, 10, 13, 19, 22, 25, 28, 34, 37, 40, 47, 49, 52, 59, 62]
-1 [1, 4, 11, 14, 16, 23, 26, 29, 35, 38, 41, 44, 50, 53, 56, 63]
-2 [2, 5, 8, 15, 17, 20, 27, 30, 32, 39, 42, 45, 51, 54, 57, 60]
-3 [3, 6, 9, 12, 18, 21, 24, 31, 33, 36, 43, 46, 48, 55, 58, 61]
+```
+
+## Twiddles
+
+``` {.python file=fftsynth/twiddle.py}
+import numpy as np
+
+<<make-twiddle>>
+```
+
+``` {.python #make-twiddle}
+def make_twiddle(n1, n2):
+    def w(k, n):
+        return np.exp(2j * np.pi * k / n)
+
+    I1 = np.arange(n1)
+    I2 = np.arange(n2)
+    return w(I1[:,None] * I2[None,:], n1*n2).astype('complex64')
+```
+
+## Radix-4 FFT example
+
+The radix-4 FFT, takes four elements in every butterfly operation, along with four weights.
+
+``` {.python #fft-ps-4}
+def fft4(x0, x1, x2, x3, w0=1, w1=1, w2=1, w3=1):
+    a = w0*x0 + w2*x2
+    b = w1*x1 + w3*x3
+    c = w0*x0 - w2*x2
+    d = w1*x1 - w3*x3
+    x0[:] = a + b
+    x1[:] = c - 1j*d
+    x2[:] = a - b
+    x3[:] = c + 1j*d
+```
+
+We'll perform a $N=64$ FFT,
+
+``` {.python #fft-ps-4}
+import numpy as np
+np.set_printoptions(precision=4)
+
+from fftsynth.parity import ParitySplitting
+from fftsynth.twiddle import make_twiddle
+
+PS = ParitySplitting(64, 4)
+x = np.fft.ifft(np.arange(0, PS.N, dtype='complex64'))
+```
+
+We reshape the input data, and transpose the result
+
+``` {.python #fft-ps-4}
+s = x.copy().reshape(PS.factors).transpose()
+```
+
+Then the transform looks like
+
+``` {.python #fft-ps-4}
+for k in range(0, len(PS.factors)):
+    w = make_twiddle(4, 4**k).conj()[:,:]
+    z = s.reshape([-1, 4, 4**k])
+    z *= w
+    fft4(*(z[..., l, :] for l in range(4)))
+    s = z
+```
+
+In every step, we multiply with twiddles, select a dimension to transform over and perform the butterfly.
+
+``` {.python .eval #fft-ps-4}
+print(s.flatten().real)
 ```
 
 ## Index functions

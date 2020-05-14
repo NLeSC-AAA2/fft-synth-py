@@ -36,7 +36,7 @@ def channels(N: int, radix: int) -> Mapping[int, Iterator[int]]:
     parity_r = partial(parity, radix)
     return groupby(sorted(range(N), key=parity_r), parity_r)
 ## ------ end
-## ------ begin <<parity-index-functions>>[0] project://lit/parity-splitting.md#98
+## ------ begin <<parity-index-functions>>[0] project://lit/parity-splitting.md#158
 def comp_idx(radix: int, i: int, j: int, k: int) -> int:
     base = (i & ~(radix**k - 1))
     rem  = (i &  (radix**k - 1))
@@ -49,7 +49,7 @@ def comp_perm(radix: int, i: int) -> int:
     p = parity(radix, base)
     return base | ((rem - p) % radix)
 ## ------ end
-## ------ begin <<parity-splitting-interface>>[0] project://lit/parity-splitting.md#116
+## ------ begin <<parity-splitting-interface>>[0] project://lit/parity-splitting.md#176
 @dataclass
 class ParitySplitting:
     """Collects a lot of properties on the parity-splitting FFT algorithm.

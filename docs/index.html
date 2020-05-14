@@ -13,26 +13,27 @@
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
   <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -41,39 +42,38 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {  background-color: #f8f8f8; }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
 code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="css/bootstrap.css" />
   <link rel="stylesheet" href="css/mods.css" />
@@ -110,6 +110,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="#cooley-tukey-algorithm">Cooley-Tukey algorithm</a></li>
 <li><a href="#parity-splitting">Parity splitting</a></li>
 <li><a href="#fused-multiply-add-codelets">Fused-Multiply-Add codelets</a></li>
+<li><a href="#code-generator">Code generator</a></li>
 </ul>
 </div>
 </nav>
@@ -131,7 +132,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 id="version">Version</h2>
 <div class="annotated-code">
 <p><span><em>«fftsynth/__init__.py»=</em></span></p>
-<div class="sourceCode" id="cb2" data-file="fftsynth/__init__.py"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" title="1">__version__ <span class="op">=</span> <span class="st">&quot;0.1.0&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb2" data-file="fftsynth/__init__.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a>__version__ <span class="op">=</span> <span class="st">&quot;0.1.0&quot;</span></span></code></pre></div>
 </div>
 <h1 id="cooley-tukey-algorithm">Cooley-Tukey algorithm</h1>
 <p>(sampled from Frigo 1999. I changed array indices to <span class="math inline">\(k, l, m\)</span>, <span class="math inline">\(n\)</span> denoting the length of the array.)</p>
@@ -156,13 +157,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>We approach the FFT algorithm by casting the array to an multi-dimensional array, where each dimension represents one step in the FFT.</p>
 <div id="fig:cooley-tukey" class="fignos">
 <figure>
-<img src="img/cooley-tukey-20.svg" alt="Figure 1: A N=20 Fourier transform is broken up into an 5 \times 2 \times 2 fast Fourier transform." /><figcaption><span>Figure 1:</span> A <span class="math inline">\(N=20\)</span> Fourier transform is broken up into an <span class="math inline">\(5 \times 2 \times 2\)</span> fast Fourier transform.</figcaption>
+<img src="img/cooley-tukey-20.svg" alt="" /><figcaption><span>Figure 1:</span> A <span class="math inline">\(N=20\)</span> Fourier transform is broken up into an <span class="math inline">\(5 \times 2 \times 2\)</span> fast Fourier transform.</figcaption>
 </figure>
 </div>
 <p>Another way to illustrate the FFT algorithm is by visualising the data flow.</p>
 <div id="fig:fft-dataflow" class="fignos">
 <figure>
-<img src="img/dataflow.svg" alt="Figure 2: Data flow in a radix-2 FFT" /><figcaption><span>Figure 2:</span> Data flow in a radix-2 FFT</figcaption>
+<img src="img/dataflow.svg" alt="" /><figcaption><span>Figure 2:</span> Data flow in a radix-2 FFT</figcaption>
 </figure>
 </div>
 <p>We will refer to the smallest Fourier transform inside an FFT as a <strong>butterfly</strong> operation. In the case of a radix-2 FFT, as illustrated in Figure <a href="#fig:fft-dataflow">2</a>, this is the operation of performing a 2-FT on any two elements within the array, commonly including the multiplication with a twiddle factor.</p>
@@ -179,276 +180,355 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>This would ensure that each 4-FFT reads its data from the 4 different input channels. We define the <code>parity</code> function to work with any radix:</p>
 <div class="annotated-code">
 <p><span><em>«fftsynth/parity.py»=</em></span></p>
-<div class="sourceCode" id="cb3" data-file="fftsynth/parity.py"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb3-1" title="1"><span class="im">from</span> numba <span class="im">import</span> jit, vectorize</a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="im">import</span> numpy <span class="im">as</span> np</a>
-<a class="sourceLine" id="cb3-3" title="3"><span class="im">import</span> math</a>
-<a class="sourceLine" id="cb3-4" title="4"></a>
-<a class="sourceLine" id="cb3-5" title="5"><span class="im">from</span> functools <span class="im">import</span> partial</a>
-<a class="sourceLine" id="cb3-6" title="6"><span class="im">from</span> itertools <span class="im">import</span> groupby</a>
-<a class="sourceLine" id="cb3-7" title="7"><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</a>
-<a class="sourceLine" id="cb3-8" title="8"></a>
-<a class="sourceLine" id="cb3-9" title="9"><span class="im">from</span> typing <span class="im">import</span> List, Mapping, Iterator, Sequence</a>
-<a class="sourceLine" id="cb3-10" title="10"></a>
-<a class="sourceLine" id="cb3-11" title="11"></a>
-<a class="sourceLine" id="cb3-12" title="12"><span class="at">@jit</span>(nopython<span class="op">=</span><span class="va">True</span>)</a>
-<a class="sourceLine" id="cb3-13" title="13"><span class="kw">def</span> digits(n: <span class="bu">int</span>, i: <span class="bu">int</span>) <span class="op">-&gt;</span> List[<span class="bu">int</span>]:</a>
-<a class="sourceLine" id="cb3-14" title="14">    <span class="co">&quot;&quot;&quot;Generates the n-numbered digits of i, in reverse order.&quot;&quot;&quot;</span></a>
-<a class="sourceLine" id="cb3-15" title="15">    <span class="cf">while</span> <span class="va">True</span>:</a>
-<a class="sourceLine" id="cb3-16" title="16">        <span class="cf">if</span> i <span class="op">==</span> <span class="dv">0</span>:</a>
-<a class="sourceLine" id="cb3-17" title="17">            <span class="cf">return</span></a>
-<a class="sourceLine" id="cb3-18" title="18">        <span class="cf">else</span>:</a>
-<a class="sourceLine" id="cb3-19" title="19">            i, q <span class="op">=</span> <span class="bu">divmod</span>(i, n)</a>
-<a class="sourceLine" id="cb3-20" title="20">            <span class="cf">yield</span> q</a>
-<a class="sourceLine" id="cb3-21" title="21"></a>
-<a class="sourceLine" id="cb3-22" title="22"></a>
-<a class="sourceLine" id="cb3-23" title="23"><span class="at">@vectorize</span>(nopython<span class="op">=</span><span class="va">True</span>)</a>
-<a class="sourceLine" id="cb3-24" title="24"><span class="kw">def</span> parity(n: <span class="bu">int</span>, i: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</a>
-<a class="sourceLine" id="cb3-25" title="25">    <span class="co">&quot;&quot;&quot;Computes the n-parity of a number i.&quot;&quot;&quot;</span></a>
-<a class="sourceLine" id="cb3-26" title="26">    x <span class="op">=</span> <span class="dv">0</span></a>
-<a class="sourceLine" id="cb3-27" title="27">    <span class="cf">for</span> j <span class="kw">in</span> digits(n, i):</a>
-<a class="sourceLine" id="cb3-28" title="28">        x <span class="op">+=</span> j</a>
-<a class="sourceLine" id="cb3-29" title="29">    <span class="cf">return</span> x <span class="op">%</span> n</a>
-<a class="sourceLine" id="cb3-30" title="30"></a>
-<a class="sourceLine" id="cb3-31" title="31"><span class="op">&lt;&lt;</span>parity<span class="op">-</span>channels<span class="op">&gt;&gt;</span></a>
-<a class="sourceLine" id="cb3-32" title="32"><span class="op">&lt;&lt;</span>parity<span class="op">-</span>index<span class="op">-</span>functions<span class="op">&gt;&gt;</span></a>
-<a class="sourceLine" id="cb3-33" title="33"><span class="op">&lt;&lt;</span>parity<span class="op">-</span>splitting<span class="op">-</span>interface<span class="op">&gt;&gt;</span></a></code></pre></div>
+<div class="sourceCode" id="cb3" data-file="fftsynth/parity.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="im">from</span> numba <span class="im">import</span> jit, vectorize</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="im">import</span> math</span>
+<span id="cb3-4"><a href="#cb3-4"></a></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="im">from</span> functools <span class="im">import</span> partial</span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="im">from</span> itertools <span class="im">import</span> groupby</span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
+<span id="cb3-8"><a href="#cb3-8"></a></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="im">from</span> typing <span class="im">import</span> List, Mapping, Iterator, Sequence</span>
+<span id="cb3-10"><a href="#cb3-10"></a></span>
+<span id="cb3-11"><a href="#cb3-11"></a></span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="at">@jit</span>(nopython<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="kw">def</span> digits(n: <span class="bu">int</span>, i: <span class="bu">int</span>) <span class="op">-&gt;</span> List[<span class="bu">int</span>]:</span>
+<span id="cb3-14"><a href="#cb3-14"></a>    <span class="co">&quot;&quot;&quot;Generates the n-numbered digits of i, in reverse order.&quot;&quot;&quot;</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a>    <span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb3-16"><a href="#cb3-16"></a>        <span class="cf">if</span> i <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb3-17"><a href="#cb3-17"></a>            <span class="cf">return</span></span>
+<span id="cb3-18"><a href="#cb3-18"></a>        <span class="cf">else</span>:</span>
+<span id="cb3-19"><a href="#cb3-19"></a>            i, q <span class="op">=</span> <span class="bu">divmod</span>(i, n)</span>
+<span id="cb3-20"><a href="#cb3-20"></a>            <span class="cf">yield</span> q</span>
+<span id="cb3-21"><a href="#cb3-21"></a></span>
+<span id="cb3-22"><a href="#cb3-22"></a></span>
+<span id="cb3-23"><a href="#cb3-23"></a><span class="at">@vectorize</span>(nopython<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-24"><a href="#cb3-24"></a><span class="kw">def</span> parity(n: <span class="bu">int</span>, i: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
+<span id="cb3-25"><a href="#cb3-25"></a>    <span class="co">&quot;&quot;&quot;Computes the n-parity of a number i.&quot;&quot;&quot;</span></span>
+<span id="cb3-26"><a href="#cb3-26"></a>    x <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb3-27"><a href="#cb3-27"></a>    <span class="cf">for</span> j <span class="kw">in</span> digits(n, i):</span>
+<span id="cb3-28"><a href="#cb3-28"></a>        x <span class="op">+=</span> j</span>
+<span id="cb3-29"><a href="#cb3-29"></a>    <span class="cf">return</span> x <span class="op">%</span> n</span>
+<span id="cb3-30"><a href="#cb3-30"></a></span>
+<span id="cb3-31"><a href="#cb3-31"></a><span class="op">&lt;&lt;</span>parity<span class="op">-</span>channels<span class="op">&gt;&gt;</span></span>
+<span id="cb3-32"><a href="#cb3-32"></a><span class="op">&lt;&lt;</span>parity<span class="op">-</span>index<span class="op">-</span>functions<span class="op">&gt;&gt;</span></span>
+<span id="cb3-33"><a href="#cb3-33"></a><span class="op">&lt;&lt;</span>parity<span class="op">-</span>splitting<span class="op">-</span>interface<span class="op">&gt;&gt;</span></span></code></pre></div>
 </div>
 <p>Using the parity function we can determine which index belongs to which channel</p>
 <div class="annotated-code">
 <p><span><em>«parity-channels»=</em></span></p>
-<div class="sourceCode" id="parity-channels"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="parity-channels-1" title="1"><span class="kw">def</span> channels(N: <span class="bu">int</span>, radix: <span class="bu">int</span>) <span class="op">-&gt;</span> Mapping[<span class="bu">int</span>, Iterator[<span class="bu">int</span>]]:</a>
-<a class="sourceLine" id="parity-channels-2" title="2">    <span class="co">&quot;&quot;&quot;Given a 1-d contiguous array of size N, and a FFT of given radix,</span></a>
-<a class="sourceLine" id="parity-channels-3" title="3"><span class="co">    this returns a map of iterators of the different memory channels.&quot;&quot;&quot;</span></a>
-<a class="sourceLine" id="parity-channels-4" title="4">    parity_r <span class="op">=</span> partial(parity, radix)</a>
-<a class="sourceLine" id="parity-channels-5" title="5">    <span class="cf">return</span> groupby(<span class="bu">sorted</span>(<span class="bu">range</span>(N), key<span class="op">=</span>parity_r), parity_r)</a></code></pre></div>
+<div class="sourceCode" id="parity-channels"><pre class="sourceCode python"><code class="sourceCode python"><span id="parity-channels-1"><a href="#parity-channels-1"></a><span class="kw">def</span> channels(N: <span class="bu">int</span>, radix: <span class="bu">int</span>) <span class="op">-&gt;</span> Mapping[<span class="bu">int</span>, Iterator[<span class="bu">int</span>]]:</span>
+<span id="parity-channels-2"><a href="#parity-channels-2"></a>    <span class="co">&quot;&quot;&quot;Given a 1-d contiguous array of size N, and a FFT of given radix,</span></span>
+<span id="parity-channels-3"><a href="#parity-channels-3"></a><span class="co">    this returns a map of iterators of the different memory channels.&quot;&quot;&quot;</span></span>
+<span id="parity-channels-4"><a href="#parity-channels-4"></a>    parity_r <span class="op">=</span> partial(parity, radix)</span>
+<span id="parity-channels-5"><a href="#parity-channels-5"></a>    <span class="cf">return</span> groupby(<span class="bu">sorted</span>(<span class="bu">range</span>(N), key<span class="op">=</span>parity_r), parity_r)</span></code></pre></div>
 </div>
 <p>For instance, for radix-2, size 16, this creates the following channels</p>
 <div class="annotated-code">
 <p><span><em>«parity»=</em></span></p>
-<div class="sourceCode" id="parity"><pre class="sourceCode python doctest"><code class="sourceCode python"><a class="sourceLine" id="parity-1" title="1"><span class="im">from</span> fftsynth.parity <span class="im">import</span> channels</a>
-<a class="sourceLine" id="parity-2" title="2"></a>
-<a class="sourceLine" id="parity-3" title="3"><span class="cf">for</span> (g, i) <span class="kw">in</span> channels(<span class="dv">16</span>, <span class="dv">2</span>):</a>
-<a class="sourceLine" id="parity-4" title="4">    <span class="bu">print</span>(g, <span class="bu">list</span>(i))</a>
-<a class="sourceLine" id="parity-5" title="5"><span class="op">---</span></a>
-<a class="sourceLine" id="parity-6" title="6"><span class="dv">0</span> [<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">15</span>]</a>
-<a class="sourceLine" id="parity-7" title="7"><span class="dv">1</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">11</span>, <span class="dv">13</span>, <span class="dv">14</span>]</a></code></pre></div>
+<div class="doctest" data-status="SUCCESS">
+<div class="doctestInput">
+<div class="sourceCode" id="parity"><pre class="sourceCode python eval"><code class="sourceCode python"><span id="parity-1"><a href="#parity-1"></a><span class="im">from</span> fftsynth.parity <span class="im">import</span> channels</span>
+<span id="parity-2"><a href="#parity-2"></a></span>
+<span id="parity-3"><a href="#parity-3"></a><span class="cf">for</span> (g, i) <span class="kw">in</span> channels(<span class="dv">16</span>, <span class="dv">2</span>):</span>
+<span id="parity-4"><a href="#parity-4"></a>    <span class="bu">print</span>(g, <span class="bu">list</span>(i))</span></code></pre></div>
+</div>
+<div class="doctestResult">
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="dv">0</span> [<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">15</span>]</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="dv">1</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">11</span>, <span class="dv">13</span>, <span class="dv">14</span>]</span></code></pre></div>
+</div>
+</div>
 </div>
 <p>and for a radix-4, size 64 fft, this creates the following channels</p>
 <div class="annotated-code">
 <p><span><em>«parity»+</em></span></p>
-<div class="sourceCode" id="parity"><pre class="sourceCode python doctest"><code class="sourceCode python"><a class="sourceLine" id="parity-1" title="1"><span class="im">from</span> fftsynth.parity <span class="im">import</span> channels</a>
-<a class="sourceLine" id="parity-2" title="2"></a>
-<a class="sourceLine" id="parity-3" title="3"><span class="cf">for</span> (g, i) <span class="kw">in</span> channels(<span class="dv">16</span>, <span class="dv">2</span>):</a>
-<a class="sourceLine" id="parity-4" title="4">    <span class="bu">print</span>(g, <span class="bu">list</span>(i))</a>
-<a class="sourceLine" id="parity-5" title="5"><span class="op">---</span></a>
-<a class="sourceLine" id="parity-6" title="6"><span class="dv">0</span> [<span class="dv">0</span>, <span class="dv">7</span>, <span class="dv">10</span>, <span class="dv">13</span>, <span class="dv">19</span>, <span class="dv">22</span>, <span class="dv">25</span>, <span class="dv">28</span>, <span class="dv">34</span>, <span class="dv">37</span>, <span class="dv">40</span>, <span class="dv">47</span>, <span class="dv">49</span>, <span class="dv">52</span>, <span class="dv">59</span>, <span class="dv">62</span>]</a>
-<a class="sourceLine" id="parity-7" title="7"><span class="dv">1</span> [<span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">11</span>, <span class="dv">14</span>, <span class="dv">16</span>, <span class="dv">23</span>, <span class="dv">26</span>, <span class="dv">29</span>, <span class="dv">35</span>, <span class="dv">38</span>, <span class="dv">41</span>, <span class="dv">44</span>, <span class="dv">50</span>, <span class="dv">53</span>, <span class="dv">56</span>, <span class="dv">63</span>]</a>
-<a class="sourceLine" id="parity-8" title="8"><span class="dv">2</span> [<span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">8</span>, <span class="dv">15</span>, <span class="dv">17</span>, <span class="dv">20</span>, <span class="dv">27</span>, <span class="dv">30</span>, <span class="dv">32</span>, <span class="dv">39</span>, <span class="dv">42</span>, <span class="dv">45</span>, <span class="dv">51</span>, <span class="dv">54</span>, <span class="dv">57</span>, <span class="dv">60</span>]</a>
-<a class="sourceLine" id="parity-9" title="9"><span class="dv">3</span> [<span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">18</span>, <span class="dv">21</span>, <span class="dv">24</span>, <span class="dv">31</span>, <span class="dv">33</span>, <span class="dv">36</span>, <span class="dv">43</span>, <span class="dv">46</span>, <span class="dv">48</span>, <span class="dv">55</span>, <span class="dv">58</span>, <span class="dv">61</span>]</a></code></pre></div>
+<div class="doctest" data-status="SUCCESS">
+<div class="doctestInput">
+<div class="sourceCode" id="parity"><pre class="sourceCode python eval"><code class="sourceCode python"><span id="parity-1"><a href="#parity-1"></a><span class="cf">for</span> (g, i) <span class="kw">in</span> channels(<span class="dv">16</span>, <span class="dv">2</span>):</span>
+<span id="parity-2"><a href="#parity-2"></a>    <span class="bu">print</span>(g, <span class="bu">list</span>(i))</span></code></pre></div>
+</div>
+<div class="doctestResult">
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="dv">0</span> [<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">15</span>]</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="dv">1</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">11</span>, <span class="dv">13</span>, <span class="dv">14</span>]</span></code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="twiddles">Twiddles</h2>
+<div class="annotated-code">
+<p><span><em>«fftsynth/twiddle.py»=</em></span></p>
+<div class="sourceCode" id="cb6" data-file="fftsynth/twiddle.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb6-2"><a href="#cb6-2"></a></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="op">&lt;&lt;</span>make<span class="op">-</span>twiddle<span class="op">&gt;&gt;</span></span></code></pre></div>
+</div>
+<div class="annotated-code">
+<p><span><em>«make-twiddle»=</em></span></p>
+<div class="sourceCode" id="make-twiddle"><pre class="sourceCode python"><code class="sourceCode python"><span id="make-twiddle-1"><a href="#make-twiddle-1"></a><span class="kw">def</span> make_twiddle(n1, n2):</span>
+<span id="make-twiddle-2"><a href="#make-twiddle-2"></a>    <span class="kw">def</span> w(k, n):</span>
+<span id="make-twiddle-3"><a href="#make-twiddle-3"></a>        <span class="cf">return</span> np.exp(2j <span class="op">*</span> np.pi <span class="op">*</span> k <span class="op">/</span> n)</span>
+<span id="make-twiddle-4"><a href="#make-twiddle-4"></a></span>
+<span id="make-twiddle-5"><a href="#make-twiddle-5"></a>    I1 <span class="op">=</span> np.arange(n1)</span>
+<span id="make-twiddle-6"><a href="#make-twiddle-6"></a>    I2 <span class="op">=</span> np.arange(n2)</span>
+<span id="make-twiddle-7"><a href="#make-twiddle-7"></a>    <span class="cf">return</span> w(I1[:,<span class="va">None</span>] <span class="op">*</span> I2[<span class="va">None</span>,:], n1<span class="op">*</span>n2).astype(<span class="st">&#39;complex64&#39;</span>)</span></code></pre></div>
+</div>
+<h2 id="radix-4-fft-example">Radix-4 FFT example</h2>
+<p>The radix-4 FFT, takes four elements in every butterfly operation, along with four weights.</p>
+<div class="annotated-code">
+<p><span><em>«fft-ps-4»=</em></span></p>
+<div class="sourceCode" id="fft-ps-4"><pre class="sourceCode python"><code class="sourceCode python"><span id="fft-ps-4-1"><a href="#fft-ps-4-1"></a><span class="kw">def</span> fft4(x0, x1, x2, x3, w0<span class="op">=</span><span class="dv">1</span>, w1<span class="op">=</span><span class="dv">1</span>, w2<span class="op">=</span><span class="dv">1</span>, w3<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="fft-ps-4-2"><a href="#fft-ps-4-2"></a>    a <span class="op">=</span> w0<span class="op">*</span>x0 <span class="op">+</span> w2<span class="op">*</span>x2</span>
+<span id="fft-ps-4-3"><a href="#fft-ps-4-3"></a>    b <span class="op">=</span> w1<span class="op">*</span>x1 <span class="op">+</span> w3<span class="op">*</span>x3</span>
+<span id="fft-ps-4-4"><a href="#fft-ps-4-4"></a>    c <span class="op">=</span> w0<span class="op">*</span>x0 <span class="op">-</span> w2<span class="op">*</span>x2</span>
+<span id="fft-ps-4-5"><a href="#fft-ps-4-5"></a>    d <span class="op">=</span> w1<span class="op">*</span>x1 <span class="op">-</span> w3<span class="op">*</span>x3</span>
+<span id="fft-ps-4-6"><a href="#fft-ps-4-6"></a>    x0[:] <span class="op">=</span> a <span class="op">+</span> b</span>
+<span id="fft-ps-4-7"><a href="#fft-ps-4-7"></a>    x1[:] <span class="op">=</span> c <span class="op">-</span><span class="ot"> 1j</span><span class="op">*</span>d</span>
+<span id="fft-ps-4-8"><a href="#fft-ps-4-8"></a>    x2[:] <span class="op">=</span> a <span class="op">-</span> b</span>
+<span id="fft-ps-4-9"><a href="#fft-ps-4-9"></a>    x3[:] <span class="op">=</span> c <span class="op">+</span><span class="ot"> 1j</span><span class="op">*</span>d</span></code></pre></div>
+</div>
+<p>We’ll perform a <span class="math inline">\(N=64\)</span> FFT,</p>
+<div class="annotated-code">
+<p><span><em>«fft-ps-4»+</em></span></p>
+<div class="sourceCode" id="fft-ps-4"><pre class="sourceCode python"><code class="sourceCode python"><span id="fft-ps-4-1"><a href="#fft-ps-4-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="fft-ps-4-2"><a href="#fft-ps-4-2"></a>np.set_printoptions(precision<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="fft-ps-4-3"><a href="#fft-ps-4-3"></a></span>
+<span id="fft-ps-4-4"><a href="#fft-ps-4-4"></a><span class="im">from</span> fftsynth.parity <span class="im">import</span> ParitySplitting</span>
+<span id="fft-ps-4-5"><a href="#fft-ps-4-5"></a><span class="im">from</span> fftsynth.twiddle <span class="im">import</span> make_twiddle</span>
+<span id="fft-ps-4-6"><a href="#fft-ps-4-6"></a></span>
+<span id="fft-ps-4-7"><a href="#fft-ps-4-7"></a>PS <span class="op">=</span> ParitySplitting(<span class="dv">64</span>, <span class="dv">4</span>)</span>
+<span id="fft-ps-4-8"><a href="#fft-ps-4-8"></a>x <span class="op">=</span> np.fft.ifft(np.arange(<span class="dv">0</span>, PS.N, dtype<span class="op">=</span><span class="st">&#39;complex64&#39;</span>))</span></code></pre></div>
+</div>
+<p>We reshape the input data, and transpose the result</p>
+<div class="annotated-code">
+<p><span><em>«fft-ps-4»+</em></span></p>
+<div class="sourceCode" id="fft-ps-4"><pre class="sourceCode python"><code class="sourceCode python"><span id="fft-ps-4-1"><a href="#fft-ps-4-1"></a>s <span class="op">=</span> x.copy().reshape(PS.factors).transpose()</span></code></pre></div>
+</div>
+<p>Then the transform looks like</p>
+<div class="annotated-code">
+<p><span><em>«fft-ps-4»+</em></span></p>
+<div class="sourceCode" id="fft-ps-4"><pre class="sourceCode python"><code class="sourceCode python"><span id="fft-ps-4-1"><a href="#fft-ps-4-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(PS.factors)):</span>
+<span id="fft-ps-4-2"><a href="#fft-ps-4-2"></a>    w <span class="op">=</span> make_twiddle(<span class="dv">4</span>, <span class="dv">4</span><span class="op">**</span>k).conj()[:,:]</span>
+<span id="fft-ps-4-3"><a href="#fft-ps-4-3"></a>    z <span class="op">=</span> s.reshape([<span class="op">-</span><span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">4</span><span class="op">**</span>k])</span>
+<span id="fft-ps-4-4"><a href="#fft-ps-4-4"></a>    z <span class="op">*=</span> w</span>
+<span id="fft-ps-4-5"><a href="#fft-ps-4-5"></a>    fft4(<span class="op">*</span>(z[..., l, :] <span class="cf">for</span> l <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)))</span>
+<span id="fft-ps-4-6"><a href="#fft-ps-4-6"></a>    s <span class="op">=</span> z</span></code></pre></div>
+</div>
+<p>In every step, we multiply with twiddles, select a dimension to transform over and perform the butterfly.</p>
+<div class="annotated-code">
+<p><span><em>«fft-ps-4»+</em></span></p>
+<div class="doctest" data-status="SUCCESS">
+<div class="doctestInput">
+<div class="sourceCode" id="fft-ps-4"><pre class="sourceCode python eval"><code class="sourceCode python"><span id="fft-ps-4-1"><a href="#fft-ps-4-1"></a><span class="bu">print</span>(s.flatten().real)</span></code></pre></div>
+</div>
+<div class="doctestResult">
+<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a>[ <span class="fl">0.</span>  <span class="fl">1.</span>  <span class="fl">2.</span>  <span class="fl">3.</span>  <span class="fl">4.</span>  <span class="fl">5.</span>  <span class="fl">6.</span>  <span class="fl">7.</span>  <span class="fl">8.</span>  <span class="fl">9.</span> <span class="fl">10.</span> <span class="fl">11.</span> <span class="fl">12.</span> <span class="fl">13.</span> <span class="fl">14.</span> <span class="fl">15.</span> <span class="fl">16.</span> <span class="fl">17.</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a> <span class="fl">18.</span> <span class="fl">19.</span> <span class="fl">20.</span> <span class="fl">21.</span> <span class="fl">22.</span> <span class="fl">23.</span> <span class="fl">24.</span> <span class="fl">25.</span> <span class="fl">26.</span> <span class="fl">27.</span> <span class="fl">28.</span> <span class="fl">29.</span> <span class="fl">30.</span> <span class="fl">31.</span> <span class="fl">32.</span> <span class="fl">33.</span> <span class="fl">34.</span> <span class="fl">35.</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a> <span class="fl">36.</span> <span class="fl">37.</span> <span class="fl">38.</span> <span class="fl">39.</span> <span class="fl">40.</span> <span class="fl">41.</span> <span class="fl">42.</span> <span class="fl">43.</span> <span class="fl">44.</span> <span class="fl">45.</span> <span class="fl">46.</span> <span class="fl">47.</span> <span class="fl">48.</span> <span class="fl">49.</span> <span class="fl">50.</span> <span class="fl">51.</span> <span class="fl">52.</span> <span class="fl">53.</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a> <span class="fl">54.</span> <span class="fl">55.</span> <span class="fl">56.</span> <span class="fl">57.</span> <span class="fl">58.</span> <span class="fl">59.</span> <span class="fl">60.</span> <span class="fl">61.</span> <span class="fl">62.</span> <span class="fl">63.</span>]</span></code></pre></div>
+</div>
+</div>
 </div>
 <h2 id="index-functions">Index functions</h2>
 <div class="annotated-code">
 <p><span><em>«parity-index-functions»=</em></span></p>
-<div class="sourceCode" id="parity-index-functions"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="parity-index-functions-1" title="1"><span class="kw">def</span> comp_idx(radix: <span class="bu">int</span>, i: <span class="bu">int</span>, j: <span class="bu">int</span>, k: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</a>
-<a class="sourceLine" id="parity-index-functions-2" title="2">    base <span class="op">=</span> (i <span class="op">&amp;</span> <span class="op">~</span>(radix<span class="op">**</span>k <span class="op">-</span> <span class="dv">1</span>))</a>
-<a class="sourceLine" id="parity-index-functions-3" title="3">    rem  <span class="op">=</span> (i <span class="op">&amp;</span>  (radix<span class="op">**</span>k <span class="op">-</span> <span class="dv">1</span>))</a>
-<a class="sourceLine" id="parity-index-functions-4" title="4">    <span class="cf">return</span> rem <span class="op">+</span> j <span class="op">*</span> radix<span class="op">**</span>k <span class="op">+</span> base <span class="op">*</span> radix</a>
-<a class="sourceLine" id="parity-index-functions-5" title="5"></a>
-<a class="sourceLine" id="parity-index-functions-6" title="6"></a>
-<a class="sourceLine" id="parity-index-functions-7" title="7"><span class="kw">def</span> comp_perm(radix: <span class="bu">int</span>, i: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</a>
-<a class="sourceLine" id="parity-index-functions-8" title="8">    base <span class="op">=</span> (i <span class="op">&amp;</span> <span class="op">~</span>(radix <span class="op">-</span> <span class="dv">1</span>))</a>
-<a class="sourceLine" id="parity-index-functions-9" title="9">    rem <span class="op">=</span> (i <span class="op">&amp;</span> (radix <span class="op">-</span> <span class="dv">1</span>))</a>
-<a class="sourceLine" id="parity-index-functions-10" title="10">    p <span class="op">=</span> parity(radix, base)</a>
-<a class="sourceLine" id="parity-index-functions-11" title="11">    <span class="cf">return</span> base <span class="op">|</span> ((rem <span class="op">-</span> p) <span class="op">%</span> radix)</a></code></pre></div>
+<div class="sourceCode" id="parity-index-functions"><pre class="sourceCode python"><code class="sourceCode python"><span id="parity-index-functions-1"><a href="#parity-index-functions-1"></a><span class="kw">def</span> comp_idx(radix: <span class="bu">int</span>, i: <span class="bu">int</span>, j: <span class="bu">int</span>, k: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
+<span id="parity-index-functions-2"><a href="#parity-index-functions-2"></a>    base <span class="op">=</span> (i <span class="op">&amp;</span> <span class="op">~</span>(radix<span class="op">**</span>k <span class="op">-</span> <span class="dv">1</span>))</span>
+<span id="parity-index-functions-3"><a href="#parity-index-functions-3"></a>    rem  <span class="op">=</span> (i <span class="op">&amp;</span>  (radix<span class="op">**</span>k <span class="op">-</span> <span class="dv">1</span>))</span>
+<span id="parity-index-functions-4"><a href="#parity-index-functions-4"></a>    <span class="cf">return</span> rem <span class="op">+</span> j <span class="op">*</span> radix<span class="op">**</span>k <span class="op">+</span> base <span class="op">*</span> radix</span>
+<span id="parity-index-functions-5"><a href="#parity-index-functions-5"></a></span>
+<span id="parity-index-functions-6"><a href="#parity-index-functions-6"></a></span>
+<span id="parity-index-functions-7"><a href="#parity-index-functions-7"></a><span class="kw">def</span> comp_perm(radix: <span class="bu">int</span>, i: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
+<span id="parity-index-functions-8"><a href="#parity-index-functions-8"></a>    base <span class="op">=</span> (i <span class="op">&amp;</span> <span class="op">~</span>(radix <span class="op">-</span> <span class="dv">1</span>))</span>
+<span id="parity-index-functions-9"><a href="#parity-index-functions-9"></a>    rem <span class="op">=</span> (i <span class="op">&amp;</span> (radix <span class="op">-</span> <span class="dv">1</span>))</span>
+<span id="parity-index-functions-10"><a href="#parity-index-functions-10"></a>    p <span class="op">=</span> parity(radix, base)</span>
+<span id="parity-index-functions-11"><a href="#parity-index-functions-11"></a>    <span class="cf">return</span> base <span class="op">|</span> ((rem <span class="op">-</span> p) <span class="op">%</span> radix)</span></code></pre></div>
 </div>
 <h2 id="properties">Properties</h2>
 <p>This interface should ease the implementation of the parity-splitting FFT.</p>
 <div>
 <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#parity-splitting-interface-container" aria-controls="parity-splitting-interface-container">&lt;&lt;parity-splitting-interface&gt;&gt;=</button>
 <div id="parity-splitting-interface-container" class="collapse">
-<div class="sourceCode" id="parity-splitting-interface" style="max-height: 50vh"><pre class="sourceCode python bootstrap-fold overflow-auto"><code class="sourceCode python"><a class="sourceLine" id="parity-splitting-interface-1" title="1"><span class="at">@dataclass</span></a>
-<a class="sourceLine" id="parity-splitting-interface-2" title="2"><span class="kw">class</span> ParitySplitting:</a>
-<a class="sourceLine" id="parity-splitting-interface-3" title="3">    <span class="co">&quot;&quot;&quot;Collects a lot of properties on the parity-splitting FFT algorithm.</span></a>
-<a class="sourceLine" id="parity-splitting-interface-4" title="4"><span class="co">    This algorithm splits memory access for radix-n algorithms into n</span></a>
-<a class="sourceLine" id="parity-splitting-interface-5" title="5"><span class="co">    chunks, such that each chunk is only accessed once for each butterfly</span></a>
-<a class="sourceLine" id="parity-splitting-interface-6" title="6"><span class="co">    operation. Pseudo code:</span></a>
-<a class="sourceLine" id="parity-splitting-interface-7" title="7"></a>
-<a class="sourceLine" id="parity-splitting-interface-8" title="8"><span class="co">        for k in range(depth):</span></a>
-<a class="sourceLine" id="parity-splitting-interface-9" title="9"><span class="co">            for i in range(L):</span></a>
-<a class="sourceLine" id="parity-splitting-interface-10" title="10"><span class="co">                for j in range(radix):</span></a>
-<a class="sourceLine" id="parity-splitting-interface-11" title="11"><span class="co">                    fft(*permute(chunks), W)</span></a>
-<a class="sourceLine" id="parity-splitting-interface-12" title="12"><span class="co">    &quot;&quot;&quot;</span></a>
-<a class="sourceLine" id="parity-splitting-interface-13" title="13">    N: <span class="bu">int</span></a>
-<a class="sourceLine" id="parity-splitting-interface-14" title="14">    radix: <span class="bu">int</span></a>
-<a class="sourceLine" id="parity-splitting-interface-15" title="15">    </a>
-<a class="sourceLine" id="parity-splitting-interface-16" title="16">    <span class="at">@property</span></a>
-<a class="sourceLine" id="parity-splitting-interface-17" title="17">    <span class="kw">def</span> depth(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</a>
-<a class="sourceLine" id="parity-splitting-interface-18" title="18">        <span class="co">&quot;&quot;&quot;radix-log of FFT size&quot;&quot;&quot;</span></a>
-<a class="sourceLine" id="parity-splitting-interface-19" title="19">        <span class="cf">return</span> <span class="bu">int</span>(math.log(<span class="va">self</span>.N, <span class="va">self</span>.radix))</a>
-<a class="sourceLine" id="parity-splitting-interface-20" title="20">    </a>
-<a class="sourceLine" id="parity-splitting-interface-21" title="21">    <span class="at">@property</span></a>
-<a class="sourceLine" id="parity-splitting-interface-22" title="22">    <span class="kw">def</span> M(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</a>
-<a class="sourceLine" id="parity-splitting-interface-23" title="23">        <span class="co">&quot;&quot;&quot;N // radix&quot;&quot;&quot;</span></a>
-<a class="sourceLine" id="parity-splitting-interface-24" title="24">        <span class="cf">return</span> <span class="va">self</span>.N<span class="op">//</span><span class="va">self</span>.radix</a>
-<a class="sourceLine" id="parity-splitting-interface-25" title="25">    </a>
-<a class="sourceLine" id="parity-splitting-interface-26" title="26">    <span class="at">@property</span></a>
-<a class="sourceLine" id="parity-splitting-interface-27" title="27">    <span class="kw">def</span> L(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</a>
-<a class="sourceLine" id="parity-splitting-interface-28" title="28">        <span class="co">&quot;&quot;&quot;N // radix**2&quot;&quot;&quot;</span></a>
-<a class="sourceLine" id="parity-splitting-interface-29" title="29">        <span class="cf">return</span> <span class="va">self</span>.M<span class="op">//</span><span class="va">self</span>.radix</a>
-<a class="sourceLine" id="parity-splitting-interface-30" title="30">    </a>
-<a class="sourceLine" id="parity-splitting-interface-31" title="31">    <span class="at">@property</span></a>
-<a class="sourceLine" id="parity-splitting-interface-32" title="32">    <span class="kw">def</span> factors(<span class="va">self</span>) <span class="op">-&gt;</span> List[<span class="bu">int</span>]:</a>
-<a class="sourceLine" id="parity-splitting-interface-33" title="33">        <span class="co">&quot;&quot;&quot;Shape of FFT&quot;&quot;&quot;</span></a>
-<a class="sourceLine" id="parity-splitting-interface-34" title="34">        <span class="cf">return</span> [<span class="va">self</span>.radix] <span class="op">*</span> <span class="va">self</span>.depth</a>
-<a class="sourceLine" id="parity-splitting-interface-35" title="35">    </a>
-<a class="sourceLine" id="parity-splitting-interface-36" title="36">    <span class="at">@property</span></a>
-<a class="sourceLine" id="parity-splitting-interface-37" title="37">    <span class="kw">def</span> channels(<span class="va">self</span>) <span class="op">-&gt;</span> Mapping[<span class="bu">int</span>, Iterator[<span class="bu">int</span>]]:</a>
-<a class="sourceLine" id="parity-splitting-interface-38" title="38">        <span class="co">&quot;&quot;&quot;Pattern for memory chunks&quot;&quot;&quot;</span></a>
-<a class="sourceLine" id="parity-splitting-interface-39" title="39">        <span class="cf">return</span> channels(<span class="va">self</span>.N, <span class="va">self</span>.radix)</a>
-<a class="sourceLine" id="parity-splitting-interface-40" title="40">    </a>
-<a class="sourceLine" id="parity-splitting-interface-41" title="41">    <span class="at">@property</span></a>
-<a class="sourceLine" id="parity-splitting-interface-42" title="42">    <span class="kw">def</span> channel_loc(<span class="va">self</span>) <span class="op">-&gt;</span> np.ndarray:</a>
-<a class="sourceLine" id="parity-splitting-interface-43" title="43">        x <span class="op">=</span> np.zeros(shape<span class="op">=</span>(<span class="va">self</span>.N,), dtype<span class="op">=</span><span class="bu">int</span>)</a>
-<a class="sourceLine" id="parity-splitting-interface-44" title="44">        <span class="cf">for</span> g, i <span class="kw">in</span> <span class="va">self</span>.channels:</a>
-<a class="sourceLine" id="parity-splitting-interface-45" title="45">            x[<span class="bu">list</span>(i)] <span class="op">=</span> g</a>
-<a class="sourceLine" id="parity-splitting-interface-46" title="46">        <span class="cf">return</span> x.reshape(<span class="va">self</span>.factors)</a>
-<a class="sourceLine" id="parity-splitting-interface-47" title="47">    </a>
-<a class="sourceLine" id="parity-splitting-interface-48" title="48">    <span class="at">@property</span></a>
-<a class="sourceLine" id="parity-splitting-interface-49" title="49">    <span class="kw">def</span> index_loc(<span class="va">self</span>) <span class="op">-&gt;</span> np.ndarray:</a>
-<a class="sourceLine" id="parity-splitting-interface-50" title="50">        x <span class="op">=</span> np.zeros(shape<span class="op">=</span>(<span class="va">self</span>.N,), dtype<span class="op">=</span><span class="bu">int</span>)</a>
-<a class="sourceLine" id="parity-splitting-interface-51" title="51">        <span class="cf">for</span> g, i <span class="kw">in</span> <span class="va">self</span>.channels:</a>
-<a class="sourceLine" id="parity-splitting-interface-52" title="52">            x[<span class="bu">list</span>(i)] <span class="op">=</span> np.arange(<span class="va">self</span>.M, dtype<span class="op">=</span><span class="bu">int</span>)</a>
-<a class="sourceLine" id="parity-splitting-interface-53" title="53">        <span class="cf">return</span> x.reshape(<span class="va">self</span>.factors)</a>
-<a class="sourceLine" id="parity-splitting-interface-54" title="54">    </a>
-<a class="sourceLine" id="parity-splitting-interface-55" title="55">    <span class="kw">def</span> mix(<span class="va">self</span>, x: np.ndarray) <span class="op">-&gt;</span> List[np.ndarray]:</a>
-<a class="sourceLine" id="parity-splitting-interface-56" title="56">        <span class="cf">return</span> [x[<span class="bu">list</span>(i)].copy() <span class="cf">for</span> g, i <span class="kw">in</span> <span class="va">self</span>.channels]</a>
-<a class="sourceLine" id="parity-splitting-interface-57" title="57"></a>
-<a class="sourceLine" id="parity-splitting-interface-58" title="58">    <span class="kw">def</span> unmix(<span class="va">self</span>, s: Sequence[np.ndarray]) <span class="op">-&gt;</span> np.ndarray:</a>
-<a class="sourceLine" id="parity-splitting-interface-59" title="59">        x <span class="op">=</span> np.zeros(shape<span class="op">=</span>(<span class="va">self</span>.N,), dtype<span class="op">=</span><span class="st">&#39;complex64&#39;</span>)</a>
-<a class="sourceLine" id="parity-splitting-interface-60" title="60">        <span class="cf">for</span> g, i <span class="kw">in</span> <span class="va">self</span>.channels:</a>
-<a class="sourceLine" id="parity-splitting-interface-61" title="61">            x[<span class="bu">list</span>(i)] <span class="op">=</span> s[g]</a>
-<a class="sourceLine" id="parity-splitting-interface-62" title="62">        <span class="cf">return</span> x</a></code></pre></div>
+<div class="sourceCode" id="parity-splitting-interface" style="max-height: 50vh"><pre class="sourceCode python bootstrap-fold overflow-auto"><code class="sourceCode python"><span id="parity-splitting-interface-1"><a href="#parity-splitting-interface-1"></a><span class="at">@dataclass</span></span>
+<span id="parity-splitting-interface-2"><a href="#parity-splitting-interface-2"></a><span class="kw">class</span> ParitySplitting:</span>
+<span id="parity-splitting-interface-3"><a href="#parity-splitting-interface-3"></a>    <span class="co">&quot;&quot;&quot;Collects a lot of properties on the parity-splitting FFT algorithm.</span></span>
+<span id="parity-splitting-interface-4"><a href="#parity-splitting-interface-4"></a><span class="co">    This algorithm splits memory access for radix-n algorithms into n</span></span>
+<span id="parity-splitting-interface-5"><a href="#parity-splitting-interface-5"></a><span class="co">    chunks, such that each chunk is only accessed once for each butterfly</span></span>
+<span id="parity-splitting-interface-6"><a href="#parity-splitting-interface-6"></a><span class="co">    operation. Pseudo code:</span></span>
+<span id="parity-splitting-interface-7"><a href="#parity-splitting-interface-7"></a></span>
+<span id="parity-splitting-interface-8"><a href="#parity-splitting-interface-8"></a><span class="co">        for k in range(depth):</span></span>
+<span id="parity-splitting-interface-9"><a href="#parity-splitting-interface-9"></a><span class="co">            for i in range(L):</span></span>
+<span id="parity-splitting-interface-10"><a href="#parity-splitting-interface-10"></a><span class="co">                for j in range(radix):</span></span>
+<span id="parity-splitting-interface-11"><a href="#parity-splitting-interface-11"></a><span class="co">                    fft(*permute(chunks), W)</span></span>
+<span id="parity-splitting-interface-12"><a href="#parity-splitting-interface-12"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="parity-splitting-interface-13"><a href="#parity-splitting-interface-13"></a>    N: <span class="bu">int</span></span>
+<span id="parity-splitting-interface-14"><a href="#parity-splitting-interface-14"></a>    radix: <span class="bu">int</span></span>
+<span id="parity-splitting-interface-15"><a href="#parity-splitting-interface-15"></a>    </span>
+<span id="parity-splitting-interface-16"><a href="#parity-splitting-interface-16"></a>    <span class="at">@property</span></span>
+<span id="parity-splitting-interface-17"><a href="#parity-splitting-interface-17"></a>    <span class="kw">def</span> depth(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
+<span id="parity-splitting-interface-18"><a href="#parity-splitting-interface-18"></a>        <span class="co">&quot;&quot;&quot;radix-log of FFT size&quot;&quot;&quot;</span></span>
+<span id="parity-splitting-interface-19"><a href="#parity-splitting-interface-19"></a>        <span class="cf">return</span> <span class="bu">int</span>(math.log(<span class="va">self</span>.N, <span class="va">self</span>.radix))</span>
+<span id="parity-splitting-interface-20"><a href="#parity-splitting-interface-20"></a>    </span>
+<span id="parity-splitting-interface-21"><a href="#parity-splitting-interface-21"></a>    <span class="at">@property</span></span>
+<span id="parity-splitting-interface-22"><a href="#parity-splitting-interface-22"></a>    <span class="kw">def</span> M(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
+<span id="parity-splitting-interface-23"><a href="#parity-splitting-interface-23"></a>        <span class="co">&quot;&quot;&quot;N // radix&quot;&quot;&quot;</span></span>
+<span id="parity-splitting-interface-24"><a href="#parity-splitting-interface-24"></a>        <span class="cf">return</span> <span class="va">self</span>.N<span class="op">//</span><span class="va">self</span>.radix</span>
+<span id="parity-splitting-interface-25"><a href="#parity-splitting-interface-25"></a>    </span>
+<span id="parity-splitting-interface-26"><a href="#parity-splitting-interface-26"></a>    <span class="at">@property</span></span>
+<span id="parity-splitting-interface-27"><a href="#parity-splitting-interface-27"></a>    <span class="kw">def</span> L(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
+<span id="parity-splitting-interface-28"><a href="#parity-splitting-interface-28"></a>        <span class="co">&quot;&quot;&quot;N // radix**2&quot;&quot;&quot;</span></span>
+<span id="parity-splitting-interface-29"><a href="#parity-splitting-interface-29"></a>        <span class="cf">return</span> <span class="va">self</span>.M<span class="op">//</span><span class="va">self</span>.radix</span>
+<span id="parity-splitting-interface-30"><a href="#parity-splitting-interface-30"></a>    </span>
+<span id="parity-splitting-interface-31"><a href="#parity-splitting-interface-31"></a>    <span class="at">@property</span></span>
+<span id="parity-splitting-interface-32"><a href="#parity-splitting-interface-32"></a>    <span class="kw">def</span> factors(<span class="va">self</span>) <span class="op">-&gt;</span> List[<span class="bu">int</span>]:</span>
+<span id="parity-splitting-interface-33"><a href="#parity-splitting-interface-33"></a>        <span class="co">&quot;&quot;&quot;Shape of FFT&quot;&quot;&quot;</span></span>
+<span id="parity-splitting-interface-34"><a href="#parity-splitting-interface-34"></a>        <span class="cf">return</span> [<span class="va">self</span>.radix] <span class="op">*</span> <span class="va">self</span>.depth</span>
+<span id="parity-splitting-interface-35"><a href="#parity-splitting-interface-35"></a>    </span>
+<span id="parity-splitting-interface-36"><a href="#parity-splitting-interface-36"></a>    <span class="at">@property</span></span>
+<span id="parity-splitting-interface-37"><a href="#parity-splitting-interface-37"></a>    <span class="kw">def</span> channels(<span class="va">self</span>) <span class="op">-&gt;</span> Mapping[<span class="bu">int</span>, Iterator[<span class="bu">int</span>]]:</span>
+<span id="parity-splitting-interface-38"><a href="#parity-splitting-interface-38"></a>        <span class="co">&quot;&quot;&quot;Pattern for memory chunks&quot;&quot;&quot;</span></span>
+<span id="parity-splitting-interface-39"><a href="#parity-splitting-interface-39"></a>        <span class="cf">return</span> channels(<span class="va">self</span>.N, <span class="va">self</span>.radix)</span>
+<span id="parity-splitting-interface-40"><a href="#parity-splitting-interface-40"></a>    </span>
+<span id="parity-splitting-interface-41"><a href="#parity-splitting-interface-41"></a>    <span class="at">@property</span></span>
+<span id="parity-splitting-interface-42"><a href="#parity-splitting-interface-42"></a>    <span class="kw">def</span> channel_loc(<span class="va">self</span>) <span class="op">-&gt;</span> np.ndarray:</span>
+<span id="parity-splitting-interface-43"><a href="#parity-splitting-interface-43"></a>        x <span class="op">=</span> np.zeros(shape<span class="op">=</span>(<span class="va">self</span>.N,), dtype<span class="op">=</span><span class="bu">int</span>)</span>
+<span id="parity-splitting-interface-44"><a href="#parity-splitting-interface-44"></a>        <span class="cf">for</span> g, i <span class="kw">in</span> <span class="va">self</span>.channels:</span>
+<span id="parity-splitting-interface-45"><a href="#parity-splitting-interface-45"></a>            x[<span class="bu">list</span>(i)] <span class="op">=</span> g</span>
+<span id="parity-splitting-interface-46"><a href="#parity-splitting-interface-46"></a>        <span class="cf">return</span> x.reshape(<span class="va">self</span>.factors)</span>
+<span id="parity-splitting-interface-47"><a href="#parity-splitting-interface-47"></a>    </span>
+<span id="parity-splitting-interface-48"><a href="#parity-splitting-interface-48"></a>    <span class="at">@property</span></span>
+<span id="parity-splitting-interface-49"><a href="#parity-splitting-interface-49"></a>    <span class="kw">def</span> index_loc(<span class="va">self</span>) <span class="op">-&gt;</span> np.ndarray:</span>
+<span id="parity-splitting-interface-50"><a href="#parity-splitting-interface-50"></a>        x <span class="op">=</span> np.zeros(shape<span class="op">=</span>(<span class="va">self</span>.N,), dtype<span class="op">=</span><span class="bu">int</span>)</span>
+<span id="parity-splitting-interface-51"><a href="#parity-splitting-interface-51"></a>        <span class="cf">for</span> g, i <span class="kw">in</span> <span class="va">self</span>.channels:</span>
+<span id="parity-splitting-interface-52"><a href="#parity-splitting-interface-52"></a>            x[<span class="bu">list</span>(i)] <span class="op">=</span> np.arange(<span class="va">self</span>.M, dtype<span class="op">=</span><span class="bu">int</span>)</span>
+<span id="parity-splitting-interface-53"><a href="#parity-splitting-interface-53"></a>        <span class="cf">return</span> x.reshape(<span class="va">self</span>.factors)</span>
+<span id="parity-splitting-interface-54"><a href="#parity-splitting-interface-54"></a>    </span>
+<span id="parity-splitting-interface-55"><a href="#parity-splitting-interface-55"></a>    <span class="kw">def</span> mix(<span class="va">self</span>, x: np.ndarray) <span class="op">-&gt;</span> List[np.ndarray]:</span>
+<span id="parity-splitting-interface-56"><a href="#parity-splitting-interface-56"></a>        <span class="cf">return</span> [x[<span class="bu">list</span>(i)].copy() <span class="cf">for</span> g, i <span class="kw">in</span> <span class="va">self</span>.channels]</span>
+<span id="parity-splitting-interface-57"><a href="#parity-splitting-interface-57"></a></span>
+<span id="parity-splitting-interface-58"><a href="#parity-splitting-interface-58"></a>    <span class="kw">def</span> unmix(<span class="va">self</span>, s: Sequence[np.ndarray]) <span class="op">-&gt;</span> np.ndarray:</span>
+<span id="parity-splitting-interface-59"><a href="#parity-splitting-interface-59"></a>        x <span class="op">=</span> np.zeros(shape<span class="op">=</span>(<span class="va">self</span>.N,), dtype<span class="op">=</span><span class="st">&#39;complex64&#39;</span>)</span>
+<span id="parity-splitting-interface-60"><a href="#parity-splitting-interface-60"></a>        <span class="cf">for</span> g, i <span class="kw">in</span> <span class="va">self</span>.channels:</span>
+<span id="parity-splitting-interface-61"><a href="#parity-splitting-interface-61"></a>            x[<span class="bu">list</span>(i)] <span class="op">=</span> s[g]</span>
+<span id="parity-splitting-interface-62"><a href="#parity-splitting-interface-62"></a>        <span class="cf">return</span> x</span></code></pre></div>
 </div>
 </div>
 <h2 id="testing">Testing</h2>
 <div>
 <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#test-slash-test_radix_4_ps-dot-py-container" aria-controls="test-slash-test_radix_4_ps-dot-py-container">&lt;&lt;test/test_radix_4_ps.py&gt;&gt;=</button>
 <div id="test-slash-test_radix_4_ps-dot-py-container" class="collapse">
-<div class="sourceCode" id="cb4" data-file="test/test_radix_4_ps.py" style="max-height: 50vh"><pre class="sourceCode python bootstrap-fold overflow-auto"><code class="sourceCode python"><a class="sourceLine" id="cb4-1" title="1"><span class="im">import</span> pytest</a>
-<a class="sourceLine" id="cb4-2" title="2"><span class="im">import</span> pyopencl <span class="im">as</span> cl</a>
-<a class="sourceLine" id="cb4-3" title="3"><span class="im">import</span> pyopencl.cltypes</a>
-<a class="sourceLine" id="cb4-4" title="4"><span class="im">import</span> numpy <span class="im">as</span> np</a>
-<a class="sourceLine" id="cb4-5" title="5"></a>
-<a class="sourceLine" id="cb4-6" title="6"><span class="im">from</span> fft.util <span class="im">import</span> parity</a>
-<a class="sourceLine" id="cb4-7" title="7"><span class="im">from</span> fft.multi_channel <span class="im">import</span> MultiChannel, comp_idx, comp_perm</a>
-<a class="sourceLine" id="cb4-8" title="8"></a>
-<a class="sourceLine" id="cb4-9" title="9"></a>
-<a class="sourceLine" id="cb4-10" title="10">N <span class="op">=</span> <span class="dv">1024</span></a>
-<a class="sourceLine" id="cb4-11" title="11">radix <span class="op">=</span> <span class="dv">4</span></a>
-<a class="sourceLine" id="cb4-12" title="12">mc <span class="op">=</span> MultiChannel(N, radix)</a>
-<a class="sourceLine" id="cb4-13" title="13">mf <span class="op">=</span> cl.mem_flags</a>
-<a class="sourceLine" id="cb4-14" title="14"></a>
-<a class="sourceLine" id="cb4-15" title="15"></a>
-<a class="sourceLine" id="cb4-16" title="16"><span class="at">@pytest.fixture</span></a>
-<a class="sourceLine" id="cb4-17" title="17"><span class="kw">def</span> program(cl_context):</a>
-<a class="sourceLine" id="cb4-18" title="18">    kernel <span class="op">=</span> <span class="bu">open</span>(<span class="st">&quot;test/fft1024.cl&quot;</span>, <span class="st">&quot;r&quot;</span>).read()</a>
-<a class="sourceLine" id="cb4-19" title="19">    prog <span class="op">=</span> cl.Program(cl_context, kernel).build([<span class="st">&quot;-DTESTING&quot;</span>])</a>
-<a class="sourceLine" id="cb4-20" title="20">    <span class="cf">return</span> prog</a>
-<a class="sourceLine" id="cb4-21" title="21"></a>
-<a class="sourceLine" id="cb4-22" title="22"></a>
-<a class="sourceLine" id="cb4-23" title="23"><span class="kw">def</span> test_parity_4(cl_context, program):</a>
-<a class="sourceLine" id="cb4-24" title="24">    queue <span class="op">=</span> cl.CommandQueue(cl_context)</a>
-<a class="sourceLine" id="cb4-25" title="25">    x <span class="op">=</span> np.arange(N, dtype<span class="op">=</span>cl.cltypes.<span class="bu">int</span>)</a>
-<a class="sourceLine" id="cb4-26" title="26">    y <span class="op">=</span> np.zeros_like(x)</a>
-<a class="sourceLine" id="cb4-27" title="27">    x_g <span class="op">=</span> cl.Buffer(cl_context, mf.READ_ONLY <span class="op">|</span> mf.COPY_HOST_PTR, hostbuf<span class="op">=</span>x)</a>
-<a class="sourceLine" id="cb4-28" title="28">    y_g <span class="op">=</span> cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)</a>
-<a class="sourceLine" id="cb4-29" title="29">    program.test_parity_4(queue, (N,), <span class="va">None</span>, x_g, y_g)</a>
-<a class="sourceLine" id="cb4-30" title="30">    cl.enqueue_copy(queue, y, y_g)</a>
-<a class="sourceLine" id="cb4-31" title="31"></a>
-<a class="sourceLine" id="cb4-32" title="32">    y_ref <span class="op">=</span> np.array([parity(radix, i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N)]) </a>
-<a class="sourceLine" id="cb4-33" title="33">    <span class="cf">assert</span> np.<span class="bu">all</span>(y <span class="op">==</span> y_ref)</a>
-<a class="sourceLine" id="cb4-34" title="34"></a>
-<a class="sourceLine" id="cb4-35" title="35"></a>
-<a class="sourceLine" id="cb4-36" title="36"><span class="kw">def</span> test_comp_idx_4(cl_context, program):</a>
-<a class="sourceLine" id="cb4-37" title="37">    queue <span class="op">=</span> cl.CommandQueue(cl_context)</a>
-<a class="sourceLine" id="cb4-38" title="38">    x <span class="op">=</span> np.arange(mc.L, dtype<span class="op">=</span>cl.cltypes.<span class="bu">int</span>)</a>
-<a class="sourceLine" id="cb4-39" title="39">    y <span class="op">=</span> np.zeros_like(x)</a>
-<a class="sourceLine" id="cb4-40" title="40">    x_g <span class="op">=</span> cl.Buffer(cl_context, mf.READ_ONLY <span class="op">|</span> mf.COPY_HOST_PTR, hostbuf<span class="op">=</span>x)</a>
-<a class="sourceLine" id="cb4-41" title="41">    y_g <span class="op">=</span> cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)</a>
-<a class="sourceLine" id="cb4-42" title="42"></a>
-<a class="sourceLine" id="cb4-43" title="43">    <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">5</span>):</a>
-<a class="sourceLine" id="cb4-44" title="44">        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</a>
-<a class="sourceLine" id="cb4-45" title="45">            program.test_comp_idx_4(</a>
-<a class="sourceLine" id="cb4-46" title="46">                queue, (mc.L,), <span class="va">None</span>,</a>
-<a class="sourceLine" id="cb4-47" title="47">                cl.cltypes.<span class="bu">int</span>(k), cl.cltypes.<span class="bu">int</span>(j), x_g, y_g)</a>
-<a class="sourceLine" id="cb4-48" title="48">            cl.enqueue_copy(queue, y, y_g)</a>
-<a class="sourceLine" id="cb4-49" title="49"></a>
-<a class="sourceLine" id="cb4-50" title="50">            y_ref <span class="op">=</span> mc.index_loc <span class="op">\</span></a>
-<a class="sourceLine" id="cb4-51" title="51">                .reshape([<span class="op">-</span><span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">4</span><span class="op">**</span>k]) <span class="op">\</span></a>
-<a class="sourceLine" id="cb4-52" title="52">                .transpose([<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">1</span>]) <span class="op">\</span></a>
-<a class="sourceLine" id="cb4-53" title="53">                .reshape([<span class="op">-</span><span class="dv">1</span>, <span class="dv">4</span>])[::<span class="dv">4</span>, j]</a>
-<a class="sourceLine" id="cb4-54" title="54">            y_ref_2 <span class="op">=</span> np.array([comp_idx(<span class="dv">4</span>, i, j, k<span class="dv">-1</span>) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(mc.L)])</a>
-<a class="sourceLine" id="cb4-55" title="55">            <span class="cf">assert</span> np.<span class="bu">all</span>(y <span class="op">==</span> y_ref)</a>
-<a class="sourceLine" id="cb4-56" title="56">            <span class="cf">assert</span> np.<span class="bu">all</span>(y <span class="op">==</span> y_ref_2)</a>
-<a class="sourceLine" id="cb4-57" title="57"></a>
-<a class="sourceLine" id="cb4-58" title="58"></a>
-<a class="sourceLine" id="cb4-59" title="59"><span class="kw">def</span> test_comp_perm_4(cl_context, program):</a>
-<a class="sourceLine" id="cb4-60" title="60">    queue <span class="op">=</span> cl.CommandQueue(cl_context)</a>
-<a class="sourceLine" id="cb4-61" title="61">    x <span class="op">=</span> np.arange(mc.L, dtype<span class="op">=</span>cl.cltypes.<span class="bu">int</span>)</a>
-<a class="sourceLine" id="cb4-62" title="62">    y <span class="op">=</span> np.zeros_like(x)</a>
-<a class="sourceLine" id="cb4-63" title="63">    x_g <span class="op">=</span> cl.Buffer(cl_context, mf.READ_ONLY <span class="op">|</span> mf.COPY_HOST_PTR, hostbuf<span class="op">=</span>x)</a>
-<a class="sourceLine" id="cb4-64" title="64">    y_g <span class="op">=</span> cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)</a>
-<a class="sourceLine" id="cb4-65" title="65"></a>
-<a class="sourceLine" id="cb4-66" title="66">    <span class="cf">for</span> r <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</a>
-<a class="sourceLine" id="cb4-67" title="67">        program.test_comp_perm_4(queue, (mc.L,), <span class="va">None</span>, cl.cltypes.<span class="bu">int</span>(r), x_g, y_g)</a>
-<a class="sourceLine" id="cb4-68" title="68">        cl.enqueue_copy(queue, y, y_g)</a>
-<a class="sourceLine" id="cb4-69" title="69"></a>
-<a class="sourceLine" id="cb4-70" title="70">        y_ref <span class="op">=</span> np.array([comp_perm(radix, i<span class="op">*</span>radix <span class="op">+</span> r) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(mc.L)])</a>
-<a class="sourceLine" id="cb4-71" title="71">        <span class="cf">assert</span> np.<span class="bu">all</span>(y <span class="op">==</span> y_ref)</a>
-<a class="sourceLine" id="cb4-72" title="72"></a>
-<a class="sourceLine" id="cb4-73" title="73"></a>
-<a class="sourceLine" id="cb4-74" title="74"><span class="kw">def</span> test_transpose_4(cl_context, program):</a>
-<a class="sourceLine" id="cb4-75" title="75">    queue <span class="op">=</span> cl.CommandQueue(cl_context)</a>
-<a class="sourceLine" id="cb4-76" title="76">    x <span class="op">=</span> np.arange(N, dtype<span class="op">=</span>cl.cltypes.<span class="bu">int</span>)</a>
-<a class="sourceLine" id="cb4-77" title="77">    y <span class="op">=</span> np.zeros_like(x)</a>
-<a class="sourceLine" id="cb4-78" title="78">    x_g <span class="op">=</span> cl.Buffer(cl_context, mf.READ_ONLY <span class="op">|</span> mf.COPY_HOST_PTR, hostbuf<span class="op">=</span>x)</a>
-<a class="sourceLine" id="cb4-79" title="79">    y_g <span class="op">=</span> cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)</a>
-<a class="sourceLine" id="cb4-80" title="80">    program.test_transpose_4(queue, (N,), <span class="va">None</span>, x_g, y_g)</a>
-<a class="sourceLine" id="cb4-81" title="81">    cl.enqueue_copy(queue, y, y_g)</a>
-<a class="sourceLine" id="cb4-82" title="82"></a>
-<a class="sourceLine" id="cb4-83" title="83">    y_ref <span class="op">=</span> x.reshape(mc.factors).T.flatten()</a>
-<a class="sourceLine" id="cb4-84" title="84">    <span class="cf">assert</span> np.<span class="bu">all</span>(y <span class="op">==</span> y_ref)</a>
-<a class="sourceLine" id="cb4-85" title="85"></a>
-<a class="sourceLine" id="cb4-86" title="86"></a>
-<a class="sourceLine" id="cb4-87" title="87"><span class="kw">def</span> test_fft4_4(cl_context, program):</a>
-<a class="sourceLine" id="cb4-88" title="88">    queue <span class="op">=</span> cl.CommandQueue(cl_context)</a>
-<a class="sourceLine" id="cb4-89" title="89">    x <span class="op">=</span> np.random.normal(size<span class="op">=</span>(<span class="dv">1024</span>, <span class="dv">4</span>, <span class="dv">2</span>)).astype(cl.cltypes.<span class="bu">float</span>)</a>
-<a class="sourceLine" id="cb4-90" title="90">    y <span class="op">=</span> np.zeros_like(x)</a>
-<a class="sourceLine" id="cb4-91" title="91">    x_g <span class="op">=</span> cl.Buffer(cl_context, mf.READ_ONLY <span class="op">|</span> mf.COPY_HOST_PTR, hostbuf<span class="op">=</span>x)</a>
-<a class="sourceLine" id="cb4-92" title="92">    y_g <span class="op">=</span> cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)</a>
-<a class="sourceLine" id="cb4-93" title="93"></a>
-<a class="sourceLine" id="cb4-94" title="94">    <span class="cf">for</span> cycle <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</a>
-<a class="sourceLine" id="cb4-95" title="95">        y_ref <span class="op">=</span> np.fft.fft(np.roll(x[...,<span class="dv">0</span>]<span class="op">+</span>1j<span class="op">*</span>x[...,<span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb4-96" title="96">        program.test_fft_4(queue, (N,), <span class="va">None</span>, cl.cltypes.<span class="bu">int</span>(cycle), x_g, y_g)</a>
-<a class="sourceLine" id="cb4-97" title="97">        cl.enqueue_copy(queue, y, y_g)</a>
-<a class="sourceLine" id="cb4-98" title="98">        y_Z <span class="op">=</span> np.roll(y[...,<span class="dv">0</span>]<span class="op">+</span>1j<span class="op">*</span>y[...,<span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb4-99" title="99"></a>
-<a class="sourceLine" id="cb4-100" title="100">        <span class="cf">assert</span> <span class="bu">abs</span>(y_Z <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-4</span></a>
-<a class="sourceLine" id="cb4-101" title="101"></a>
-<a class="sourceLine" id="cb4-102" title="102"></a>
-<a class="sourceLine" id="cb4-103" title="103"><span class="kw">def</span> test_fft_1024(cl_context, program):</a>
-<a class="sourceLine" id="cb4-104" title="104">    queue <span class="op">=</span> cl.CommandQueue(cl_context)</a>
-<a class="sourceLine" id="cb4-105" title="105"></a>
-<a class="sourceLine" id="cb4-106" title="106">    x <span class="op">=</span> np.random.normal(size<span class="op">=</span>(<span class="dv">1024</span>, <span class="dv">2</span>)).astype(cl.cltypes.<span class="bu">float</span>)</a>
-<a class="sourceLine" id="cb4-107" title="107">    y <span class="op">=</span> np.zeros_like(x)</a>
-<a class="sourceLine" id="cb4-108" title="108">    x_g <span class="op">=</span> cl.Buffer(cl_context, mf.READ_ONLY <span class="op">|</span> mf.COPY_HOST_PTR, hostbuf<span class="op">=</span>x)</a>
-<a class="sourceLine" id="cb4-109" title="109">    y_g <span class="op">=</span> cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)</a>
-<a class="sourceLine" id="cb4-110" title="110">    program.fft_1024(queue, (<span class="dv">1</span>,), <span class="va">None</span>, x_g, y_g)</a>
-<a class="sourceLine" id="cb4-111" title="111">    cl.enqueue_copy(queue, y, y_g)</a>
-<a class="sourceLine" id="cb4-112" title="112"></a>
-<a class="sourceLine" id="cb4-113" title="113">    y_Z <span class="op">=</span> y[...,<span class="dv">0</span>]<span class="op">+</span>1j<span class="op">*</span>y[...,<span class="dv">1</span>]</a>
-<a class="sourceLine" id="cb4-114" title="114">    y_ref <span class="op">=</span> np.fft.fft(x[...,<span class="dv">0</span>]<span class="op">+</span>1j<span class="op">*</span>x[...,<span class="dv">1</span>])</a>
-<a class="sourceLine" id="cb4-115" title="115">    <span class="cf">assert</span> <span class="bu">abs</span>(y_Z <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-3</span></a></code></pre></div>
+<div class="sourceCode" id="cb8" data-file="test/test_radix_4_ps.py" style="max-height: 50vh"><pre class="sourceCode python bootstrap-fold overflow-auto"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a><span class="im">import</span> pytest</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="im">import</span> pyopencl <span class="im">as</span> cl</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="im">import</span> pyopencl.cltypes</span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb8-5"><a href="#cb8-5"></a></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="im">from</span> fft.util <span class="im">import</span> parity</span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="im">from</span> fft.multi_channel <span class="im">import</span> MultiChannel, comp_idx, comp_perm</span>
+<span id="cb8-8"><a href="#cb8-8"></a></span>
+<span id="cb8-9"><a href="#cb8-9"></a></span>
+<span id="cb8-10"><a href="#cb8-10"></a>N <span class="op">=</span> <span class="dv">1024</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a>radix <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb8-12"><a href="#cb8-12"></a>mc <span class="op">=</span> MultiChannel(N, radix)</span>
+<span id="cb8-13"><a href="#cb8-13"></a>mf <span class="op">=</span> cl.mem_flags</span>
+<span id="cb8-14"><a href="#cb8-14"></a></span>
+<span id="cb8-15"><a href="#cb8-15"></a></span>
+<span id="cb8-16"><a href="#cb8-16"></a><span class="at">@pytest.fixture</span></span>
+<span id="cb8-17"><a href="#cb8-17"></a><span class="kw">def</span> program(cl_context):</span>
+<span id="cb8-18"><a href="#cb8-18"></a>    kernel <span class="op">=</span> <span class="bu">open</span>(<span class="st">&quot;test/fft1024.cl&quot;</span>, <span class="st">&quot;r&quot;</span>).read()</span>
+<span id="cb8-19"><a href="#cb8-19"></a>    prog <span class="op">=</span> cl.Program(cl_context, kernel).build([<span class="st">&quot;-DTESTING&quot;</span>])</span>
+<span id="cb8-20"><a href="#cb8-20"></a>    <span class="cf">return</span> prog</span>
+<span id="cb8-21"><a href="#cb8-21"></a></span>
+<span id="cb8-22"><a href="#cb8-22"></a></span>
+<span id="cb8-23"><a href="#cb8-23"></a><span class="kw">def</span> test_parity_4(cl_context, program):</span>
+<span id="cb8-24"><a href="#cb8-24"></a>    queue <span class="op">=</span> cl.CommandQueue(cl_context)</span>
+<span id="cb8-25"><a href="#cb8-25"></a>    x <span class="op">=</span> np.arange(N, dtype<span class="op">=</span>cl.cltypes.<span class="bu">int</span>)</span>
+<span id="cb8-26"><a href="#cb8-26"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
+<span id="cb8-27"><a href="#cb8-27"></a>    x_g <span class="op">=</span> cl.Buffer(cl_context, mf.READ_ONLY <span class="op">|</span> mf.COPY_HOST_PTR, hostbuf<span class="op">=</span>x)</span>
+<span id="cb8-28"><a href="#cb8-28"></a>    y_g <span class="op">=</span> cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)</span>
+<span id="cb8-29"><a href="#cb8-29"></a>    program.test_parity_4(queue, (N,), <span class="va">None</span>, x_g, y_g)</span>
+<span id="cb8-30"><a href="#cb8-30"></a>    cl.enqueue_copy(queue, y, y_g)</span>
+<span id="cb8-31"><a href="#cb8-31"></a></span>
+<span id="cb8-32"><a href="#cb8-32"></a>    y_ref <span class="op">=</span> np.array([parity(radix, i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N)]) </span>
+<span id="cb8-33"><a href="#cb8-33"></a>    <span class="cf">assert</span> np.<span class="bu">all</span>(y <span class="op">==</span> y_ref)</span>
+<span id="cb8-34"><a href="#cb8-34"></a></span>
+<span id="cb8-35"><a href="#cb8-35"></a></span>
+<span id="cb8-36"><a href="#cb8-36"></a><span class="kw">def</span> test_comp_idx_4(cl_context, program):</span>
+<span id="cb8-37"><a href="#cb8-37"></a>    queue <span class="op">=</span> cl.CommandQueue(cl_context)</span>
+<span id="cb8-38"><a href="#cb8-38"></a>    x <span class="op">=</span> np.arange(mc.L, dtype<span class="op">=</span>cl.cltypes.<span class="bu">int</span>)</span>
+<span id="cb8-39"><a href="#cb8-39"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
+<span id="cb8-40"><a href="#cb8-40"></a>    x_g <span class="op">=</span> cl.Buffer(cl_context, mf.READ_ONLY <span class="op">|</span> mf.COPY_HOST_PTR, hostbuf<span class="op">=</span>x)</span>
+<span id="cb8-41"><a href="#cb8-41"></a>    y_g <span class="op">=</span> cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)</span>
+<span id="cb8-42"><a href="#cb8-42"></a></span>
+<span id="cb8-43"><a href="#cb8-43"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">5</span>):</span>
+<span id="cb8-44"><a href="#cb8-44"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb8-45"><a href="#cb8-45"></a>            program.test_comp_idx_4(</span>
+<span id="cb8-46"><a href="#cb8-46"></a>                queue, (mc.L,), <span class="va">None</span>,</span>
+<span id="cb8-47"><a href="#cb8-47"></a>                cl.cltypes.<span class="bu">int</span>(k), cl.cltypes.<span class="bu">int</span>(j), x_g, y_g)</span>
+<span id="cb8-48"><a href="#cb8-48"></a>            cl.enqueue_copy(queue, y, y_g)</span>
+<span id="cb8-49"><a href="#cb8-49"></a></span>
+<span id="cb8-50"><a href="#cb8-50"></a>            y_ref <span class="op">=</span> mc.index_loc <span class="op">\</span></span>
+<span id="cb8-51"><a href="#cb8-51"></a>                .reshape([<span class="op">-</span><span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">4</span><span class="op">**</span>k]) <span class="op">\</span></span>
+<span id="cb8-52"><a href="#cb8-52"></a>                .transpose([<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">1</span>]) <span class="op">\</span></span>
+<span id="cb8-53"><a href="#cb8-53"></a>                .reshape([<span class="op">-</span><span class="dv">1</span>, <span class="dv">4</span>])[::<span class="dv">4</span>, j]</span>
+<span id="cb8-54"><a href="#cb8-54"></a>            y_ref_2 <span class="op">=</span> np.array([comp_idx(<span class="dv">4</span>, i, j, k<span class="dv">-1</span>) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(mc.L)])</span>
+<span id="cb8-55"><a href="#cb8-55"></a>            <span class="cf">assert</span> np.<span class="bu">all</span>(y <span class="op">==</span> y_ref)</span>
+<span id="cb8-56"><a href="#cb8-56"></a>            <span class="cf">assert</span> np.<span class="bu">all</span>(y <span class="op">==</span> y_ref_2)</span>
+<span id="cb8-57"><a href="#cb8-57"></a></span>
+<span id="cb8-58"><a href="#cb8-58"></a></span>
+<span id="cb8-59"><a href="#cb8-59"></a><span class="kw">def</span> test_comp_perm_4(cl_context, program):</span>
+<span id="cb8-60"><a href="#cb8-60"></a>    queue <span class="op">=</span> cl.CommandQueue(cl_context)</span>
+<span id="cb8-61"><a href="#cb8-61"></a>    x <span class="op">=</span> np.arange(mc.L, dtype<span class="op">=</span>cl.cltypes.<span class="bu">int</span>)</span>
+<span id="cb8-62"><a href="#cb8-62"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
+<span id="cb8-63"><a href="#cb8-63"></a>    x_g <span class="op">=</span> cl.Buffer(cl_context, mf.READ_ONLY <span class="op">|</span> mf.COPY_HOST_PTR, hostbuf<span class="op">=</span>x)</span>
+<span id="cb8-64"><a href="#cb8-64"></a>    y_g <span class="op">=</span> cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)</span>
+<span id="cb8-65"><a href="#cb8-65"></a></span>
+<span id="cb8-66"><a href="#cb8-66"></a>    <span class="cf">for</span> r <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb8-67"><a href="#cb8-67"></a>        program.test_comp_perm_4(queue, (mc.L,), <span class="va">None</span>, cl.cltypes.<span class="bu">int</span>(r), x_g, y_g)</span>
+<span id="cb8-68"><a href="#cb8-68"></a>        cl.enqueue_copy(queue, y, y_g)</span>
+<span id="cb8-69"><a href="#cb8-69"></a></span>
+<span id="cb8-70"><a href="#cb8-70"></a>        y_ref <span class="op">=</span> np.array([comp_perm(radix, i<span class="op">*</span>radix <span class="op">+</span> r) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(mc.L)])</span>
+<span id="cb8-71"><a href="#cb8-71"></a>        <span class="cf">assert</span> np.<span class="bu">all</span>(y <span class="op">==</span> y_ref)</span>
+<span id="cb8-72"><a href="#cb8-72"></a></span>
+<span id="cb8-73"><a href="#cb8-73"></a></span>
+<span id="cb8-74"><a href="#cb8-74"></a><span class="kw">def</span> test_transpose_4(cl_context, program):</span>
+<span id="cb8-75"><a href="#cb8-75"></a>    queue <span class="op">=</span> cl.CommandQueue(cl_context)</span>
+<span id="cb8-76"><a href="#cb8-76"></a>    x <span class="op">=</span> np.arange(N, dtype<span class="op">=</span>cl.cltypes.<span class="bu">int</span>)</span>
+<span id="cb8-77"><a href="#cb8-77"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
+<span id="cb8-78"><a href="#cb8-78"></a>    x_g <span class="op">=</span> cl.Buffer(cl_context, mf.READ_ONLY <span class="op">|</span> mf.COPY_HOST_PTR, hostbuf<span class="op">=</span>x)</span>
+<span id="cb8-79"><a href="#cb8-79"></a>    y_g <span class="op">=</span> cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)</span>
+<span id="cb8-80"><a href="#cb8-80"></a>    program.test_transpose_4(queue, (N,), <span class="va">None</span>, x_g, y_g)</span>
+<span id="cb8-81"><a href="#cb8-81"></a>    cl.enqueue_copy(queue, y, y_g)</span>
+<span id="cb8-82"><a href="#cb8-82"></a></span>
+<span id="cb8-83"><a href="#cb8-83"></a>    y_ref <span class="op">=</span> x.reshape(mc.factors).T.flatten()</span>
+<span id="cb8-84"><a href="#cb8-84"></a>    <span class="cf">assert</span> np.<span class="bu">all</span>(y <span class="op">==</span> y_ref)</span>
+<span id="cb8-85"><a href="#cb8-85"></a></span>
+<span id="cb8-86"><a href="#cb8-86"></a></span>
+<span id="cb8-87"><a href="#cb8-87"></a><span class="kw">def</span> test_fft4_4(cl_context, program):</span>
+<span id="cb8-88"><a href="#cb8-88"></a>    queue <span class="op">=</span> cl.CommandQueue(cl_context)</span>
+<span id="cb8-89"><a href="#cb8-89"></a>    x <span class="op">=</span> np.random.normal(size<span class="op">=</span>(<span class="dv">1024</span>, <span class="dv">4</span>, <span class="dv">2</span>)).astype(cl.cltypes.<span class="bu">float</span>)</span>
+<span id="cb8-90"><a href="#cb8-90"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
+<span id="cb8-91"><a href="#cb8-91"></a>    x_g <span class="op">=</span> cl.Buffer(cl_context, mf.READ_ONLY <span class="op">|</span> mf.COPY_HOST_PTR, hostbuf<span class="op">=</span>x)</span>
+<span id="cb8-92"><a href="#cb8-92"></a>    y_g <span class="op">=</span> cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)</span>
+<span id="cb8-93"><a href="#cb8-93"></a></span>
+<span id="cb8-94"><a href="#cb8-94"></a>    <span class="cf">for</span> cycle <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb8-95"><a href="#cb8-95"></a>        y_ref <span class="op">=</span> np.fft.fft(np.roll(x[...,<span class="dv">0</span>]<span class="op">+</span>1j<span class="op">*</span>x[...,<span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb8-96"><a href="#cb8-96"></a>        program.test_fft_4(queue, (N,), <span class="va">None</span>, cl.cltypes.<span class="bu">int</span>(cycle), x_g, y_g)</span>
+<span id="cb8-97"><a href="#cb8-97"></a>        cl.enqueue_copy(queue, y, y_g)</span>
+<span id="cb8-98"><a href="#cb8-98"></a>        y_Z <span class="op">=</span> np.roll(y[...,<span class="dv">0</span>]<span class="op">+</span>1j<span class="op">*</span>y[...,<span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb8-99"><a href="#cb8-99"></a></span>
+<span id="cb8-100"><a href="#cb8-100"></a>        <span class="cf">assert</span> <span class="bu">abs</span>(y_Z <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-4</span></span>
+<span id="cb8-101"><a href="#cb8-101"></a></span>
+<span id="cb8-102"><a href="#cb8-102"></a></span>
+<span id="cb8-103"><a href="#cb8-103"></a><span class="kw">def</span> test_fft_1024(cl_context, program):</span>
+<span id="cb8-104"><a href="#cb8-104"></a>    queue <span class="op">=</span> cl.CommandQueue(cl_context)</span>
+<span id="cb8-105"><a href="#cb8-105"></a></span>
+<span id="cb8-106"><a href="#cb8-106"></a>    x <span class="op">=</span> np.random.normal(size<span class="op">=</span>(<span class="dv">1024</span>, <span class="dv">2</span>)).astype(cl.cltypes.<span class="bu">float</span>)</span>
+<span id="cb8-107"><a href="#cb8-107"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
+<span id="cb8-108"><a href="#cb8-108"></a>    x_g <span class="op">=</span> cl.Buffer(cl_context, mf.READ_ONLY <span class="op">|</span> mf.COPY_HOST_PTR, hostbuf<span class="op">=</span>x)</span>
+<span id="cb8-109"><a href="#cb8-109"></a>    y_g <span class="op">=</span> cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)</span>
+<span id="cb8-110"><a href="#cb8-110"></a>    program.fft_1024(queue, (<span class="dv">1</span>,), <span class="va">None</span>, x_g, y_g)</span>
+<span id="cb8-111"><a href="#cb8-111"></a>    cl.enqueue_copy(queue, y, y_g)</span>
+<span id="cb8-112"><a href="#cb8-112"></a></span>
+<span id="cb8-113"><a href="#cb8-113"></a>    y_Z <span class="op">=</span> y[...,<span class="dv">0</span>]<span class="op">+</span>1j<span class="op">*</span>y[...,<span class="dv">1</span>]</span>
+<span id="cb8-114"><a href="#cb8-114"></a>    y_ref <span class="op">=</span> np.fft.fft(x[...,<span class="dv">0</span>]<span class="op">+</span>1j<span class="op">*</span>x[...,<span class="dv">1</span>])</span>
+<span id="cb8-115"><a href="#cb8-115"></a>    <span class="cf">assert</span> <span class="bu">abs</span>(y_Z <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-3</span></span></code></pre></div>
 </div>
 </div>
 <h1 id="fused-multiply-add-codelets">Fused-Multiply-Add codelets</h1>
@@ -457,323 +537,331 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Only half of the twiddle factors are used.</p>
 <h2 id="radix-2">Radix 2</h2>
 <p>A normal implementation of the radix-2 butterfly</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode opencl"><code class="sourceCode opencl"><a class="sourceLine" id="cb5-1" title="1"><span class="dt">void</span> radix2(<span class="dt">float2</span> e, <span class="dt">float2</span> o, <span class="dt">float2</span> w, <span class="dt">float2</span>* xa, <span class="dt">float2</span>* xb)</a>
-<a class="sourceLine" id="cb5-2" title="2">{</a>
-<a class="sourceLine" id="cb5-3" title="3">    <span class="dt">float2</span> t = w * o;</a>
-<a class="sourceLine" id="cb5-4" title="4">    *xa = e + t;</a>
-<a class="sourceLine" id="cb5-5" title="5">    *xb = e - t;</a>
-<a class="sourceLine" id="cb5-6" title="6">}</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb9-1"><a href="#cb9-1"></a><span class="dt">void</span> radix2(<span class="dt">float2</span> e, <span class="dt">float2</span> o, <span class="dt">float2</span> w, <span class="dt">float2</span>* xa, <span class="dt">float2</span>* xb)</span>
+<span id="cb9-2"><a href="#cb9-2"></a>{</span>
+<span id="cb9-3"><a href="#cb9-3"></a>    <span class="dt">float2</span> t = w * o;</span>
+<span id="cb9-4"><a href="#cb9-4"></a>    *xa = e + t;</span>
+<span id="cb9-5"><a href="#cb9-5"></a>    *xb = e - t;</span>
+<span id="cb9-6"><a href="#cb9-6"></a>}</span></code></pre></div>
 <p>This contains one complex multiplication and two complex additions, totaling four floating point multiplications and six additions.</p>
 <div class="annotated-code">
 <p><span><em>«fma-radix2»=</em></span></p>
-<div class="sourceCode" id="fma-radix2"><pre class="sourceCode opencl"><code class="sourceCode opencl"><a class="sourceLine" id="fma-radix2-1" title="1"><span class="dt">void</span> radix2_fma(<span class="dt">float2</span> e, <span class="dt">float2</span> o, <span class="dt">float2</span> w, <span class="dt">float2</span>* xa, <span class="dt">float2</span>* xb)</a>
-<a class="sourceLine" id="fma-radix2-2" title="2">{</a>
-<a class="sourceLine" id="fma-radix2-3" title="3">    <span class="dt">float2</span> a = (<span class="dt">float2</span>) (-w.y * o.y + e.x, w.y * o.x + e.y);</a>
-<a class="sourceLine" id="fma-radix2-4" title="4">    a += (<span class="dt">float2</span>) (w.x * o.x, w.x * o.y);</a>
-<a class="sourceLine" id="fma-radix2-5" title="5">    <span class="dt">float2</span> b = <span class="dv">2</span> * e - a;</a>
-<a class="sourceLine" id="fma-radix2-6" title="6"></a>
-<a class="sourceLine" id="fma-radix2-7" title="7">    *xa = a;</a>
-<a class="sourceLine" id="fma-radix2-8" title="8">    *xb = b;</a>
-<a class="sourceLine" id="fma-radix2-9" title="9">}</a></code></pre></div>
+<div class="sourceCode" id="fma-radix2"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="fma-radix2-1"><a href="#fma-radix2-1"></a><span class="dt">void</span> radix2_fma(<span class="dt">float2</span> e, <span class="dt">float2</span> o, <span class="dt">float2</span> w, <span class="dt">float2</span>* xa, <span class="dt">float2</span>* xb)</span>
+<span id="fma-radix2-2"><a href="#fma-radix2-2"></a>{</span>
+<span id="fma-radix2-3"><a href="#fma-radix2-3"></a>    <span class="dt">float2</span> a = (<span class="dt">float2</span>) (-w.y * o.y + e.x, w.y * o.x + e.y);</span>
+<span id="fma-radix2-4"><a href="#fma-radix2-4"></a>    a += (<span class="dt">float2</span>) (w.x * o.x, w.x * o.y);</span>
+<span id="fma-radix2-5"><a href="#fma-radix2-5"></a>    <span class="dt">float2</span> b = <span class="dv">2</span> * e - a;</span>
+<span id="fma-radix2-6"><a href="#fma-radix2-6"></a></span>
+<span id="fma-radix2-7"><a href="#fma-radix2-7"></a>    *xa = a;</span>
+<span id="fma-radix2-8"><a href="#fma-radix2-8"></a>    *xb = b;</span>
+<span id="fma-radix2-9"><a href="#fma-radix2-9"></a>}</span></code></pre></div>
 </div>
 <p>Now we have six multiplications and six additions, but they are completely contained in six FMA operations.</p>
 <h2 id="higher-radix">Higher radix</h2>
 <div>
 <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#fftsynth-slash-opencl-slash-fma-codelets-dot-cl-container" aria-controls="fftsynth-slash-opencl-slash-fma-codelets-dot-cl-container">&lt;&lt;fftsynth/opencl/fma-codelets.cl&gt;&gt;=</button>
 <div id="fftsynth-slash-opencl-slash-fma-codelets-dot-cl-container" class="collapse">
-<div class="sourceCode" id="cb6" data-file="fftsynth/opencl/fma-codelets.cl" style="max-height: 50vh"><pre class="sourceCode opencl bootstrap-fold overflow-auto"><code class="sourceCode opencl"><a class="sourceLine" id="cb6-1" title="1">&lt;&lt;fma-radix2&gt;&gt;</a>
-<a class="sourceLine" id="cb6-2" title="2"></a>
-<a class="sourceLine" id="cb6-3" title="3"></a>
-<a class="sourceLine" id="cb6-4" title="4"><span class="dt">void</span> radix3_fma(<span class="dt">float2</span> t0, <span class="dt">float2</span> t1, <span class="dt">float2</span> t2, <span class="dt">float2</span> w0, <span class="dt">float2</span> w1, <span class="dt">float2</span>* xa, <span class="dt">float2</span>* xb, <span class="dt">float2</span>* xc) {</a>
-<a class="sourceLine" id="cb6-5" title="5"></a>
-<a class="sourceLine" id="cb6-6" title="6">    <span class="dt">float2</span> z1, s1, s2, s3, s4, s5, s6;</a>
-<a class="sourceLine" id="cb6-7" title="7">    <span class="dt">const</span> <span class="dt">float</span> c1 = <span class="fl">-0.5</span>;</a>
-<a class="sourceLine" id="cb6-8" title="8">    <span class="dt">const</span> <span class="dt">float</span> c2 = <span class="fl">-0.8660254037844386</span>;</a>
-<a class="sourceLine" id="cb6-9" title="9"></a>
-<a class="sourceLine" id="cb6-10" title="10">    <span class="co">//z1 = w0 * t1</span></a>
-<a class="sourceLine" id="cb6-11" title="11">    z1 = (<span class="dt">float2</span>) (w0.x * t1.x - w0.y * t1.y,</a>
-<a class="sourceLine" id="cb6-12" title="12">                   w0.x * t1.y + w0.y * t1.x);</a>
-<a class="sourceLine" id="cb6-13" title="13"></a>
-<a class="sourceLine" id="cb6-14" title="14">    <span class="co">//s1 = z1 - w1 * t2</span></a>
-<a class="sourceLine" id="cb6-15" title="15">    s1 = (<span class="dt">float2</span>) (z1.x - w1.x * t2.x + w1.y * t2.y,</a>
-<a class="sourceLine" id="cb6-16" title="16">                   z1.y - w1.x * t2.y - w1.y * t2.x);</a>
-<a class="sourceLine" id="cb6-17" title="17"></a>
-<a class="sourceLine" id="cb6-18" title="18">    <span class="co">//s2 = 2*z1 - s1</span></a>
-<a class="sourceLine" id="cb6-19" title="19">    s2 = (<span class="dt">float2</span>) (<span class="dv">2</span>*z1.x - s1.x,</a>
-<a class="sourceLine" id="cb6-20" title="20">                   <span class="dv">2</span>*z1.y - s1.y);</a>
-<a class="sourceLine" id="cb6-21" title="21"></a>
-<a class="sourceLine" id="cb6-22" title="22">    <span class="co">//s3 = s2 + t0</span></a>
-<a class="sourceLine" id="cb6-23" title="23">    s3 = (<span class="dt">float2</span>) (s2.x + t0.x,</a>
-<a class="sourceLine" id="cb6-24" title="24">                   s2.y + t0.y);</a>
-<a class="sourceLine" id="cb6-25" title="25"></a>
-<a class="sourceLine" id="cb6-26" title="26">    <span class="co">//s4 = t0 + c1*s2</span></a>
-<a class="sourceLine" id="cb6-27" title="27">    s4 = (<span class="dt">float2</span>) (t0.x + c1*s2.x,</a>
-<a class="sourceLine" id="cb6-28" title="28">                   t0.y + c1*s2.y);</a>
-<a class="sourceLine" id="cb6-29" title="29"></a>
-<a class="sourceLine" id="cb6-30" title="30">    <span class="co">//s5 = s4-i*c2*s1</span></a>
-<a class="sourceLine" id="cb6-31" title="31">    s5 = (<span class="dt">float2</span>) (s4.x - c2*s1.y,</a>
-<a class="sourceLine" id="cb6-32" title="32">                   s4.y + c2*s1.x);</a>
-<a class="sourceLine" id="cb6-33" title="33"></a>
-<a class="sourceLine" id="cb6-34" title="34">    <span class="co">//s6 = 2*s4-s5</span></a>
-<a class="sourceLine" id="cb6-35" title="35">    s6 = (<span class="dt">float2</span>) (<span class="dv">2</span>*s4.x - s5.x,</a>
-<a class="sourceLine" id="cb6-36" title="36">                   <span class="dv">2</span>*s4.y - s5.y);</a>
-<a class="sourceLine" id="cb6-37" title="37"></a>
-<a class="sourceLine" id="cb6-38" title="38">    *xa = s3;</a>
-<a class="sourceLine" id="cb6-39" title="39">    *xb = s5; <span class="co">//pseudo code in paper says s6</span></a>
-<a class="sourceLine" id="cb6-40" title="40">    *xc = s6; <span class="co">//pseudo code in paper says s5</span></a>
-<a class="sourceLine" id="cb6-41" title="41">}</a>
-<a class="sourceLine" id="cb6-42" title="42"></a>
-<a class="sourceLine" id="cb6-43" title="43"></a>
-<a class="sourceLine" id="cb6-44" title="44"><span class="dt">float</span> radix4_fma(<span class="dt">float2</span> t0, <span class="dt">float2</span> t1, <span class="dt">float2</span> t2, <span class="dt">float2</span> t3,</a>
-<a class="sourceLine" id="cb6-45" title="45">                <span class="dt">float2</span> w0, <span class="dt">float2</span> w1,</a>
-<a class="sourceLine" id="cb6-46" title="46">                <span class="dt">float2</span>* x0, <span class="dt">float2</span>* x1, <span class="dt">float2</span> *x2, <span class="dt">float2</span>* x3) {</a>
-<a class="sourceLine" id="cb6-47" title="47"></a>
-<a class="sourceLine" id="cb6-48" title="48">    <span class="dt">float2</span> a, b, c, d;</a>
-<a class="sourceLine" id="cb6-49" title="49"></a>
-<a class="sourceLine" id="cb6-50" title="50">    a = t0;     b = t2;     c = t1;     d = t3;</a>
-<a class="sourceLine" id="cb6-51" title="51"></a>
-<a class="sourceLine" id="cb6-52" title="52">    b = (<span class="dt">float2</span>) (a.x - w1.x * b.x + w1.y * b.y,</a>
-<a class="sourceLine" id="cb6-53" title="53">                  a.y - w1.x * b.y - w1.y * b.x);</a>
-<a class="sourceLine" id="cb6-54" title="54">    a = (<span class="dt">float2</span>) (<span class="dv">2</span>*a.x - b.x,</a>
-<a class="sourceLine" id="cb6-55" title="55">                  <span class="dv">2</span>*a.y - b.y);</a>
-<a class="sourceLine" id="cb6-56" title="56">    d = (<span class="dt">float2</span>) (c.x - w1.x * d.x + w1.y * d.y,</a>
-<a class="sourceLine" id="cb6-57" title="57">                  c.y - w1.x * d.y - w1.y * d.x);</a>
-<a class="sourceLine" id="cb6-58" title="58">    c = (<span class="dt">float2</span>) (<span class="dv">2</span>*c.x - d.x,</a>
-<a class="sourceLine" id="cb6-59" title="59">                  <span class="dv">2</span>*c.y - d.y);</a>
-<a class="sourceLine" id="cb6-60" title="60"></a>
-<a class="sourceLine" id="cb6-61" title="61">    c = (<span class="dt">float2</span>) (a.x - w0.x * c.x + w0.y * c.y,</a>
-<a class="sourceLine" id="cb6-62" title="62">                  a.y - w0.x * c.y - w0.y * c.x);</a>
-<a class="sourceLine" id="cb6-63" title="63">    *x2 = c;</a>
-<a class="sourceLine" id="cb6-64" title="64">    *x0 = (<span class="dt">float2</span>) (<span class="dv">2</span>*a.x - c.x,</a>
-<a class="sourceLine" id="cb6-65" title="65">                    <span class="dv">2</span>*a.y - c.y);</a>
-<a class="sourceLine" id="cb6-66" title="66"></a>
-<a class="sourceLine" id="cb6-67" title="67">    <span class="co">//d = b - i*w0*d</span></a>
-<a class="sourceLine" id="cb6-68" title="68">    d = (<span class="dt">float2</span>) (b.x + w0.x * d.y + w0.y * d.x,</a>
-<a class="sourceLine" id="cb6-69" title="69">                  b.y - w0.x * d.x + w0.y * d.y);</a>
-<a class="sourceLine" id="cb6-70" title="70">    *x1 = d;</a>
-<a class="sourceLine" id="cb6-71" title="71">    *x3 = (<span class="dt">float2</span>) (<span class="dv">2</span>*b.x - d.x,</a>
-<a class="sourceLine" id="cb6-72" title="72">                    <span class="dv">2</span>*b.y - d.y);</a>
-<a class="sourceLine" id="cb6-73" title="73"></a>
-<a class="sourceLine" id="cb6-74" title="74">    <span class="kw">return</span> <span class="fl">0.0</span>;</a>
-<a class="sourceLine" id="cb6-75" title="75">}</a>
-<a class="sourceLine" id="cb6-76" title="76"></a>
-<a class="sourceLine" id="cb6-77" title="77"></a>
-<a class="sourceLine" id="cb6-78" title="78"></a>
-<a class="sourceLine" id="cb6-79" title="79"><span class="dt">float</span> radix5_fma(<span class="dt">float2</span> t0, <span class="dt">float2</span> t1, <span class="dt">float2</span> t2, <span class="dt">float2</span> t3, <span class="dt">float2</span> t4,</a>
-<a class="sourceLine" id="cb6-80" title="80">                 <span class="dt">float2</span> w0, <span class="dt">float2</span> w1, <span class="dt">float2</span> w2, <span class="dt">float2</span> w3,</a>
-<a class="sourceLine" id="cb6-81" title="81">                 <span class="dt">float2</span>* x0, <span class="dt">float2</span>* x1, <span class="dt">float2</span> *x2, <span class="dt">float2</span>* x3, <span class="dt">float2</span> *x4) {</a>
-<a class="sourceLine" id="cb6-82" title="82"></a>
-<a class="sourceLine" id="cb6-83" title="83">    <span class="dt">const</span> <span class="dt">float</span> c1 = <span class="fl">0.25</span>;                  <span class="co">// 1/4</span></a>
-<a class="sourceLine" id="cb6-84" title="84">    <span class="dt">const</span> <span class="dt">float</span> c2 = <span class="fl">0.5590169943749475</span>;      <span class="co">// sqrt(5)/4</span></a>
-<a class="sourceLine" id="cb6-85" title="85">    <span class="dt">const</span> <span class="dt">float</span> c3 = <span class="fl">0.6180339887498949</span>;    <span class="co">// sqrt( (5-sqrt(5))/(5+sqrt(5)) )</span></a>
-<a class="sourceLine" id="cb6-86" title="86">    <span class="dt">const</span> <span class="dt">float</span> c4 = <span class="fl">0.9510565162951535</span>;    <span class="co">// 1/2 * np.sqrt(5/2 + np.sqrt(5)/2)</span></a>
-<a class="sourceLine" id="cb6-87" title="87"></a>
-<a class="sourceLine" id="cb6-88" title="88">    <span class="dt">float2</span> z0, z1, z2;</a>
-<a class="sourceLine" id="cb6-89" title="89">    <span class="dt">float2</span> s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;</a>
-<a class="sourceLine" id="cb6-90" title="90">    <span class="dt">float2</span> q1, q2;</a>
-<a class="sourceLine" id="cb6-91" title="91"></a>
-<a class="sourceLine" id="cb6-92" title="92">    <span class="co">//z0 = t0</span></a>
-<a class="sourceLine" id="cb6-93" title="93">    z0 = t0;</a>
-<a class="sourceLine" id="cb6-94" title="94"></a>
-<a class="sourceLine" id="cb6-95" title="95">    <span class="co">//z1 = w0*t1</span></a>
-<a class="sourceLine" id="cb6-96" title="96">    z1 = (<span class="dt">float2</span>) (w0.x * t1.x - w0.y * t1.y,</a>
-<a class="sourceLine" id="cb6-97" title="97">                   w0.x * t1.y + w0.y * t1.x);</a>
-<a class="sourceLine" id="cb6-98" title="98"></a>
-<a class="sourceLine" id="cb6-99" title="99">    <span class="co">//z2 = w1*t2</span></a>
-<a class="sourceLine" id="cb6-100" title="100">    z2 = (<span class="dt">float2</span>) (w1.x * t2.x - w1.y * t2.y,</a>
-<a class="sourceLine" id="cb6-101" title="101">                   w1.x * t2.y + w1.y * t2.x);</a>
-<a class="sourceLine" id="cb6-102" title="102"></a>
-<a class="sourceLine" id="cb6-103" title="103">    <span class="co">//s1 = z1 - w3*t4</span></a>
-<a class="sourceLine" id="cb6-104" title="104">    s1 = (<span class="dt">float2</span>) (z1.x - w3.x * t4.x + w3.y * t4.y,</a>
-<a class="sourceLine" id="cb6-105" title="105">                   z1.y - w3.x * t4.y - w3.y * t4.x);</a>
-<a class="sourceLine" id="cb6-106" title="106"></a>
-<a class="sourceLine" id="cb6-107" title="107">    <span class="co">//s2 = 2*z1-s1</span></a>
-<a class="sourceLine" id="cb6-108" title="108">    s2 = (<span class="dt">float2</span>) (<span class="dv">2</span>*z1.x - s1.x,</a>
-<a class="sourceLine" id="cb6-109" title="109">                   <span class="dv">2</span>*z1.y - s1.y);</a>
-<a class="sourceLine" id="cb6-110" title="110"></a>
-<a class="sourceLine" id="cb6-111" title="111">    <span class="co">//s3 = z2 - w2*t3</span></a>
-<a class="sourceLine" id="cb6-112" title="112">    s3 = (<span class="dt">float2</span>) (z2.x - w2.x * t3.x + w2.y * t3.y,</a>
-<a class="sourceLine" id="cb6-113" title="113">                   z2.y - w2.x * t3.y - w2.y * t3.x);</a>
-<a class="sourceLine" id="cb6-114" title="114"></a>
-<a class="sourceLine" id="cb6-115" title="115">    <span class="co">//s4 = 2*z2 - s3</span></a>
-<a class="sourceLine" id="cb6-116" title="116">    s4 = (<span class="dt">float2</span>) (<span class="dv">2</span>*z2.x - s3.x,</a>
-<a class="sourceLine" id="cb6-117" title="117">                   <span class="dv">2</span>*z2.y - s3.y);</a>
-<a class="sourceLine" id="cb6-118" title="118"></a>
-<a class="sourceLine" id="cb6-119" title="119">    <span class="co">//s5 = s2+s4</span></a>
-<a class="sourceLine" id="cb6-120" title="120">    s5 = (<span class="dt">float2</span>) (s2.x + s4.x,</a>
-<a class="sourceLine" id="cb6-121" title="121">                   s2.y + s4.y);</a>
-<a class="sourceLine" id="cb6-122" title="122"></a>
-<a class="sourceLine" id="cb6-123" title="123">    <span class="co">//s6 = s2-s4</span></a>
-<a class="sourceLine" id="cb6-124" title="124">    s6 = (<span class="dt">float2</span>) (s2.x - s4.x,</a>
-<a class="sourceLine" id="cb6-125" title="125">                   s2.y - s4.y);</a>
-<a class="sourceLine" id="cb6-126" title="126"></a>
-<a class="sourceLine" id="cb6-127" title="127">    <span class="co">//s7 = z0 - c1*s5</span></a>
-<a class="sourceLine" id="cb6-128" title="128">    s7 = (<span class="dt">float2</span>) (z0.x - c1*s5.x,</a>
-<a class="sourceLine" id="cb6-129" title="129">                   z0.y - c1*s5.y);</a>
-<a class="sourceLine" id="cb6-130" title="130"></a>
-<a class="sourceLine" id="cb6-131" title="131">    <span class="co">//s8 = s7 - c2*s6</span></a>
-<a class="sourceLine" id="cb6-132" title="132">    s8 = (<span class="dt">float2</span>) (s7.x - c2*s6.x,</a>
-<a class="sourceLine" id="cb6-133" title="133">                   s7.y - c2*s6.y);</a>
-<a class="sourceLine" id="cb6-134" title="134"></a>
-<a class="sourceLine" id="cb6-135" title="135">    <span class="co">//s9 = 2*s7 - s8</span></a>
-<a class="sourceLine" id="cb6-136" title="136">    s9 = (<span class="dt">float2</span>) (<span class="dv">2</span>*s7.x - s8.x,</a>
-<a class="sourceLine" id="cb6-137" title="137">                   <span class="dv">2</span>*s7.y - s8.y);</a>
-<a class="sourceLine" id="cb6-138" title="138"></a>
-<a class="sourceLine" id="cb6-139" title="139">    <span class="co">//s10 = s1 + c3*s3</span></a>
-<a class="sourceLine" id="cb6-140" title="140">    s10 = (<span class="dt">float2</span>) (s1.x + c3*s3.x,</a>
-<a class="sourceLine" id="cb6-141" title="141">                    s1.y + c3*s3.y);</a>
-<a class="sourceLine" id="cb6-142" title="142"></a>
-<a class="sourceLine" id="cb6-143" title="143">    <span class="co">//s11 = c3*s1 - s3</span></a>
-<a class="sourceLine" id="cb6-144" title="144">    s11 = (<span class="dt">float2</span>) (c3*s1.x - s3.x,</a>
-<a class="sourceLine" id="cb6-145" title="145">                    c3*s1.y - s3.y);</a>
-<a class="sourceLine" id="cb6-146" title="146"></a>
-<a class="sourceLine" id="cb6-147" title="147">    <span class="co">// *x0 = z0 + s5</span></a>
-<a class="sourceLine" id="cb6-148" title="148">    *x0 = (<span class="dt">float2</span>) (z0.x + s5.x,</a>
-<a class="sourceLine" id="cb6-149" title="149">                    z0.y + s5.y);</a>
-<a class="sourceLine" id="cb6-150" title="150"></a>
-<a class="sourceLine" id="cb6-151" title="151">    <span class="co">//q1 = s9 - i*c4*s10</span></a>
-<a class="sourceLine" id="cb6-152" title="152">    q1 = (<span class="dt">float2</span>) (s9.x - c4*s10.y,</a>
-<a class="sourceLine" id="cb6-153" title="153">                   s9.y + c4*s10.x);</a>
-<a class="sourceLine" id="cb6-154" title="154"></a>
-<a class="sourceLine" id="cb6-155" title="155">    <span class="co">// *x1 = 2*s9 - q1</span></a>
-<a class="sourceLine" id="cb6-156" title="156">    *x1 = (<span class="dt">float2</span>) (<span class="dv">2</span>*s9.x - q1.x,</a>
-<a class="sourceLine" id="cb6-157" title="157">                    <span class="dv">2</span>*s9.y - q1.y);</a>
-<a class="sourceLine" id="cb6-158" title="158"></a>
-<a class="sourceLine" id="cb6-159" title="159">    <span class="co">//q2 = s8 - i*c4*s11</span></a>
-<a class="sourceLine" id="cb6-160" title="160">    q2 = (<span class="dt">float2</span>) (s8.x - c4*s11.y,</a>
-<a class="sourceLine" id="cb6-161" title="161">                   s8.y + c4*s11.x);</a>
-<a class="sourceLine" id="cb6-162" title="162"></a>
-<a class="sourceLine" id="cb6-163" title="163">    <span class="co">// *x2 = 2*s8-q2</span></a>
-<a class="sourceLine" id="cb6-164" title="164">    *x2 = (<span class="dt">float2</span>) (<span class="dv">2</span>*s8.x - q2.x,</a>
-<a class="sourceLine" id="cb6-165" title="165">                    <span class="dv">2</span>*s8.y - q2.y);</a>
-<a class="sourceLine" id="cb6-166" title="166"></a>
-<a class="sourceLine" id="cb6-167" title="167">    <span class="co">// *x3 = q2</span></a>
-<a class="sourceLine" id="cb6-168" title="168">    *x3 = q2;</a>
-<a class="sourceLine" id="cb6-169" title="169"></a>
-<a class="sourceLine" id="cb6-170" title="170">    <span class="co">// *x4 = q1 </span></a>
-<a class="sourceLine" id="cb6-171" title="171">    *x4 = q1;</a>
-<a class="sourceLine" id="cb6-172" title="172"></a>
-<a class="sourceLine" id="cb6-173" title="173"></a>
-<a class="sourceLine" id="cb6-174" title="174">}</a>
-<a class="sourceLine" id="cb6-175" title="175"></a>
-<a class="sourceLine" id="cb6-176" title="176">&lt;&lt;fma-codelet-tests&gt;&gt;</a></code></pre></div>
+<div class="sourceCode" id="cb10" data-file="fftsynth/opencl/fma-codelets.cl" style="max-height: 50vh"><pre class="sourceCode opencl bootstrap-fold overflow-auto"><code class="sourceCode opencl"><span id="cb10-1"><a href="#cb10-1"></a>&lt;&lt;fma-radix2&gt;&gt;</span>
+<span id="cb10-2"><a href="#cb10-2"></a></span>
+<span id="cb10-3"><a href="#cb10-3"></a></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="dt">void</span> radix3_fma(<span class="dt">float2</span> t0, <span class="dt">float2</span> t1, <span class="dt">float2</span> t2, <span class="dt">float2</span> w0, <span class="dt">float2</span> w1, <span class="dt">float2</span>* xa, <span class="dt">float2</span>* xb, <span class="dt">float2</span>* xc) {</span>
+<span id="cb10-5"><a href="#cb10-5"></a></span>
+<span id="cb10-6"><a href="#cb10-6"></a>    <span class="dt">float2</span> z1, s1, s2, s3, s4, s5, s6;</span>
+<span id="cb10-7"><a href="#cb10-7"></a>    <span class="dt">const</span> <span class="dt">float</span> c1 = <span class="fl">-0.5</span>;</span>
+<span id="cb10-8"><a href="#cb10-8"></a>    <span class="dt">const</span> <span class="dt">float</span> c2 = <span class="fl">-0.8660254037844386</span>;</span>
+<span id="cb10-9"><a href="#cb10-9"></a></span>
+<span id="cb10-10"><a href="#cb10-10"></a>    <span class="co">//z1 = w0 * t1</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a>    z1 = (<span class="dt">float2</span>) (w0.x * t1.x - w0.y * t1.y,</span>
+<span id="cb10-12"><a href="#cb10-12"></a>                   w0.x * t1.y + w0.y * t1.x);</span>
+<span id="cb10-13"><a href="#cb10-13"></a></span>
+<span id="cb10-14"><a href="#cb10-14"></a>    <span class="co">//s1 = z1 - w1 * t2</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a>    s1 = (<span class="dt">float2</span>) (z1.x - w1.x * t2.x + w1.y * t2.y,</span>
+<span id="cb10-16"><a href="#cb10-16"></a>                   z1.y - w1.x * t2.y - w1.y * t2.x);</span>
+<span id="cb10-17"><a href="#cb10-17"></a></span>
+<span id="cb10-18"><a href="#cb10-18"></a>    <span class="co">//s2 = 2*z1 - s1</span></span>
+<span id="cb10-19"><a href="#cb10-19"></a>    s2 = (<span class="dt">float2</span>) (<span class="dv">2</span>*z1.x - s1.x,</span>
+<span id="cb10-20"><a href="#cb10-20"></a>                   <span class="dv">2</span>*z1.y - s1.y);</span>
+<span id="cb10-21"><a href="#cb10-21"></a></span>
+<span id="cb10-22"><a href="#cb10-22"></a>    <span class="co">//s3 = s2 + t0</span></span>
+<span id="cb10-23"><a href="#cb10-23"></a>    s3 = (<span class="dt">float2</span>) (s2.x + t0.x,</span>
+<span id="cb10-24"><a href="#cb10-24"></a>                   s2.y + t0.y);</span>
+<span id="cb10-25"><a href="#cb10-25"></a></span>
+<span id="cb10-26"><a href="#cb10-26"></a>    <span class="co">//s4 = t0 + c1*s2</span></span>
+<span id="cb10-27"><a href="#cb10-27"></a>    s4 = (<span class="dt">float2</span>) (t0.x + c1*s2.x,</span>
+<span id="cb10-28"><a href="#cb10-28"></a>                   t0.y + c1*s2.y);</span>
+<span id="cb10-29"><a href="#cb10-29"></a></span>
+<span id="cb10-30"><a href="#cb10-30"></a>    <span class="co">//s5 = s4-i*c2*s1</span></span>
+<span id="cb10-31"><a href="#cb10-31"></a>    s5 = (<span class="dt">float2</span>) (s4.x - c2*s1.y,</span>
+<span id="cb10-32"><a href="#cb10-32"></a>                   s4.y + c2*s1.x);</span>
+<span id="cb10-33"><a href="#cb10-33"></a></span>
+<span id="cb10-34"><a href="#cb10-34"></a>    <span class="co">//s6 = 2*s4-s5</span></span>
+<span id="cb10-35"><a href="#cb10-35"></a>    s6 = (<span class="dt">float2</span>) (<span class="dv">2</span>*s4.x - s5.x,</span>
+<span id="cb10-36"><a href="#cb10-36"></a>                   <span class="dv">2</span>*s4.y - s5.y);</span>
+<span id="cb10-37"><a href="#cb10-37"></a></span>
+<span id="cb10-38"><a href="#cb10-38"></a>    *xa = s3;</span>
+<span id="cb10-39"><a href="#cb10-39"></a>    *xb = s5; <span class="co">//pseudo code in paper says s6</span></span>
+<span id="cb10-40"><a href="#cb10-40"></a>    *xc = s6; <span class="co">//pseudo code in paper says s5</span></span>
+<span id="cb10-41"><a href="#cb10-41"></a>}</span>
+<span id="cb10-42"><a href="#cb10-42"></a></span>
+<span id="cb10-43"><a href="#cb10-43"></a></span>
+<span id="cb10-44"><a href="#cb10-44"></a><span class="dt">float</span> radix4_fma(<span class="dt">float2</span> t0, <span class="dt">float2</span> t1, <span class="dt">float2</span> t2, <span class="dt">float2</span> t3,</span>
+<span id="cb10-45"><a href="#cb10-45"></a>                <span class="dt">float2</span> w0, <span class="dt">float2</span> w1,</span>
+<span id="cb10-46"><a href="#cb10-46"></a>                <span class="dt">float2</span>* x0, <span class="dt">float2</span>* x1, <span class="dt">float2</span> *x2, <span class="dt">float2</span>* x3) {</span>
+<span id="cb10-47"><a href="#cb10-47"></a></span>
+<span id="cb10-48"><a href="#cb10-48"></a>    <span class="dt">float2</span> a, b, c, d;</span>
+<span id="cb10-49"><a href="#cb10-49"></a></span>
+<span id="cb10-50"><a href="#cb10-50"></a>    a = t0;     b = t2;     c = t1;     d = t3;</span>
+<span id="cb10-51"><a href="#cb10-51"></a></span>
+<span id="cb10-52"><a href="#cb10-52"></a>    b = (<span class="dt">float2</span>) (a.x - w1.x * b.x + w1.y * b.y,</span>
+<span id="cb10-53"><a href="#cb10-53"></a>                  a.y - w1.x * b.y - w1.y * b.x);</span>
+<span id="cb10-54"><a href="#cb10-54"></a>    a = (<span class="dt">float2</span>) (<span class="dv">2</span>*a.x - b.x,</span>
+<span id="cb10-55"><a href="#cb10-55"></a>                  <span class="dv">2</span>*a.y - b.y);</span>
+<span id="cb10-56"><a href="#cb10-56"></a>    d = (<span class="dt">float2</span>) (c.x - w1.x * d.x + w1.y * d.y,</span>
+<span id="cb10-57"><a href="#cb10-57"></a>                  c.y - w1.x * d.y - w1.y * d.x);</span>
+<span id="cb10-58"><a href="#cb10-58"></a>    c = (<span class="dt">float2</span>) (<span class="dv">2</span>*c.x - d.x,</span>
+<span id="cb10-59"><a href="#cb10-59"></a>                  <span class="dv">2</span>*c.y - d.y);</span>
+<span id="cb10-60"><a href="#cb10-60"></a></span>
+<span id="cb10-61"><a href="#cb10-61"></a>    c = (<span class="dt">float2</span>) (a.x - w0.x * c.x + w0.y * c.y,</span>
+<span id="cb10-62"><a href="#cb10-62"></a>                  a.y - w0.x * c.y - w0.y * c.x);</span>
+<span id="cb10-63"><a href="#cb10-63"></a>    *x2 = c;</span>
+<span id="cb10-64"><a href="#cb10-64"></a>    *x0 = (<span class="dt">float2</span>) (<span class="dv">2</span>*a.x - c.x,</span>
+<span id="cb10-65"><a href="#cb10-65"></a>                    <span class="dv">2</span>*a.y - c.y);</span>
+<span id="cb10-66"><a href="#cb10-66"></a></span>
+<span id="cb10-67"><a href="#cb10-67"></a>    <span class="co">//d = b - i*w0*d</span></span>
+<span id="cb10-68"><a href="#cb10-68"></a>    d = (<span class="dt">float2</span>) (b.x + w0.x * d.y + w0.y * d.x,</span>
+<span id="cb10-69"><a href="#cb10-69"></a>                  b.y - w0.x * d.x + w0.y * d.y);</span>
+<span id="cb10-70"><a href="#cb10-70"></a>    *x1 = d;</span>
+<span id="cb10-71"><a href="#cb10-71"></a>    *x3 = (<span class="dt">float2</span>) (<span class="dv">2</span>*b.x - d.x,</span>
+<span id="cb10-72"><a href="#cb10-72"></a>                    <span class="dv">2</span>*b.y - d.y);</span>
+<span id="cb10-73"><a href="#cb10-73"></a></span>
+<span id="cb10-74"><a href="#cb10-74"></a>    <span class="kw">return</span> <span class="fl">0.0</span>;</span>
+<span id="cb10-75"><a href="#cb10-75"></a>}</span>
+<span id="cb10-76"><a href="#cb10-76"></a></span>
+<span id="cb10-77"><a href="#cb10-77"></a></span>
+<span id="cb10-78"><a href="#cb10-78"></a></span>
+<span id="cb10-79"><a href="#cb10-79"></a><span class="dt">float</span> radix5_fma(<span class="dt">float2</span> t0, <span class="dt">float2</span> t1, <span class="dt">float2</span> t2, <span class="dt">float2</span> t3, <span class="dt">float2</span> t4,</span>
+<span id="cb10-80"><a href="#cb10-80"></a>                 <span class="dt">float2</span> w0, <span class="dt">float2</span> w1, <span class="dt">float2</span> w2, <span class="dt">float2</span> w3,</span>
+<span id="cb10-81"><a href="#cb10-81"></a>                 <span class="dt">float2</span>* x0, <span class="dt">float2</span>* x1, <span class="dt">float2</span> *x2, <span class="dt">float2</span>* x3, <span class="dt">float2</span> *x4) {</span>
+<span id="cb10-82"><a href="#cb10-82"></a></span>
+<span id="cb10-83"><a href="#cb10-83"></a>    <span class="dt">const</span> <span class="dt">float</span> c1 = <span class="fl">0.25</span>;                  <span class="co">// 1/4</span></span>
+<span id="cb10-84"><a href="#cb10-84"></a>    <span class="dt">const</span> <span class="dt">float</span> c2 = <span class="fl">0.5590169943749475</span>;      <span class="co">// sqrt(5)/4</span></span>
+<span id="cb10-85"><a href="#cb10-85"></a>    <span class="dt">const</span> <span class="dt">float</span> c3 = <span class="fl">0.6180339887498949</span>;    <span class="co">// sqrt( (5-sqrt(5))/(5+sqrt(5)) )</span></span>
+<span id="cb10-86"><a href="#cb10-86"></a>    <span class="dt">const</span> <span class="dt">float</span> c4 = <span class="fl">0.9510565162951535</span>;    <span class="co">// 1/2 * np.sqrt(5/2 + np.sqrt(5)/2)</span></span>
+<span id="cb10-87"><a href="#cb10-87"></a></span>
+<span id="cb10-88"><a href="#cb10-88"></a>    <span class="dt">float2</span> z0, z1, z2;</span>
+<span id="cb10-89"><a href="#cb10-89"></a>    <span class="dt">float2</span> s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;</span>
+<span id="cb10-90"><a href="#cb10-90"></a>    <span class="dt">float2</span> q1, q2;</span>
+<span id="cb10-91"><a href="#cb10-91"></a></span>
+<span id="cb10-92"><a href="#cb10-92"></a>    <span class="co">//z0 = t0</span></span>
+<span id="cb10-93"><a href="#cb10-93"></a>    z0 = t0;</span>
+<span id="cb10-94"><a href="#cb10-94"></a></span>
+<span id="cb10-95"><a href="#cb10-95"></a>    <span class="co">//z1 = w0*t1</span></span>
+<span id="cb10-96"><a href="#cb10-96"></a>    z1 = (<span class="dt">float2</span>) (w0.x * t1.x - w0.y * t1.y,</span>
+<span id="cb10-97"><a href="#cb10-97"></a>                   w0.x * t1.y + w0.y * t1.x);</span>
+<span id="cb10-98"><a href="#cb10-98"></a></span>
+<span id="cb10-99"><a href="#cb10-99"></a>    <span class="co">//z2 = w1*t2</span></span>
+<span id="cb10-100"><a href="#cb10-100"></a>    z2 = (<span class="dt">float2</span>) (w1.x * t2.x - w1.y * t2.y,</span>
+<span id="cb10-101"><a href="#cb10-101"></a>                   w1.x * t2.y + w1.y * t2.x);</span>
+<span id="cb10-102"><a href="#cb10-102"></a></span>
+<span id="cb10-103"><a href="#cb10-103"></a>    <span class="co">//s1 = z1 - w3*t4</span></span>
+<span id="cb10-104"><a href="#cb10-104"></a>    s1 = (<span class="dt">float2</span>) (z1.x - w3.x * t4.x + w3.y * t4.y,</span>
+<span id="cb10-105"><a href="#cb10-105"></a>                   z1.y - w3.x * t4.y - w3.y * t4.x);</span>
+<span id="cb10-106"><a href="#cb10-106"></a></span>
+<span id="cb10-107"><a href="#cb10-107"></a>    <span class="co">//s2 = 2*z1-s1</span></span>
+<span id="cb10-108"><a href="#cb10-108"></a>    s2 = (<span class="dt">float2</span>) (<span class="dv">2</span>*z1.x - s1.x,</span>
+<span id="cb10-109"><a href="#cb10-109"></a>                   <span class="dv">2</span>*z1.y - s1.y);</span>
+<span id="cb10-110"><a href="#cb10-110"></a></span>
+<span id="cb10-111"><a href="#cb10-111"></a>    <span class="co">//s3 = z2 - w2*t3</span></span>
+<span id="cb10-112"><a href="#cb10-112"></a>    s3 = (<span class="dt">float2</span>) (z2.x - w2.x * t3.x + w2.y * t3.y,</span>
+<span id="cb10-113"><a href="#cb10-113"></a>                   z2.y - w2.x * t3.y - w2.y * t3.x);</span>
+<span id="cb10-114"><a href="#cb10-114"></a></span>
+<span id="cb10-115"><a href="#cb10-115"></a>    <span class="co">//s4 = 2*z2 - s3</span></span>
+<span id="cb10-116"><a href="#cb10-116"></a>    s4 = (<span class="dt">float2</span>) (<span class="dv">2</span>*z2.x - s3.x,</span>
+<span id="cb10-117"><a href="#cb10-117"></a>                   <span class="dv">2</span>*z2.y - s3.y);</span>
+<span id="cb10-118"><a href="#cb10-118"></a></span>
+<span id="cb10-119"><a href="#cb10-119"></a>    <span class="co">//s5 = s2+s4</span></span>
+<span id="cb10-120"><a href="#cb10-120"></a>    s5 = (<span class="dt">float2</span>) (s2.x + s4.x,</span>
+<span id="cb10-121"><a href="#cb10-121"></a>                   s2.y + s4.y);</span>
+<span id="cb10-122"><a href="#cb10-122"></a></span>
+<span id="cb10-123"><a href="#cb10-123"></a>    <span class="co">//s6 = s2-s4</span></span>
+<span id="cb10-124"><a href="#cb10-124"></a>    s6 = (<span class="dt">float2</span>) (s2.x - s4.x,</span>
+<span id="cb10-125"><a href="#cb10-125"></a>                   s2.y - s4.y);</span>
+<span id="cb10-126"><a href="#cb10-126"></a></span>
+<span id="cb10-127"><a href="#cb10-127"></a>    <span class="co">//s7 = z0 - c1*s5</span></span>
+<span id="cb10-128"><a href="#cb10-128"></a>    s7 = (<span class="dt">float2</span>) (z0.x - c1*s5.x,</span>
+<span id="cb10-129"><a href="#cb10-129"></a>                   z0.y - c1*s5.y);</span>
+<span id="cb10-130"><a href="#cb10-130"></a></span>
+<span id="cb10-131"><a href="#cb10-131"></a>    <span class="co">//s8 = s7 - c2*s6</span></span>
+<span id="cb10-132"><a href="#cb10-132"></a>    s8 = (<span class="dt">float2</span>) (s7.x - c2*s6.x,</span>
+<span id="cb10-133"><a href="#cb10-133"></a>                   s7.y - c2*s6.y);</span>
+<span id="cb10-134"><a href="#cb10-134"></a></span>
+<span id="cb10-135"><a href="#cb10-135"></a>    <span class="co">//s9 = 2*s7 - s8</span></span>
+<span id="cb10-136"><a href="#cb10-136"></a>    s9 = (<span class="dt">float2</span>) (<span class="dv">2</span>*s7.x - s8.x,</span>
+<span id="cb10-137"><a href="#cb10-137"></a>                   <span class="dv">2</span>*s7.y - s8.y);</span>
+<span id="cb10-138"><a href="#cb10-138"></a></span>
+<span id="cb10-139"><a href="#cb10-139"></a>    <span class="co">//s10 = s1 + c3*s3</span></span>
+<span id="cb10-140"><a href="#cb10-140"></a>    s10 = (<span class="dt">float2</span>) (s1.x + c3*s3.x,</span>
+<span id="cb10-141"><a href="#cb10-141"></a>                    s1.y + c3*s3.y);</span>
+<span id="cb10-142"><a href="#cb10-142"></a></span>
+<span id="cb10-143"><a href="#cb10-143"></a>    <span class="co">//s11 = c3*s1 - s3</span></span>
+<span id="cb10-144"><a href="#cb10-144"></a>    s11 = (<span class="dt">float2</span>) (c3*s1.x - s3.x,</span>
+<span id="cb10-145"><a href="#cb10-145"></a>                    c3*s1.y - s3.y);</span>
+<span id="cb10-146"><a href="#cb10-146"></a></span>
+<span id="cb10-147"><a href="#cb10-147"></a>    <span class="co">// *x0 = z0 + s5</span></span>
+<span id="cb10-148"><a href="#cb10-148"></a>    *x0 = (<span class="dt">float2</span>) (z0.x + s5.x,</span>
+<span id="cb10-149"><a href="#cb10-149"></a>                    z0.y + s5.y);</span>
+<span id="cb10-150"><a href="#cb10-150"></a></span>
+<span id="cb10-151"><a href="#cb10-151"></a>    <span class="co">//q1 = s9 - i*c4*s10</span></span>
+<span id="cb10-152"><a href="#cb10-152"></a>    q1 = (<span class="dt">float2</span>) (s9.x - c4*s10.y,</span>
+<span id="cb10-153"><a href="#cb10-153"></a>                   s9.y + c4*s10.x);</span>
+<span id="cb10-154"><a href="#cb10-154"></a></span>
+<span id="cb10-155"><a href="#cb10-155"></a>    <span class="co">// *x1 = 2*s9 - q1</span></span>
+<span id="cb10-156"><a href="#cb10-156"></a>    *x1 = (<span class="dt">float2</span>) (<span class="dv">2</span>*s9.x - q1.x,</span>
+<span id="cb10-157"><a href="#cb10-157"></a>                    <span class="dv">2</span>*s9.y - q1.y);</span>
+<span id="cb10-158"><a href="#cb10-158"></a></span>
+<span id="cb10-159"><a href="#cb10-159"></a>    <span class="co">//q2 = s8 - i*c4*s11</span></span>
+<span id="cb10-160"><a href="#cb10-160"></a>    q2 = (<span class="dt">float2</span>) (s8.x - c4*s11.y,</span>
+<span id="cb10-161"><a href="#cb10-161"></a>                   s8.y + c4*s11.x);</span>
+<span id="cb10-162"><a href="#cb10-162"></a></span>
+<span id="cb10-163"><a href="#cb10-163"></a>    <span class="co">// *x2 = 2*s8-q2</span></span>
+<span id="cb10-164"><a href="#cb10-164"></a>    *x2 = (<span class="dt">float2</span>) (<span class="dv">2</span>*s8.x - q2.x,</span>
+<span id="cb10-165"><a href="#cb10-165"></a>                    <span class="dv">2</span>*s8.y - q2.y);</span>
+<span id="cb10-166"><a href="#cb10-166"></a></span>
+<span id="cb10-167"><a href="#cb10-167"></a>    <span class="co">// *x3 = q2</span></span>
+<span id="cb10-168"><a href="#cb10-168"></a>    *x3 = q2;</span>
+<span id="cb10-169"><a href="#cb10-169"></a></span>
+<span id="cb10-170"><a href="#cb10-170"></a>    <span class="co">// *x4 = q1 </span></span>
+<span id="cb10-171"><a href="#cb10-171"></a>    *x4 = q1;</span>
+<span id="cb10-172"><a href="#cb10-172"></a></span>
+<span id="cb10-173"><a href="#cb10-173"></a></span>
+<span id="cb10-174"><a href="#cb10-174"></a>}</span>
+<span id="cb10-175"><a href="#cb10-175"></a></span>
+<span id="cb10-176"><a href="#cb10-176"></a>&lt;&lt;fma-codelet-tests&gt;&gt;</span></code></pre></div>
 </div>
 </div>
 <h2 id="testing-1">Testing</h2>
 <div>
 <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#fma-codelet-tests-container" aria-controls="fma-codelet-tests-container">&lt;&lt;fma-codelet-tests&gt;&gt;=</button>
 <div id="fma-codelet-tests-container" class="collapse">
-<div class="sourceCode" id="fma-codelet-tests" style="max-height: 50vh"><pre class="sourceCode opencl bootstrap-fold overflow-auto"><code class="sourceCode opencl"><a class="sourceLine" id="fma-codelet-tests-1" title="1"><span class="kw">__kernel</span> <span class="dt">void</span> test_radix2(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</a>
-<a class="sourceLine" id="fma-codelet-tests-2" title="2"></a>
-<a class="sourceLine" id="fma-codelet-tests-3" title="3">    <span class="dt">float2</span> w = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</a>
-<a class="sourceLine" id="fma-codelet-tests-4" title="4">    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">2</span>;</a>
-<a class="sourceLine" id="fma-codelet-tests-5" title="5"></a>
-<a class="sourceLine" id="fma-codelet-tests-6" title="6">    <span class="co">//n is the number of radix2 ffts to perform</span></a>
-<a class="sourceLine" id="fma-codelet-tests-7" title="7">    <span class="kw">if</span> (i&lt;<span class="dv">2</span>*n) {</a>
-<a class="sourceLine" id="fma-codelet-tests-8" title="8">        <span class="dt">float2</span> y0, y1;</a>
-<a class="sourceLine" id="fma-codelet-tests-9" title="9">        radix2_fma(x[i], x[i+<span class="dv">1</span>], w, &amp;y0, &amp;y1);</a>
-<a class="sourceLine" id="fma-codelet-tests-10" title="10"></a>
-<a class="sourceLine" id="fma-codelet-tests-11" title="11">        y[i] = y0; y[i+<span class="dv">1</span>] = y1;</a>
-<a class="sourceLine" id="fma-codelet-tests-12" title="12">    }</a>
-<a class="sourceLine" id="fma-codelet-tests-13" title="13">}</a>
-<a class="sourceLine" id="fma-codelet-tests-14" title="14"></a>
-<a class="sourceLine" id="fma-codelet-tests-15" title="15"></a>
-<a class="sourceLine" id="fma-codelet-tests-16" title="16"><span class="kw">__kernel</span> <span class="dt">void</span> test_radix3(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</a>
-<a class="sourceLine" id="fma-codelet-tests-17" title="17"></a>
-<a class="sourceLine" id="fma-codelet-tests-18" title="18">    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</a>
-<a class="sourceLine" id="fma-codelet-tests-19" title="19">    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</a>
-<a class="sourceLine" id="fma-codelet-tests-20" title="20">    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">3</span>;</a>
-<a class="sourceLine" id="fma-codelet-tests-21" title="21"></a>
-<a class="sourceLine" id="fma-codelet-tests-22" title="22">    <span class="co">//n is the number of radix3 ffts to perform</span></a>
-<a class="sourceLine" id="fma-codelet-tests-23" title="23">    <span class="kw">if</span> (i&lt;<span class="dv">3</span>*n) {</a>
-<a class="sourceLine" id="fma-codelet-tests-24" title="24">        <span class="dt">float2</span> y0, y1, y2;</a>
-<a class="sourceLine" id="fma-codelet-tests-25" title="25"></a>
-<a class="sourceLine" id="fma-codelet-tests-26" title="26">        radix3_fma(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], w0, w1, &amp;y0, &amp;y1, &amp;y2);</a>
-<a class="sourceLine" id="fma-codelet-tests-27" title="27"></a>
-<a class="sourceLine" id="fma-codelet-tests-28" title="28">        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;</a>
-<a class="sourceLine" id="fma-codelet-tests-29" title="29">    }</a>
-<a class="sourceLine" id="fma-codelet-tests-30" title="30">}</a>
-<a class="sourceLine" id="fma-codelet-tests-31" title="31"></a>
-<a class="sourceLine" id="fma-codelet-tests-32" title="32"></a>
-<a class="sourceLine" id="fma-codelet-tests-33" title="33"><span class="kw">__kernel</span> <span class="dt">void</span> test_radix4(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</a>
-<a class="sourceLine" id="fma-codelet-tests-34" title="34"></a>
-<a class="sourceLine" id="fma-codelet-tests-35" title="35">    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</a>
-<a class="sourceLine" id="fma-codelet-tests-36" title="36">    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</a>
-<a class="sourceLine" id="fma-codelet-tests-37" title="37">    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">4</span>;</a>
-<a class="sourceLine" id="fma-codelet-tests-38" title="38"></a>
-<a class="sourceLine" id="fma-codelet-tests-39" title="39">    <span class="co">//n is the number of radix4 ffts to perform</span></a>
-<a class="sourceLine" id="fma-codelet-tests-40" title="40">    <span class="kw">if</span> (i&lt;<span class="dv">4</span>*n) {</a>
-<a class="sourceLine" id="fma-codelet-tests-41" title="41">        <span class="dt">float2</span> y0, y1, y2, y3;</a>
-<a class="sourceLine" id="fma-codelet-tests-42" title="42"></a>
-<a class="sourceLine" id="fma-codelet-tests-43" title="43">        radix4_fma(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], x[i+<span class="dv">3</span>], w0, w1, &amp;y0, &amp;y1, &amp;y2, &amp;y3);</a>
-<a class="sourceLine" id="fma-codelet-tests-44" title="44"></a>
-<a class="sourceLine" id="fma-codelet-tests-45" title="45">        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;    y[i+<span class="dv">3</span>] = y3;</a>
-<a class="sourceLine" id="fma-codelet-tests-46" title="46">    }</a>
-<a class="sourceLine" id="fma-codelet-tests-47" title="47">}</a>
-<a class="sourceLine" id="fma-codelet-tests-48" title="48"></a>
-<a class="sourceLine" id="fma-codelet-tests-49" title="49"></a>
-<a class="sourceLine" id="fma-codelet-tests-50" title="50"><span class="kw">__kernel</span> <span class="dt">void</span> test_radix5(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</a>
-<a class="sourceLine" id="fma-codelet-tests-51" title="51"></a>
-<a class="sourceLine" id="fma-codelet-tests-52" title="52">    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</a>
-<a class="sourceLine" id="fma-codelet-tests-53" title="53">    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</a>
-<a class="sourceLine" id="fma-codelet-tests-54" title="54">    <span class="dt">float2</span> w2 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</a>
-<a class="sourceLine" id="fma-codelet-tests-55" title="55">    <span class="dt">float2</span> w3 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</a>
-<a class="sourceLine" id="fma-codelet-tests-56" title="56">    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">5</span>;</a>
-<a class="sourceLine" id="fma-codelet-tests-57" title="57"></a>
-<a class="sourceLine" id="fma-codelet-tests-58" title="58">    <span class="co">//n is the number of radix5 ffts to perform</span></a>
-<a class="sourceLine" id="fma-codelet-tests-59" title="59">    <span class="kw">if</span> (i&lt;<span class="dv">5</span>*n) {</a>
-<a class="sourceLine" id="fma-codelet-tests-60" title="60">        <span class="dt">float2</span> y0, y1, y2, y3, y4;</a>
-<a class="sourceLine" id="fma-codelet-tests-61" title="61"></a>
-<a class="sourceLine" id="fma-codelet-tests-62" title="62">        radix5_fma(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], x[i+<span class="dv">3</span>], x[i+<span class="dv">4</span>], w0, w1, w2, w3, &amp;y0, &amp;y1, &amp;y2, &amp;y3, &amp;y4);</a>
-<a class="sourceLine" id="fma-codelet-tests-63" title="63"></a>
-<a class="sourceLine" id="fma-codelet-tests-64" title="64">        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;    y[i+<span class="dv">3</span>] = y3;    y[i+<span class="dv">4</span>] = y4;</a>
-<a class="sourceLine" id="fma-codelet-tests-65" title="65">    }</a>
-<a class="sourceLine" id="fma-codelet-tests-66" title="66">}</a></code></pre></div>
+<div class="sourceCode" id="fma-codelet-tests" style="max-height: 50vh"><pre class="sourceCode opencl bootstrap-fold overflow-auto"><code class="sourceCode opencl"><span id="fma-codelet-tests-1"><a href="#fma-codelet-tests-1"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix2(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
+<span id="fma-codelet-tests-2"><a href="#fma-codelet-tests-2"></a></span>
+<span id="fma-codelet-tests-3"><a href="#fma-codelet-tests-3"></a>    <span class="dt">float2</span> w = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-4"><a href="#fma-codelet-tests-4"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">2</span>;</span>
+<span id="fma-codelet-tests-5"><a href="#fma-codelet-tests-5"></a></span>
+<span id="fma-codelet-tests-6"><a href="#fma-codelet-tests-6"></a>    <span class="co">//n is the number of radix2 ffts to perform</span></span>
+<span id="fma-codelet-tests-7"><a href="#fma-codelet-tests-7"></a>    <span class="kw">if</span> (i&lt;<span class="dv">2</span>*n) {</span>
+<span id="fma-codelet-tests-8"><a href="#fma-codelet-tests-8"></a>        <span class="dt">float2</span> y0, y1;</span>
+<span id="fma-codelet-tests-9"><a href="#fma-codelet-tests-9"></a>        radix2_fma(x[i], x[i+<span class="dv">1</span>], w, &amp;y0, &amp;y1);</span>
+<span id="fma-codelet-tests-10"><a href="#fma-codelet-tests-10"></a></span>
+<span id="fma-codelet-tests-11"><a href="#fma-codelet-tests-11"></a>        y[i] = y0; y[i+<span class="dv">1</span>] = y1;</span>
+<span id="fma-codelet-tests-12"><a href="#fma-codelet-tests-12"></a>    }</span>
+<span id="fma-codelet-tests-13"><a href="#fma-codelet-tests-13"></a>}</span>
+<span id="fma-codelet-tests-14"><a href="#fma-codelet-tests-14"></a></span>
+<span id="fma-codelet-tests-15"><a href="#fma-codelet-tests-15"></a></span>
+<span id="fma-codelet-tests-16"><a href="#fma-codelet-tests-16"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix3(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
+<span id="fma-codelet-tests-17"><a href="#fma-codelet-tests-17"></a></span>
+<span id="fma-codelet-tests-18"><a href="#fma-codelet-tests-18"></a>    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-19"><a href="#fma-codelet-tests-19"></a>    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-20"><a href="#fma-codelet-tests-20"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">3</span>;</span>
+<span id="fma-codelet-tests-21"><a href="#fma-codelet-tests-21"></a></span>
+<span id="fma-codelet-tests-22"><a href="#fma-codelet-tests-22"></a>    <span class="co">//n is the number of radix3 ffts to perform</span></span>
+<span id="fma-codelet-tests-23"><a href="#fma-codelet-tests-23"></a>    <span class="kw">if</span> (i&lt;<span class="dv">3</span>*n) {</span>
+<span id="fma-codelet-tests-24"><a href="#fma-codelet-tests-24"></a>        <span class="dt">float2</span> y0, y1, y2;</span>
+<span id="fma-codelet-tests-25"><a href="#fma-codelet-tests-25"></a></span>
+<span id="fma-codelet-tests-26"><a href="#fma-codelet-tests-26"></a>        radix3_fma(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], w0, w1, &amp;y0, &amp;y1, &amp;y2);</span>
+<span id="fma-codelet-tests-27"><a href="#fma-codelet-tests-27"></a></span>
+<span id="fma-codelet-tests-28"><a href="#fma-codelet-tests-28"></a>        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;</span>
+<span id="fma-codelet-tests-29"><a href="#fma-codelet-tests-29"></a>    }</span>
+<span id="fma-codelet-tests-30"><a href="#fma-codelet-tests-30"></a>}</span>
+<span id="fma-codelet-tests-31"><a href="#fma-codelet-tests-31"></a></span>
+<span id="fma-codelet-tests-32"><a href="#fma-codelet-tests-32"></a></span>
+<span id="fma-codelet-tests-33"><a href="#fma-codelet-tests-33"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix4(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
+<span id="fma-codelet-tests-34"><a href="#fma-codelet-tests-34"></a></span>
+<span id="fma-codelet-tests-35"><a href="#fma-codelet-tests-35"></a>    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-36"><a href="#fma-codelet-tests-36"></a>    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-37"><a href="#fma-codelet-tests-37"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">4</span>;</span>
+<span id="fma-codelet-tests-38"><a href="#fma-codelet-tests-38"></a></span>
+<span id="fma-codelet-tests-39"><a href="#fma-codelet-tests-39"></a>    <span class="co">//n is the number of radix4 ffts to perform</span></span>
+<span id="fma-codelet-tests-40"><a href="#fma-codelet-tests-40"></a>    <span class="kw">if</span> (i&lt;<span class="dv">4</span>*n) {</span>
+<span id="fma-codelet-tests-41"><a href="#fma-codelet-tests-41"></a>        <span class="dt">float2</span> y0, y1, y2, y3;</span>
+<span id="fma-codelet-tests-42"><a href="#fma-codelet-tests-42"></a></span>
+<span id="fma-codelet-tests-43"><a href="#fma-codelet-tests-43"></a>        radix4_fma(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], x[i+<span class="dv">3</span>], w0, w1, &amp;y0, &amp;y1, &amp;y2, &amp;y3);</span>
+<span id="fma-codelet-tests-44"><a href="#fma-codelet-tests-44"></a></span>
+<span id="fma-codelet-tests-45"><a href="#fma-codelet-tests-45"></a>        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;    y[i+<span class="dv">3</span>] = y3;</span>
+<span id="fma-codelet-tests-46"><a href="#fma-codelet-tests-46"></a>    }</span>
+<span id="fma-codelet-tests-47"><a href="#fma-codelet-tests-47"></a>}</span>
+<span id="fma-codelet-tests-48"><a href="#fma-codelet-tests-48"></a></span>
+<span id="fma-codelet-tests-49"><a href="#fma-codelet-tests-49"></a></span>
+<span id="fma-codelet-tests-50"><a href="#fma-codelet-tests-50"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix5(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
+<span id="fma-codelet-tests-51"><a href="#fma-codelet-tests-51"></a></span>
+<span id="fma-codelet-tests-52"><a href="#fma-codelet-tests-52"></a>    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-53"><a href="#fma-codelet-tests-53"></a>    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-54"><a href="#fma-codelet-tests-54"></a>    <span class="dt">float2</span> w2 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-55"><a href="#fma-codelet-tests-55"></a>    <span class="dt">float2</span> w3 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-56"><a href="#fma-codelet-tests-56"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">5</span>;</span>
+<span id="fma-codelet-tests-57"><a href="#fma-codelet-tests-57"></a></span>
+<span id="fma-codelet-tests-58"><a href="#fma-codelet-tests-58"></a>    <span class="co">//n is the number of radix5 ffts to perform</span></span>
+<span id="fma-codelet-tests-59"><a href="#fma-codelet-tests-59"></a>    <span class="kw">if</span> (i&lt;<span class="dv">5</span>*n) {</span>
+<span id="fma-codelet-tests-60"><a href="#fma-codelet-tests-60"></a>        <span class="dt">float2</span> y0, y1, y2, y3, y4;</span>
+<span id="fma-codelet-tests-61"><a href="#fma-codelet-tests-61"></a></span>
+<span id="fma-codelet-tests-62"><a href="#fma-codelet-tests-62"></a>        radix5_fma(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], x[i+<span class="dv">3</span>], x[i+<span class="dv">4</span>], w0, w1, w2, w3, &amp;y0, &amp;y1, &amp;y2, &amp;y3, &amp;y4);</span>
+<span id="fma-codelet-tests-63"><a href="#fma-codelet-tests-63"></a></span>
+<span id="fma-codelet-tests-64"><a href="#fma-codelet-tests-64"></a>        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;    y[i+<span class="dv">3</span>] = y3;    y[i+<span class="dv">4</span>] = y4;</span>
+<span id="fma-codelet-tests-65"><a href="#fma-codelet-tests-65"></a>    }</span>
+<span id="fma-codelet-tests-66"><a href="#fma-codelet-tests-66"></a>}</span></code></pre></div>
 </div>
 </div>
 <div class="annotated-code">
 <p><span><em>«test/test_fma_codelets.py»=</em></span></p>
-<div class="sourceCode" id="cb7" data-file="test/test_fma_codelets.py"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb7-1" title="1"><span class="im">import</span> os</a>
-<a class="sourceLine" id="cb7-2" title="2"><span class="im">import</span> numpy <span class="im">as</span> np</a>
-<a class="sourceLine" id="cb7-3" title="3"></a>
-<a class="sourceLine" id="cb7-4" title="4"><span class="im">import</span> pytest</a>
-<a class="sourceLine" id="cb7-5" title="5"><span class="im">from</span> kernel_tuner <span class="im">import</span> run_kernel</a>
-<a class="sourceLine" id="cb7-6" title="6"></a>
-<a class="sourceLine" id="cb7-7" title="7"></a>
-<a class="sourceLine" id="cb7-8" title="8"><span class="kw">def</span> get_kernel_path(<span class="bu">dir</span><span class="op">=</span><span class="va">None</span>):</a>
-<a class="sourceLine" id="cb7-9" title="9">    <span class="co">&quot;&quot;&quot; get path to the kernels as a string &quot;&quot;&quot;</span></a>
-<a class="sourceLine" id="cb7-10" title="10">    path <span class="op">=</span> <span class="st">&quot;/&quot;</span>.join(os.path.dirname(os.path.realpath(<span class="va">__file__</span>)).split(<span class="st">&#39;/&#39;</span>)[:<span class="op">-</span><span class="dv">1</span>])</a>
-<a class="sourceLine" id="cb7-11" title="11">    <span class="cf">return</span> path<span class="op">+</span><span class="st">&#39;/&#39;</span> <span class="op">+</span> (<span class="bu">dir</span> <span class="op">+</span> <span class="st">&#39;/&#39;</span> <span class="cf">if</span> <span class="bu">dir</span> <span class="cf">else</span> <span class="st">&#39;&#39;</span>)</a>
-<a class="sourceLine" id="cb7-12" title="12"></a>
-<a class="sourceLine" id="cb7-13" title="13">filename <span class="op">=</span> get_kernel_path(<span class="st">&quot;src&quot;</span>)<span class="op">+</span><span class="st">&quot;fma_codelets.cl&quot;</span></a>
-<a class="sourceLine" id="cb7-14" title="14"></a>
-<a class="sourceLine" id="cb7-15" title="15"></a>
-<a class="sourceLine" id="cb7-16" title="16"><span class="at">@pytest.mark.parametrize</span>(<span class="st">&#39;radix&#39;</span>, [<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>])</a>
-<a class="sourceLine" id="cb7-17" title="17"><span class="kw">def</span> test_radix(radix):</a>
-<a class="sourceLine" id="cb7-18" title="18">    <span class="co">#this test runs 256 instances of the radix n function</span></a>
-<a class="sourceLine" id="cb7-19" title="19">    <span class="co">#it does not use twiddle factors, so as a test</span></a>
-<a class="sourceLine" id="cb7-20" title="20">    <span class="co">#it&#39;s not to be relied upon fully</span></a>
-<a class="sourceLine" id="cb7-21" title="21">    n <span class="op">=</span> np.int32(<span class="dv">256</span>)</a>
-<a class="sourceLine" id="cb7-22" title="22">    x <span class="op">=</span> np.random.normal(size<span class="op">=</span>(n, radix, <span class="dv">2</span>)).astype(np.float32)</a>
-<a class="sourceLine" id="cb7-23" title="23">    y <span class="op">=</span> np.zeros_like(x)</a>
-<a class="sourceLine" id="cb7-24" title="24"></a>
-<a class="sourceLine" id="cb7-25" title="25">    y_ref <span class="op">=</span> np.fft.fft(x[...,<span class="dv">0</span>]<span class="op">+</span>1j<span class="op">*</span>x[...,<span class="dv">1</span>])</a>
-<a class="sourceLine" id="cb7-26" title="26"></a>
-<a class="sourceLine" id="cb7-27" title="27">    args <span class="op">=</span> [x, y, n]</a>
-<a class="sourceLine" id="cb7-28" title="28">    answer <span class="op">=</span> run_kernel(<span class="st">&quot;test_radix&quot;</span> <span class="op">+</span> <span class="bu">str</span>(radix), filename, <span class="dv">1</span>, args, {})</a>
-<a class="sourceLine" id="cb7-29" title="29"></a>
-<a class="sourceLine" id="cb7-30" title="30">    <span class="bu">print</span>(answer)</a>
-<a class="sourceLine" id="cb7-31" title="31">    y <span class="op">=</span> answer[<span class="dv">1</span>]</a>
-<a class="sourceLine" id="cb7-32" title="32">    y <span class="op">=</span> y[...,<span class="dv">0</span>]<span class="op">+</span>1j<span class="op">*</span>y[...,<span class="dv">1</span>]</a>
-<a class="sourceLine" id="cb7-33" title="33">    <span class="bu">print</span>(y)</a>
-<a class="sourceLine" id="cb7-34" title="34">    <span class="bu">print</span>(y_ref)</a>
-<a class="sourceLine" id="cb7-35" title="35"></a>
-<a class="sourceLine" id="cb7-36" title="36">    <span class="cf">assert</span> <span class="bu">abs</span>(y <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-4</span></a></code></pre></div>
+<div class="sourceCode" id="cb11" data-file="test/test_fma_codelets.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a><span class="im">import</span> os</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb11-3"><a href="#cb11-3"></a></span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="im">import</span> pytest</span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="im">from</span> kernel_tuner <span class="im">import</span> run_kernel</span>
+<span id="cb11-6"><a href="#cb11-6"></a></span>
+<span id="cb11-7"><a href="#cb11-7"></a></span>
+<span id="cb11-8"><a href="#cb11-8"></a><span class="kw">def</span> get_kernel_path(<span class="bu">dir</span><span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb11-9"><a href="#cb11-9"></a>    <span class="co">&quot;&quot;&quot; get path to the kernels as a string &quot;&quot;&quot;</span></span>
+<span id="cb11-10"><a href="#cb11-10"></a>    path <span class="op">=</span> <span class="st">&quot;/&quot;</span>.join(os.path.dirname(os.path.realpath(<span class="va">__file__</span>)).split(<span class="st">&#39;/&#39;</span>)[:<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb11-11"><a href="#cb11-11"></a>    <span class="cf">return</span> path<span class="op">+</span><span class="st">&#39;/&#39;</span> <span class="op">+</span> (<span class="bu">dir</span> <span class="op">+</span> <span class="st">&#39;/&#39;</span> <span class="cf">if</span> <span class="bu">dir</span> <span class="cf">else</span> <span class="st">&#39;&#39;</span>)</span>
+<span id="cb11-12"><a href="#cb11-12"></a></span>
+<span id="cb11-13"><a href="#cb11-13"></a>filename <span class="op">=</span> get_kernel_path(<span class="st">&quot;src&quot;</span>)<span class="op">+</span><span class="st">&quot;fma_codelets.cl&quot;</span></span>
+<span id="cb11-14"><a href="#cb11-14"></a></span>
+<span id="cb11-15"><a href="#cb11-15"></a></span>
+<span id="cb11-16"><a href="#cb11-16"></a><span class="at">@pytest.mark.parametrize</span>(<span class="st">&#39;radix&#39;</span>, [<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>])</span>
+<span id="cb11-17"><a href="#cb11-17"></a><span class="kw">def</span> test_radix(radix):</span>
+<span id="cb11-18"><a href="#cb11-18"></a>    <span class="co">#this test runs 256 instances of the radix n function</span></span>
+<span id="cb11-19"><a href="#cb11-19"></a>    <span class="co">#it does not use twiddle factors, so as a test</span></span>
+<span id="cb11-20"><a href="#cb11-20"></a>    <span class="co">#it&#39;s not to be relied upon fully</span></span>
+<span id="cb11-21"><a href="#cb11-21"></a>    n <span class="op">=</span> np.int32(<span class="dv">256</span>)</span>
+<span id="cb11-22"><a href="#cb11-22"></a>    x <span class="op">=</span> np.random.normal(size<span class="op">=</span>(n, radix, <span class="dv">2</span>)).astype(np.float32)</span>
+<span id="cb11-23"><a href="#cb11-23"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
+<span id="cb11-24"><a href="#cb11-24"></a></span>
+<span id="cb11-25"><a href="#cb11-25"></a>    y_ref <span class="op">=</span> np.fft.fft(x[...,<span class="dv">0</span>]<span class="op">+</span>1j<span class="op">*</span>x[...,<span class="dv">1</span>])</span>
+<span id="cb11-26"><a href="#cb11-26"></a></span>
+<span id="cb11-27"><a href="#cb11-27"></a>    args <span class="op">=</span> [x, y, n]</span>
+<span id="cb11-28"><a href="#cb11-28"></a>    answer <span class="op">=</span> run_kernel(<span class="st">&quot;test_radix&quot;</span> <span class="op">+</span> <span class="bu">str</span>(radix), filename, <span class="dv">1</span>, args, {})</span>
+<span id="cb11-29"><a href="#cb11-29"></a></span>
+<span id="cb11-30"><a href="#cb11-30"></a>    <span class="bu">print</span>(answer)</span>
+<span id="cb11-31"><a href="#cb11-31"></a>    y <span class="op">=</span> answer[<span class="dv">1</span>]</span>
+<span id="cb11-32"><a href="#cb11-32"></a>    y <span class="op">=</span> y[...,<span class="dv">0</span>]<span class="op">+</span>1j<span class="op">*</span>y[...,<span class="dv">1</span>]</span>
+<span id="cb11-33"><a href="#cb11-33"></a>    <span class="bu">print</span>(y)</span>
+<span id="cb11-34"><a href="#cb11-34"></a>    <span class="bu">print</span>(y_ref)</span>
+<span id="cb11-35"><a href="#cb11-35"></a></span>
+<span id="cb11-36"><a href="#cb11-36"></a>    <span class="cf">assert</span> <span class="bu">abs</span>(y <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-4</span></span></code></pre></div>
 </div>
+<h1 id="code-generator">Code generator</h1>
+<div class="annotated-code">
+<p><span><em>«fftsynth/generator.py»=</em></span></p>
+<div class="sourceCode" id="cb12" data-file="fftsynth/generator.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">def</span> write_twiddles(w):</span>
+<span id="cb12-2"><a href="#cb12-2"></a>    <span class="bu">print</span>(<span class="ss">f&quot;__constant float2 W[</span><span class="sc">{W.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">][</span><span class="sc">{mc.</span>radix<span class="dv">-1</span><span class="sc">}</span><span class="ss">] </span><span class="ch">{{</span><span class="ss">&quot;</span>)</span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="bu">print</span>( <span class="st">&quot;    {&quot;</span> <span class="op">+</span> <span class="st">&quot;},</span><span class="ch">\n</span><span class="st">    {&quot;</span>.join(<span class="st">&quot;, &quot;</span>.join(<span class="ss">f&quot;(float2) (</span><span class="sc">{w.</span>real<span class="sc">: f}</span><span class="ss">f, </span><span class="sc">{w.</span>imag<span class="sc">: f}</span><span class="ss">f)&quot;</span> <span class="cf">for</span> w <span class="kw">in</span> ws[<span class="dv">1</span>:]) <span class="cf">for</span> ws <span class="kw">in</span> W) <span class="op">+</span> <span class="st">&quot;</span><span class="sc">}}</span><span class="st">;&quot;</span>)</span></code></pre></div>
+</div>
+<h2 id="twiddles-1">Twiddles</h2>
 </div></main>
 
 <footer class="py-4 bg-dark text-white-50 footer"><div class="container">
-2020-04-20 — version 0.1.0<br />
+2020-05-12 — version 0.1.0<br />
 Generated from the Entangled Bootstrap template.
 </div></footer>
 

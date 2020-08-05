@@ -3,7 +3,20 @@
 ``` {.python file=fftsynth/generator.py}
 <<generate-twiddles>>
 
+<<generate-fft>>
+```
 
+## Outer loop
+
+``` {.python #generate-fft}
+def write_outer_loop_fn(ps):
+    print(f"void fft_{ps.N}(__restrict float2 *s0, __restrict float2 *s1, __restrict float2 *s2, __restrict float2 *s3)")
+    print( "{")
+    print(f"    for (int k = 0; k < {ps.depth}; ++k) {{")
+    print(f"        for (int i = 0; i < {ps.L}; ++i) {{")        
+    print( "        }")
+    print( "    }")
+    print( "}")
 ```
 
 ## Twiddles

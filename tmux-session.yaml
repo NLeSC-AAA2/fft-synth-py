@@ -1,0 +1,9 @@
+session_name: entangled
+windows:
+- window_name: entangled
+  layout: tiled
+  panes:
+    - make --no-print-directory watch-pandoc
+    - make --no-print-directory watch-browser-sync
+    - entangled daemon
+

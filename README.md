@@ -20,3 +20,9 @@ To start `entangled`, `browser-sync` and the `inotify-wait` loop for running Pan
 make watch
 ```
 
+If that doesn't work, `pip install tmuxp` and run
+
+```
+tmuxp load ./tmux-session.yaml
+```
+

@@ -1,4 +1,5 @@
-## ------ language="Python" file="test/test_fma_codelets.py" project://lit/fma-codelets.md#291
+# ~\~ language=Python filename=test/test_fma_codelets.py
+# ~\~ begin <<lit/fma-codelets.md|test/test_fma_codelets.py>>[0]
 import os
 import numpy as np
 
@@ -35,4 +36,4 @@ def test_radix(radix):
     print(y_ref)
 
     assert abs(y - y_ref).max() < 1e-4
-## ------ end
+# ~\~ end

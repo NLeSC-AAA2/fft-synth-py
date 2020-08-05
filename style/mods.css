@@ -81,7 +81,7 @@ td, th {
 }
 
 tr:nth-child(even) {
-        background-color: #eee;
+        background-color: #ddd;
 }
 
 code {

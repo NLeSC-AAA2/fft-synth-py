@@ -1,4 +1,5 @@
-## ------ language="Python" file="test/test_radix_4_ps.py" project://lit/parity-splitting.md#243
+# ~\~ language=Python filename=test/test_radix_4_ps.py
+# ~\~ begin <<lit/parity-splitting.md|test/test_radix_4_ps.py>>[0]
 import pytest
 import pyopencl as cl
 import pyopencl.cltypes
@@ -114,4 +115,4 @@ def test_fft_1024(cl_context, program):
     y_Z = y[...,0]+1j*y[...,1]
     y_ref = np.fft.fft(x[...,0]+1j*x[...,1])
     assert abs(y_Z - y_ref).max() < 1e-3
-## ------ end
+# ~\~ end

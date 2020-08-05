@@ -244,12 +244,14 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p><span><em>«parity»+</em></span></p>
 <div class="doctest" data-status="SUCCESS">
 <div class="doctestInput">
-<div class="sourceCode" id="parity"><pre class="sourceCode python eval"><code class="sourceCode python"><span id="parity-1"><a href="#parity-1"></a><span class="cf">for</span> (g, i) <span class="kw">in</span> channels(<span class="dv">16</span>, <span class="dv">2</span>):</span>
+<div class="sourceCode" id="parity"><pre class="sourceCode python eval"><code class="sourceCode python"><span id="parity-1"><a href="#parity-1"></a><span class="cf">for</span> (g, i) <span class="kw">in</span> channels(<span class="dv">64</span>, <span class="dv">4</span>):</span>
 <span id="parity-2"><a href="#parity-2"></a>    <span class="bu">print</span>(g, <span class="bu">list</span>(i))</span></code></pre></div>
 </div>
 <div class="doctestResult">
-<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="dv">0</span> [<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">15</span>]</span>
-<span id="cb5-2"><a href="#cb5-2"></a><span class="dv">1</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">11</span>, <span class="dv">13</span>, <span class="dv">14</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="dv">0</span> [<span class="dv">0</span>, <span class="dv">7</span>, <span class="dv">10</span>, <span class="dv">13</span>, <span class="dv">19</span>, <span class="dv">22</span>, <span class="dv">25</span>, <span class="dv">28</span>, <span class="dv">34</span>, <span class="dv">37</span>, <span class="dv">40</span>, <span class="dv">47</span>, <span class="dv">49</span>, <span class="dv">52</span>, <span class="dv">59</span>, <span class="dv">62</span>]</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="dv">1</span> [<span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">11</span>, <span class="dv">14</span>, <span class="dv">16</span>, <span class="dv">23</span>, <span class="dv">26</span>, <span class="dv">29</span>, <span class="dv">35</span>, <span class="dv">38</span>, <span class="dv">41</span>, <span class="dv">44</span>, <span class="dv">50</span>, <span class="dv">53</span>, <span class="dv">56</span>, <span class="dv">63</span>]</span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="dv">2</span> [<span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">8</span>, <span class="dv">15</span>, <span class="dv">17</span>, <span class="dv">20</span>, <span class="dv">27</span>, <span class="dv">30</span>, <span class="dv">32</span>, <span class="dv">39</span>, <span class="dv">42</span>, <span class="dv">45</span>, <span class="dv">51</span>, <span class="dv">54</span>, <span class="dv">57</span>, <span class="dv">60</span>]</span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="dv">3</span> [<span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">18</span>, <span class="dv">21</span>, <span class="dv">24</span>, <span class="dv">31</span>, <span class="dv">33</span>, <span class="dv">36</span>, <span class="dv">43</span>, <span class="dv">46</span>, <span class="dv">48</span>, <span class="dv">55</span>, <span class="dv">58</span>, <span class="dv">61</span>]</span></code></pre></div>
 </div>
 </div>
 </div>
@@ -853,15 +855,21 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h1 id="code-generator">Code generator</h1>
 <div class="annotated-code">
 <p><span><em>«fftsynth/generator.py»=</em></span></p>
-<div class="sourceCode" id="cb12" data-file="fftsynth/generator.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">def</span> write_twiddles(w):</span>
-<span id="cb12-2"><a href="#cb12-2"></a>    <span class="bu">print</span>(<span class="ss">f&quot;__constant float2 W[</span><span class="sc">{W.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">][</span><span class="sc">{mc.</span>radix<span class="dv">-1</span><span class="sc">}</span><span class="ss">] </span><span class="ch">{{</span><span class="ss">&quot;</span>)</span>
-<span id="cb12-3"><a href="#cb12-3"></a><span class="bu">print</span>( <span class="st">&quot;    {&quot;</span> <span class="op">+</span> <span class="st">&quot;},</span><span class="ch">\n</span><span class="st">    {&quot;</span>.join(<span class="st">&quot;, &quot;</span>.join(<span class="ss">f&quot;(float2) (</span><span class="sc">{w.</span>real<span class="sc">: f}</span><span class="ss">f, </span><span class="sc">{w.</span>imag<span class="sc">: f}</span><span class="ss">f)&quot;</span> <span class="cf">for</span> w <span class="kw">in</span> ws[<span class="dv">1</span>:]) <span class="cf">for</span> ws <span class="kw">in</span> W) <span class="op">+</span> <span class="st">&quot;</span><span class="sc">}}</span><span class="st">;&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb12" data-file="fftsynth/generator.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>twiddles<span class="op">&gt;&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a></span></code></pre></div>
 </div>
 <h2 id="twiddles-1">Twiddles</h2>
+<div class="annotated-code">
+<p><span><em>«generate-twiddles»=</em></span></p>
+<div class="sourceCode" id="generate-twiddles"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-twiddles-1"><a href="#generate-twiddles-1"></a><span class="kw">def</span> write_twiddles(ps, W):</span>
+<span id="generate-twiddles-2"><a href="#generate-twiddles-2"></a>    <span class="bu">print</span>(<span class="ss">f&quot;__constant float2 W[</span><span class="sc">{W.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">][</span><span class="sc">{ps.</span>radix<span class="dv">-1</span><span class="sc">}</span><span class="ss">] </span><span class="ch">{{</span><span class="ss">&quot;</span>)</span>
+<span id="generate-twiddles-3"><a href="#generate-twiddles-3"></a>    <span class="bu">print</span>( <span class="st">&quot;    {&quot;</span> <span class="op">+</span> <span class="st">&quot;},</span><span class="ch">\n</span><span class="st">    {&quot;</span>.join(<span class="st">&quot;, &quot;</span>.join(<span class="ss">f&quot;(float2) (</span><span class="sc">{w.</span>real<span class="sc">: f}</span><span class="ss">f, </span><span class="sc">{w.</span>imag<span class="sc">: f}</span><span class="ss">f)&quot;</span></span>
+<span id="generate-twiddles-4"><a href="#generate-twiddles-4"></a>            <span class="cf">for</span> w <span class="kw">in</span> ws[<span class="dv">1</span>:]) <span class="cf">for</span> ws <span class="kw">in</span> W) <span class="op">+</span> <span class="st">&quot;</span><span class="sc">}}</span><span class="st">;&quot;</span>)</span></code></pre></div>
+</div>
 </div></main>
 
 <footer class="py-4 bg-dark text-white-50 footer"><div class="container">
-2020-05-12 — version 0.1.0<br />
+2020-05-26 — version 0.1.0<br />
 Generated from the Entangled Bootstrap template.
 </div></footer>
 

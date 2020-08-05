@@ -78,7 +78,7 @@ for (g, i) in channels(16, 2):
 and for a radix-4, size 64 fft, this creates the following channels
 
 ``` {.python .eval #parity}
-for (g, i) in channels(16, 2):
+for (g, i) in channels(64, 4):
     print(g, list(i))
 ```
 

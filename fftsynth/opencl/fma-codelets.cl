@@ -1,5 +1,6 @@
-// ------ language="OpenCL" file="fftsynth/opencl/fma-codelets.cl" project://lit/fma-codelets.md#41
-// ------ begin <<fma-radix2>>[0] project://lit/fma-codelets.md#25
+/* ~\~ language=OpenCL filename=fftsynth/opencl/fma-codelets.cl */
+/* ~\~ begin <<lit/fma-codelets.md|fftsynth/opencl/fma-codelets.cl>>[0] */
+/* ~\~ begin <<lit/fma-codelets.md|fma-radix2>>[0] */
 void radix2_fma(float2 e, float2 o, float2 w, float2* xa, float2* xb)
 {
     float2 a = (float2) (-w.y * o.y + e.x, w.y * o.x + e.y);
@@ -9,7 +10,7 @@ void radix2_fma(float2 e, float2 o, float2 w, float2* xa, float2* xb)
     *xa = a;
     *xb = b;
 }
-// ------ end
+/* ~\~ end */
 
 
 void radix3_fma(float2 t0, float2 t1, float2 t2, float2 w0, float2 w1, float2* xa, float2* xb, float2* xc) {
@@ -184,7 +185,7 @@ float radix5_fma(float2 t0, float2 t1, float2 t2, float2 t3, float2 t4,
 
 }
 
-// ------ begin <<fma-codelet-tests>>[0] project://lit/fma-codelets.md#222
+/* ~\~ begin <<lit/fma-codelets.md|fma-codelet-tests>>[0] */
 __kernel void test_radix2(__global float2 *x, __global float2 *y, int n) {
 
     float2 w = (float2) (1.0, 0.0);
@@ -251,5 +252,5 @@ __kernel void test_radix5(__global float2 *x, __global float2 *y, int n) {
         y[i] = y0;    y[i+1] = y1;    y[i+2] = y2;    y[i+3] = y3;    y[i+4] = y4;
     }
 }
-// ------ end
-// ------ end
+/* ~\~ end */
+/* ~\~ end */

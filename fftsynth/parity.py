@@ -1,4 +1,5 @@
-## ------ language="Python" file="fftsynth/parity.py" project://lit/parity-splitting.md#24
+# ~\~ language=Python filename=fftsynth/parity.py
+# ~\~ begin <<lit/parity-splitting.md|fftsynth/parity.py>>[0]
 from numba import jit, vectorize
 import numpy as np
 import math
@@ -29,14 +30,14 @@ def parity(n: int, i: int) -> int:
         x += j
     return x % n
 
-## ------ begin <<parity-channels>>[0] project://lit/parity-splitting.md#62
+# ~\~ begin <<lit/parity-splitting.md|parity-channels>>[0]
 def channels(N: int, radix: int) -> Mapping[int, Iterator[int]]:
     """Given a 1-d contiguous array of size N, and a FFT of given radix,
     this returns a map of iterators of the different memory channels."""
     parity_r = partial(parity, radix)
     return groupby(sorted(range(N), key=parity_r), parity_r)
-## ------ end
-## ------ begin <<parity-index-functions>>[0] project://lit/parity-splitting.md#158
+# ~\~ end
+# ~\~ begin <<lit/parity-splitting.md|parity-index-functions>>[0]
 def comp_idx(radix: int, i: int, j: int, k: int) -> int:
     base = (i & ~(radix**k - 1))
     rem  = (i &  (radix**k - 1))
@@ -48,8 +49,8 @@ def comp_perm(radix: int, i: int) -> int:
     rem = (i & (radix - 1))
     p = parity(radix, base)
     return base | ((rem - p) % radix)
-## ------ end
-## ------ begin <<parity-splitting-interface>>[0] project://lit/parity-splitting.md#176
+# ~\~ end
+# ~\~ begin <<lit/parity-splitting.md|parity-splitting-interface>>[0]
 @dataclass
 class ParitySplitting:
     """Collects a lot of properties on the parity-splitting FFT algorithm.
@@ -112,5 +113,5 @@ class ParitySplitting:
         for g, i in self.channels:
             x[list(i)] = s[g]
         return x
-## ------ end
-## ------ end
+# ~\~ end
+# ~\~ end

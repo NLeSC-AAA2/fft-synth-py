@@ -857,19 +857,108 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p><span><em>«fftsynth/generator.py»=</em></span></p>
 <div class="sourceCode" id="cb12" data-file="fftsynth/generator.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>twiddles<span class="op">&gt;&gt;</span></span>
 <span id="cb12-2"><a href="#cb12-2"></a></span>
-<span id="cb12-3"><a href="#cb12-3"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>fft<span class="op">&gt;&gt;</span></span></code></pre></div>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>transpose<span class="op">&gt;&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a></span>
+<span id="cb12-5"><a href="#cb12-5"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>parity<span class="op">&gt;&gt;</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a></span>
+<span id="cb12-7"><a href="#cb12-7"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>fft<span class="op">&gt;&gt;</span></span></code></pre></div>
+</div>
+<h2 id="bit-math">Bit math</h2>
+<p>The <code>transpose_{r}</code> function should reverse the digits in a base-n representation of the integer.</p>
+<div class="annotated-code">
+<p><span><em>«generate-transpose»=</em></span></p>
+<div class="sourceCode" id="generate-transpose"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-transpose-1"><a href="#generate-transpose-1"></a><span class="kw">def</span> write_transpose_fn(ps):</span>
+<span id="generate-transpose-2"><a href="#generate-transpose-2"></a>    <span class="bu">print</span>(<span class="ss">f&quot;&quot;&quot;</span></span>
+<span id="generate-transpose-3"><a href="#generate-transpose-3"></a><span class="ss">inline int transpose_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(int j) </span><span class="ch">{{</span></span>
+<span id="generate-transpose-4"><a href="#generate-transpose-4"></a><span class="ss">    int x = 0;</span></span>
+<span id="generate-transpose-5"><a href="#generate-transpose-5"></a><span class="ss">    for (int l = 0; l &lt; </span><span class="sc">{ps.</span>depth<span class="sc">}</span><span class="ss">; ++l) </span><span class="ch">{{</span></span>
+<span id="generate-transpose-6"><a href="#generate-transpose-6"></a><span class="ss">        x *= </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">;</span></span>
+<span id="generate-transpose-7"><a href="#generate-transpose-7"></a><span class="ss">        x += j % </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">;</span></span>
+<span id="generate-transpose-8"><a href="#generate-transpose-8"></a><span class="ss">        j /= </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">;</span></span>
+<span id="generate-transpose-9"><a href="#generate-transpose-9"></a><span class="ss">    }}</span></span>
+<span id="generate-transpose-10"><a href="#generate-transpose-10"></a><span class="ss">    return x;</span></span>
+<span id="generate-transpose-11"><a href="#generate-transpose-11"></a><span class="ss">}}&quot;&quot;&quot;</span>)</span></code></pre></div>
+</div>
+<p>The <code>parity_{r}</code> function should compute the parity of the index.</p>
+<div class="annotated-code">
+<p><span><em>«generate-parity»=</em></span></p>
+<div class="sourceCode" id="generate-parity"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-parity-1"><a href="#generate-parity-1"></a><span class="kw">def</span> write_parity_fn(ps):</span>
+<span id="generate-parity-2"><a href="#generate-parity-2"></a>    <span class="bu">print</span>(<span class="ss">f&quot;&quot;&quot;</span></span>
+<span id="generate-parity-3"><a href="#generate-parity-3"></a><span class="ss">inline int parity_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(int i) </span><span class="ch">{{</span></span>
+<span id="generate-parity-4"><a href="#generate-parity-4"></a><span class="ss">    int x = i % </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">;</span></span>
+<span id="generate-parity-5"><a href="#generate-parity-5"></a><span class="ss">    for (int a = 0; a &lt; </span><span class="sc">{ps.</span>depth<span class="sc">}</span><span class="ss">; ++a) </span><span class="ch">{{</span></span>
+<span id="generate-parity-6"><a href="#generate-parity-6"></a><span class="ss">        i /= </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">;</span></span>
+<span id="generate-parity-7"><a href="#generate-parity-7"></a><span class="ss">        x += i % </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">;</span></span>
+<span id="generate-parity-8"><a href="#generate-parity-8"></a><span class="ss">    }}</span></span>
+<span id="generate-parity-9"><a href="#generate-parity-9"></a><span class="ss">    return x % </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">;</span></span>
+<span id="generate-parity-10"><a href="#generate-parity-10"></a><span class="ss">}}</span></span></code></pre></div>
 </div>
 <h2 id="outer-loop">Outer loop</h2>
 <div class="annotated-code">
 <p><span><em>«generate-fft»=</em></span></p>
 <div class="sourceCode" id="generate-fft"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-fft-1"><a href="#generate-fft-1"></a><span class="kw">def</span> write_outer_loop_fn(ps):</span>
-<span id="generate-fft-2"><a href="#generate-fft-2"></a>    <span class="bu">print</span>(<span class="ss">f&quot;void fft_</span><span class="sc">{ps.N}</span><span class="ss">(__restrict float2 *s0, __restrict float2 *s1, __restrict float2 *s2, __restrict float2 *s3)&quot;</span>)</span>
+<span id="generate-fft-2"><a href="#generate-fft-2"></a>    <span class="bu">print</span>(<span class="ss">f&quot;void fft_</span><span class="sc">{ps.N}</span><span class="ss">_mc(__restrict float2 *s0, __restrict float2 *s1, __restrict float2 *s2, __restrict float2 *s3)&quot;</span>)</span>
 <span id="generate-fft-3"><a href="#generate-fft-3"></a>    <span class="bu">print</span>( <span class="st">&quot;{&quot;</span>)</span>
-<span id="generate-fft-4"><a href="#generate-fft-4"></a>    <span class="bu">print</span>(<span class="ss">f&quot;    for (int k = 0; k &lt; </span><span class="sc">{ps.</span>depth<span class="sc">}</span><span class="ss">; ++k) </span><span class="ch">{{</span><span class="ss">&quot;</span>)</span>
-<span id="generate-fft-5"><a href="#generate-fft-5"></a>    <span class="bu">print</span>(<span class="ss">f&quot;        for (int i = 0; i &lt; </span><span class="sc">{ps.L}</span><span class="ss">; ++i) </span><span class="ch">{{</span><span class="ss">&quot;</span>)        </span>
-<span id="generate-fft-6"><a href="#generate-fft-6"></a>    <span class="bu">print</span>( <span class="st">&quot;        }&quot;</span>)</span>
-<span id="generate-fft-7"><a href="#generate-fft-7"></a>    <span class="bu">print</span>( <span class="st">&quot;    }&quot;</span>)</span>
-<span id="generate-fft-8"><a href="#generate-fft-8"></a>    <span class="bu">print</span>( <span class="st">&quot;}&quot;</span>)</span></code></pre></div>
+<span id="generate-fft-4"><a href="#generate-fft-4"></a>    <span class="bu">print</span>( <span class="st">&quot;    int wp = 0;&quot;</span>)</span>
+<span id="generate-fft-5"><a href="#generate-fft-5"></a>    <span class="bu">print</span>(<span class="ss">f&quot;    for (int k = 0; k &lt; </span><span class="sc">{ps.</span>depth<span class="sc">}</span><span class="ss">; ++k) </span><span class="ch">{{</span><span class="ss">&quot;</span>)</span>
+<span id="generate-fft-6"><a href="#generate-fft-6"></a>    <span class="cf">with</span> indent(<span class="st">&quot;         &quot;</span>):</span>
+<span id="generate-fft-7"><a href="#generate-fft-7"></a>        <span class="op">&lt;&lt;</span>fft<span class="op">-</span>inner<span class="op">-</span>loop<span class="op">&gt;&gt;</span></span>
+<span id="generate-fft-8"><a href="#generate-fft-8"></a>    <span class="bu">print</span>( <span class="st">&quot;    }&quot;</span>)</span>
+<span id="generate-fft-9"><a href="#generate-fft-9"></a>    <span class="bu">print</span>( <span class="st">&quot;}&quot;</span>)</span></code></pre></div>
+</div>
+<h3 id="inner-loop">Inner loop</h3>
+<p>Here we have <code>k</code> being the index of the outer loop. We now</p>
+<div class="annotated-code">
+<p><span><em>«fft-inner-loop»=</em></span></p>
+<div class="sourceCode" id="fft-inner-loop"><pre class="sourceCode python"><code class="sourceCode python"><span id="fft-inner-loop-1"><a href="#fft-inner-loop-1"></a><span class="bu">print</span>(<span class="ss">f&quot;int j = (k == 0 ? 0 : ipow(</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">, k - 1));&quot;</span>)</span>
+<span id="fft-inner-loop-2"><a href="#fft-inner-loop-2"></a><span class="bu">print</span>(<span class="ss">f&quot;for (int i = 0; i &lt; </span><span class="sc">{ps.L}</span><span class="ss">; ++i) </span><span class="ch">{{</span><span class="ss">&quot;</span>)</span></code></pre></div>
+</div>
+<p>The next bit is only still implemented for radix-4.</p>
+<div class="annotated-code">
+<p><span><em>«fft-inner-loop»+</em></span></p>
+<div class="sourceCode" id="fft-inner-loop"><pre class="sourceCode python"><code class="sourceCode python"><span id="fft-inner-loop-1"><a href="#fft-inner-loop-1"></a><span class="bu">print</span>( <span class="st">&quot;if (k != 0) {&quot;</span>)</span>
+<span id="fft-inner-loop-2"><a href="#fft-inner-loop-2"></a><span class="bu">print</span>( <span class="st">&quot;    a = comp_idx_4(i &gt;&gt; 2, k-1);&quot;</span>)</span>
+<span id="fft-inner-loop-3"><a href="#fft-inner-loop-3"></a><span class="bu">print</span>( <span class="st">&quot;} else {&quot;</span>)</span>
+<span id="fft-inner-loop-4"><a href="#fft-inner-loop-4"></a><span class="bu">print</span>( <span class="st">&quot;    a = comp_perm_4(i &gt;&gt; 2, i&amp;3);&quot;</span>)</span>
+<span id="fft-inner-loop-5"><a href="#fft-inner-loop-5"></a><span class="bu">print</span>( <span class="st">&quot;}&quot;</span>)</span>
+<span id="fft-inner-loop-6"><a href="#fft-inner-loop-6"></a><span class="bu">print</span>( <span class="st">&quot;fft_4(s0, s1, s2, s3, i&amp;3, a, a+j, a+2*j, a+3*j, wp);&quot;</span>)</span>
+<span id="fft-inner-loop-7"><a href="#fft-inner-loop-7"></a><span class="bu">print</span>( <span class="st">&quot;if (k != 0) ++wp;&quot;</span>)</span></code></pre></div>
+</div>
+<h3 id="outer-kernel">Outer kernel</h3>
+<p>The outer kernel reads the data, puts it in the correct parity-channel and then calls the respective <code>fft_{n}_mc</code> kernel.</p>
+<div class="annotated-code">
+<p><span><em>«generate-outer-fft»=</em></span></p>
+<div class="sourceCode" id="generate-outer-fft"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-outer-fft-1"><a href="#generate-outer-fft-1"></a>declare_arrays <span class="op">=</span> <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>.join(</span>
+<span id="generate-outer-fft-2"><a href="#generate-outer-fft-2"></a>    <span class="ss">f&quot;float2 s</span><span class="sc">{i}</span><span class="ss">[</span><span class="sc">{ps.L}</span><span class="ss">];&quot;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(ps.radix))</span>
+<span id="generate-outer-fft-3"><a href="#generate-outer-fft-3"></a>mc_args <span class="op">=</span> <span class="st">&quot;, &quot;</span>.join(</span>
+<span id="generate-outer-fft-4"><a href="#generate-outer-fft-4"></a>    <span class="ss">f&quot;s</span><span class="sc">{i}</span><span class="ss">&quot;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(ps.radix))</span>
+<span id="generate-outer-fft-5"><a href="#generate-outer-fft-5"></a>read_cases <span class="op">=</span> <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>.join(</span>
+<span id="generate-outer-fft-6"><a href="#generate-outer-fft-6"></a>    <span class="ss">f&quot;case </span><span class="sc">{p}</span><span class="ss">: s</span><span class="sc">{p}</span><span class="ss">[i/</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">] = x[j]; break;&quot;</span> <span class="cf">for</span> p <span class="kw">in</span> <span class="bu">range</span>(ps.radix))</span>
+<span id="generate-outer-fft-7"><a href="#generate-outer-fft-7"></a>write_cases <span class="op">=</span> <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>.join(</span>
+<span id="generate-outer-fft-8"><a href="#generate-outer-fft-8"></a>    <span class="ss">f&quot;case </span><span class="sc">{p}</span><span class="ss">: y[i] = s</span><span class="sc">{p}</span><span class="ss">[i/</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">]; break;&quot;</span> <span class="cf">for</span> p <span class="kw">in</span> <span class="bu">range</span>(ps.radix))</span>
+<span id="generate-outer-fft-9"><a href="#generate-outer-fft-9"></a><span class="bu">print</span>(<span class="ss">f&quot;&quot;&quot;</span></span>
+<span id="generate-outer-fft-10"><a href="#generate-outer-fft-10"></a><span class="ss">__kernel void fft_</span><span class="sc">{ps.N}</span><span class="ss">(__global const float2 * restrict x, __global float2 * restrict y)</span></span>
+<span id="generate-outer-fft-11"><a href="#generate-outer-fft-11"></a><span class="ch">{{</span></span>
+<span id="generate-outer-fft-12"><a href="#generate-outer-fft-12"></a><span class="ss">    </span><span class="sc">{</span>declare_arrays<span class="sc">}</span></span>
+<span id="generate-outer-fft-13"><a href="#generate-outer-fft-13"></a><span class="ss">    float2 s</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">[</span><span class="sc">{ps.L}</span><span class="ss">];</span></span>
+<span id="generate-outer-fft-14"><a href="#generate-outer-fft-14"></a></span>
+<span id="generate-outer-fft-15"><a href="#generate-outer-fft-15"></a><span class="ss">    for (int j = 0; j &lt; </span><span class="sc">{ps.N}</span><span class="ss">; ++j) </span><span class="ch">{{</span></span>
+<span id="generate-outer-fft-16"><a href="#generate-outer-fft-16"></a><span class="ss">        int i = transpose_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(j);</span></span>
+<span id="generate-outer-fft-17"><a href="#generate-outer-fft-17"></a><span class="ss">        int p = parity_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(i);</span></span>
+<span id="generate-outer-fft-18"><a href="#generate-outer-fft-18"></a><span class="ss">        switch (p) </span><span class="ch">{{</span></span>
+<span id="generate-outer-fft-19"><a href="#generate-outer-fft-19"></a><span class="ss">            </span><span class="sc">{</span>read_cases<span class="sc">}</span></span>
+<span id="generate-outer-fft-20"><a href="#generate-outer-fft-20"></a><span class="ss">        }}</span></span>
+<span id="generate-outer-fft-21"><a href="#generate-outer-fft-21"></a><span class="ss">    }}</span></span>
+<span id="generate-outer-fft-22"><a href="#generate-outer-fft-22"></a></span>
+<span id="generate-outer-fft-23"><a href="#generate-outer-fft-23"></a><span class="ss">    fft_1024_mc(</span><span class="sc">{</span>mc_args<span class="sc">}</span><span class="ss">);</span></span>
+<span id="generate-outer-fft-24"><a href="#generate-outer-fft-24"></a></span>
+<span id="generate-outer-fft-25"><a href="#generate-outer-fft-25"></a><span class="ss">    for (int i = 0; i &lt; </span><span class="sc">{ps.N}</span><span class="ss">; ++i) </span><span class="ch">{{</span></span>
+<span id="generate-outer-fft-26"><a href="#generate-outer-fft-26"></a><span class="ss">        int p = parity_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(i);</span></span>
+<span id="generate-outer-fft-27"><a href="#generate-outer-fft-27"></a><span class="ss">        switch (p) </span><span class="ch">{{</span></span>
+<span id="generate-outer-fft-28"><a href="#generate-outer-fft-28"></a><span class="ss">            </span><span class="sc">{</span>write_cases<span class="sc">}</span></span>
+<span id="generate-outer-fft-29"><a href="#generate-outer-fft-29"></a><span class="ss">        }}</span></span>
+<span id="generate-outer-fft-30"><a href="#generate-outer-fft-30"></a><span class="ss">    }}</span></span>
+<span id="generate-outer-fft-31"><a href="#generate-outer-fft-31"></a><span class="ss">}}&quot;&quot;&quot;</span>)</span></code></pre></div>
 </div>
 <h2 id="twiddles-1">Twiddles</h2>
 <div class="annotated-code">

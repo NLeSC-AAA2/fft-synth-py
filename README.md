@@ -7,6 +7,8 @@ The best way to setup the edit workflow:
 
 - have `nodejs` with `browser-sync` (`npm install -g browser-sync`)
 - have Entangled filters installed (`pip install --user entangled-filters`)
+- have `dhall-to-json` ([Download here](https://github.com/dhall-lang/dhall-haskell/releases))
+- `pip install --user pandoc-eqnos pandoc-fignos`
 - have a recent version of Pandoc (&le; 2.7)
 - `tmux`
 - `inotify-tools`

@@ -1,18 +1,18 @@
 # ~\~ language=Python filename=fftsynth/parity.py
 # ~\~ begin <<lit/parity-splitting.md|fftsynth/parity.py>>[0]
 from numba import jit, vectorize
-import numpy as np
+import numpy as np                  # type: ignore
 import math
 
 from functools import partial
 from itertools import groupby
 from dataclasses import dataclass
 
-from typing import List, Mapping, Iterator, Sequence
+from typing import List, Iterator, Sequence, Generator, Tuple
 
 
 @jit(nopython=True)
-def digits(n: int, i: int) -> List[int]:
+def digits(n: int, i: int) -> Generator[int, None, None]:
     """Generates the n-numbered digits of i, in reverse order."""
     while True:
         if i == 0:
@@ -31,7 +31,7 @@ def parity(n: int, i: int) -> int:
     return x % n
 
 # ~\~ begin <<lit/parity-splitting.md|parity-channels>>[0]
-def channels(N: int, radix: int) -> Mapping[int, Iterator[int]]:
+def channels(N: int, radix: int) -> Iterator[Tuple[int, Iterator[int]]]:
     """Given a 1-d contiguous array of size N, and a FFT of given radix,
     this returns a map of iterators of the different memory channels."""
     parity_r = partial(parity, radix)
@@ -65,46 +65,46 @@ class ParitySplitting:
     """
     N: int
     radix: int
-    
+
     @property
     def depth(self) -> int:
         """radix-log of FFT size"""
         return int(math.log(self.N, self.radix))
-    
+
     @property
     def M(self) -> int:
         """N // radix"""
         return self.N//self.radix
-    
+
     @property
     def L(self) -> int:
         """N // radix**2"""
         return self.M//self.radix
-    
+
     @property
     def factors(self) -> List[int]:
         """Shape of FFT"""
         return [self.radix] * self.depth
-    
+
     @property
-    def channels(self) -> Mapping[int, Iterator[int]]:
+    def channels(self) -> Iterator[Tuple[int, Iterator[int]]]:
         """Pattern for memory chunks"""
         return channels(self.N, self.radix)
-    
+
     @property
     def channel_loc(self) -> np.ndarray:
         x = np.zeros(shape=(self.N,), dtype=int)
         for g, i in self.channels:
             x[list(i)] = g
         return x.reshape(self.factors)
-    
+
     @property
     def index_loc(self) -> np.ndarray:
         x = np.zeros(shape=(self.N,), dtype=int)
         for g, i in self.channels:
             x[list(i)] = np.arange(self.M, dtype=int)
         return x.reshape(self.factors)
-    
+
     def mix(self, x: np.ndarray) -> List[np.ndarray]:
         return [x[list(i)].copy() for g, i in self.channels]
 

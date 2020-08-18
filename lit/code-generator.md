@@ -118,7 +118,25 @@ __kernel void fft_{ps.N}(__global const float2 * restrict x, __global float2 * r
 ``` {.python #generate-twiddles}
 def write_twiddles(ps, W):
     print(f"__constant float2 W[{W.shape[0]}][{ps.radix-1}] {{")
-    print( "    {" + "},\n    {".join(", ".join(f"(float2) ({w.real: f}f, {w.imag: f}f)"
-            for w in ws[1:]) for ws in W) + "}};")
+    print( "    {" + "},\n    {".join(", ".join(
+                f"(float2) ({w.real: f}f, {w.imag: f}f)"
+                for w in ws[1:])
+            for ws in W) + "}};")
 ```
 
+## Utility
+
+``` {.python file=fftsynth/indent.py}
+from contextlib import (contextmanager, redirect_stdout)
+import io
+import textwrap
+
+
+@contextmanager
+def indent(prefix: str):
+    f = io.StringIO()
+    with redirect_stdout(f):
+        yield
+    output = f.getvalue()
+    print(textwrap.indent(output, prefix), end="")
+```

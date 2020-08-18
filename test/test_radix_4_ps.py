@@ -1,17 +1,17 @@
 # ~\~ language=Python filename=test/test_radix_4_ps.py
 # ~\~ begin <<lit/parity-splitting.md|test/test_radix_4_ps.py>>[0]
-import pytest
-import pyopencl as cl
-import pyopencl.cltypes
-import numpy as np
+import pytest               # type: ignore
+import pyopencl as cl       # type: ignore
+import pyopencl.cltypes     # type: ignore
+import numpy as np          # type: ignore
 
-from fft.util import parity
-from fft.multi_channel import MultiChannel, comp_idx, comp_perm
+from fftsynth.parity import parity
+from fftsynth.parity import ParitySplitting, comp_idx, comp_perm
 
 
 N = 1024
 radix = 4
-mc = MultiChannel(N, radix)
+mc = ParitySplitting(N, radix)
 mf = cl.mem_flags
 
 

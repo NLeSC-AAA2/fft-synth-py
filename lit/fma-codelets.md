@@ -294,13 +294,9 @@ import numpy as np
 import pytest
 from kernel_tuner import run_kernel
 
+from pkg_resources import resource_filename
 
-def get_kernel_path(dir=None):
-    """ get path to the kernels as a string """
-    path = "/".join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
-    return path+'/' + (dir + '/' if dir else '')
-
-filename = get_kernel_path("src")+"fma_codelets.cl"
+filename = resource_filename("fftsynth", "opencl/fma-codelets.cl")
 
 
 @pytest.mark.parametrize('radix', [2, 3, 4, 5])

@@ -1,6 +1,8 @@
 # Code generator
 
 ``` {.python file=fftsynth/generator.py}
+from .indent import indent
+
 <<generate-twiddles>>
 
 <<generate-transpose>>
@@ -10,12 +12,33 @@
 <<generate-fft>>
 ```
 
+## Testing
+To test we need to define small `__kernel` functions.
+
+``` {.python file=test/test_generator.py}
+import pytest
+import numpy as np
+import pyopencl as cl
+from fftsynth.parity import ParitySplitting
+
+cases = [
+    ParitySplitting(64, 4),
+    ParitySplitting(81, 3),
+    ParitySplitting(125, 5)
+]
+
+mf = cl.mem_flags
+
+<<test-parity>>
+<<test-transpose>>
+```
+
 ## Bit math
 The `transpose_{r}` function should reverse the digits in a base-n representation of the integer.
 
 ``` {.python #generate-transpose}
-def write_transpose_fn(ps):
-    print(f"""
+def gen_transpose_fn(ps):
+    return f"""
 inline int transpose_{ps.radix}(int j) {{
     int x = 0;
     for (int l = 0; l < {ps.depth}; ++l) {{
@@ -24,14 +47,14 @@ inline int transpose_{ps.radix}(int j) {{
         j /= {ps.radix};
     }}
     return x;
-}}""")
+}}"""
 ```
 
 The `parity_{r}` function should compute the parity of the index.
 
 ``` {.python #generate-parity}
-def write_parity_fn(ps):
-    print(f"""
+def gen_parity_fn(ps):
+    return f"""
 inline int parity_{ps.radix}(int i) {{
     int x = i % {ps.radix};
     for (int a = 0; a < {ps.depth}; ++a) {{
@@ -39,7 +62,64 @@ inline int parity_{ps.radix}(int i) {{
         x += i % {ps.radix};
     }}
     return x % {ps.radix};
-}}
+}}"""
+```
+
+### Testing
+
+``` {.python #test-transpose}
+@pytest.mark.parametrize('ps', cases)
+def test_transpose_4(cl_context, ps):
+    from fftsynth.generator import gen_transpose_fn
+    source = gen_transpose_fn(ps)
+    kernel = f"""
+    {source}
+
+    __kernel void test_transpose(__global const int *x, __global int *y) {{
+        int i = get_global_id(0);
+        y[i] = transpose_{ps.radix}(x[i]);
+    }}
+    """
+    program = cl.Program(cl_context, kernel).build(["-DTESTING"])
+    queue = cl.CommandQueue(cl_context)
+    x = np.arange(ps.N, dtype=cl.cltypes.int)
+    y = np.zeros_like(x)
+    x_g = cl.Buffer(cl_context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=x)
+    y_g = cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)
+    program.test_transpose(queue, (ps.N,), None, x_g, y_g)
+    cl.enqueue_copy(queue, y, y_g)
+
+    y_ref = x.reshape(ps.factors).T.flatten()
+    assert np.all(y == y_ref)
+```
+
+#### Parity
+
+``` {.python #test-parity}
+@pytest.mark.parametrize('ps', cases)
+def test_parity_4(cl_context, ps):
+    from fftsynth.generator import gen_parity_fn
+    from fftsynth.parity import parity
+    source = gen_parity_fn(ps)
+    kernel = f"""
+    {source}
+
+    __kernel void test_parity(__global const int *x, __global int *y) {{
+        int i = get_global_id(0);
+        y[i] = parity_{ps.radix}(x[i]);
+    }}
+    """
+    program = cl.Program(cl_context, kernel).build(["-DTESTING"])
+    queue = cl.CommandQueue(cl_context)
+    x = np.arange(ps.N, dtype=cl.cltypes.int)
+    y = np.zeros_like(x)
+    x_g = cl.Buffer(cl_context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=x)
+    y_g = cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)
+    program.test_parity(queue, (ps.N,), None, x_g, y_g)
+    cl.enqueue_copy(queue, y, y_g)
+
+    y_ref = np.array([parity(ps.radix, i) for i in range(ps.N)]) 
+    assert np.all(y == y_ref)
 ```
 
 ## Outer loop

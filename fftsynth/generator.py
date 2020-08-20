@@ -1,5 +1,7 @@
 # ~\~ language=Python filename=fftsynth/generator.py
 # ~\~ begin <<lit/code-generator.md|fftsynth/generator.py>>[0]
+from .indent import indent
+
 # ~\~ begin <<lit/code-generator.md|generate-twiddles>>[0]
 def write_twiddles(ps, W):
     print(f"__constant float2 W[{W.shape[0]}][{ps.radix-1}] {{")
@@ -10,8 +12,8 @@ def write_twiddles(ps, W):
 # ~\~ end
 
 # ~\~ begin <<lit/code-generator.md|generate-transpose>>[0]
-def write_transpose_fn(ps):
-    print(f"""
+def gen_transpose_fn(ps):
+    return f"""
 inline int transpose_{ps.radix}(int j) {{
     int x = 0;
     for (int l = 0; l < {ps.depth}; ++l) {{
@@ -20,12 +22,12 @@ inline int transpose_{ps.radix}(int j) {{
         j /= {ps.radix};
     }}
     return x;
-}}""")
+}}"""
 # ~\~ end
 
 # ~\~ begin <<lit/code-generator.md|generate-parity>>[0]
-def write_parity_fn(ps):
-    print(f"""
+def gen_parity_fn(ps):
+    return f"""
 inline int parity_{ps.radix}(int i) {{
     int x = i % {ps.radix};
     for (int a = 0; a < {ps.depth}; ++a) {{
@@ -33,7 +35,7 @@ inline int parity_{ps.radix}(int i) {{
         x += i % {ps.radix};
     }}
     return x % {ps.radix};
-}}
+}}"""
 # ~\~ end
 
 # ~\~ begin <<lit/code-generator.md|generate-fft>>[0]

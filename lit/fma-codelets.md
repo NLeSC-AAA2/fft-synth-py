@@ -288,11 +288,10 @@ __kernel void test_radix5(__global float2 *x, __global float2 *y, int n) {
 ```
 
 ``` {.python file=test/test_fma_codelets.py}
-import os
 import numpy as np
 
 import pytest
-from kernel_tuner import run_kernel
+from kernel_tuner import run_kernel     # type: ignore
 
 from pkg_resources import resource_filename
 

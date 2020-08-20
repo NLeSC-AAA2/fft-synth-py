@@ -1,10 +1,9 @@
 # ~\~ language=Python filename=test/test_fma_codelets.py
 # ~\~ begin <<lit/fma-codelets.md|test/test_fma_codelets.py>>[0]
-import os
 import numpy as np
 
 import pytest
-from kernel_tuner import run_kernel
+from kernel_tuner import run_kernel     # type: ignore
 
 from pkg_resources import resource_filename
 

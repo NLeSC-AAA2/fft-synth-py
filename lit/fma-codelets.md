@@ -210,7 +210,7 @@ float radix5_fma(float2 t0, float2 t1, float2 t2, float2 t3, float2 t4,
     // *x4 = q1 
     *x4 = q1;
 
-
+    return 0.0;
 }
 
 <<fma-codelet-tests>>

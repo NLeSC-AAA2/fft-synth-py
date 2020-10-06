@@ -26,3 +26,16 @@ If that doesn't work, `pip install tmuxp` and run
 tmuxp load ./tmux-session.yaml
 ```
 
+## Run unit tests
+The unit tests rely on an OpenCL platform being available. Run `clinfo` to see if you have any.
+
+```
+pip install -e .[test]
+```
+
+And then
+
+```
+pytest
+```
+

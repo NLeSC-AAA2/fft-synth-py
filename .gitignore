@@ -130,6 +130,7 @@ dmypy.json
 .entangled/
 
 # Node
+package-lock.json
 node_modules
 
 # Editors

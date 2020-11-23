@@ -247,13 +247,15 @@ import numpy as np          # type: ignore
 
 from fftsynth.parity import parity
 from fftsynth.parity import ParitySplitting, comp_idx, comp_perm
-
+from kernel_tuner import run_kernel # type: ignore
+from pkg_resources import resource_filename
 
 N = 1024
 radix = 4
 mc = ParitySplitting(N, radix)
 mf = cl.mem_flags
 
+kernel_file_content = open("test/fft1024.cl", "r").read()
 
 @pytest.fixture
 def program(cl_context):
@@ -262,17 +264,15 @@ def program(cl_context):
     return prog
 
 
-def test_parity_4(cl_context, program):
-    queue = cl.CommandQueue(cl_context)
+def test_parity_4():
     x = np.arange(N, dtype=cl.cltypes.int)
     y = np.zeros_like(x)
-    x_g = cl.Buffer(cl_context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=x)
-    y_g = cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)
-    program.test_parity_4(queue, (N,), None, x_g, y_g)
-    cl.enqueue_copy(queue, y, y_g)
+    y_ref = np.array([parity(radix, i) for i in range(N)])
+    kernel_args = [x, y]
 
-    y_ref = np.array([parity(radix, i) for i in range(N)]) 
-    assert np.all(y == y_ref)
+    answers = run_kernel("test_parity_4", kernel_file_content, N, kernel_args, {}, compiler_options=["-DTESTING"])
+
+    assert np.all(answers[1] == y_ref)
 
 
 def test_comp_idx_4(cl_context, program):

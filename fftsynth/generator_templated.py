@@ -4,6 +4,15 @@ template_loader = FileSystemLoader("fftsynth/templates")
 template_environment = Environment(loader=template_loader)
 
 
+def generate_twiddle_array(parity_splitting, W):
+    """
+    Generate OpenCL constant array for twiddle factors
+    """
+    template = template_environment.get_template("twiddles.cl")
+
+    return template.render(radix=parity_splitting.radix, W=W)
+
+
 def generate_transpose_function(parity_splitting):
     """
     Generate inline OpenCL function to reverse the digits in base-n representation.

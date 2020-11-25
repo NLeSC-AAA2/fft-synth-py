@@ -20,8 +20,10 @@ To test we need to define small `__kernel` functions.
 ``` {.python file=test/test_generator.py}
 import pytest
 import numpy as np
-import pyopencl as cl
-from fftsynth.parity import ParitySplitting
+from kernel_tuner import run_kernel # type: ignore
+
+from fftsynth.parity import ParitySplitting, parity
+from fftsynth.generator import gen_parity_fn, gen_transpose_fn
 
 cases = [
     ParitySplitting(64, 4),
@@ -29,9 +31,8 @@ cases = [
     ParitySplitting(125, 5)
 ]
 
-mf = cl.mem_flags
-
 <<test-parity>>
+
 <<test-transpose>>
 ```
 
@@ -71,8 +72,7 @@ inline int parity_{ps.radix}(int i) {{
 
 ``` {.python #test-transpose}
 @pytest.mark.parametrize('ps', cases)
-def test_transpose_4(cl_context, ps):
-    from fftsynth.generator import gen_transpose_fn
+def test_transpose_4(ps):
     source = gen_transpose_fn(ps)
     kernel = f"""
     {source}
@@ -82,26 +82,21 @@ def test_transpose_4(cl_context, ps):
         y[i] = transpose_{ps.radix}(x[i]);
     }}
     """
-    program = cl.Program(cl_context, kernel).build(["-DTESTING"])
-    queue = cl.CommandQueue(cl_context)
-    x = np.arange(ps.N, dtype=cl.cltypes.int)
+    x = np.arange(ps.N, dtype=np.int32)
     y = np.zeros_like(x)
-    x_g = cl.Buffer(cl_context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=x)
-    y_g = cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)
-    program.test_transpose(queue, (ps.N,), None, x_g, y_g)
-    cl.enqueue_copy(queue, y, y_g)
+    kernel_args = [x, y]
 
+    results = run_kernel("test_transpose", kernel, ps.N, kernel_args, {}, compiler_options=["-DTESTING"])
     y_ref = x.reshape(ps.factors).T.flatten()
-    assert np.all(y == y_ref)
+
+    assert np.all(results[1] == y_ref)
 ```
 
 #### Parity
 
 ``` {.python #test-parity}
 @pytest.mark.parametrize('ps', cases)
-def test_parity_4(cl_context, ps):
-    from fftsynth.generator import gen_parity_fn
-    from fftsynth.parity import parity
+def test_parity_4(ps):
     source = gen_parity_fn(ps)
     kernel = f"""
     {source}
@@ -111,17 +106,14 @@ def test_parity_4(cl_context, ps):
         y[i] = parity_{ps.radix}(x[i]);
     }}
     """
-    program = cl.Program(cl_context, kernel).build(["-DTESTING"])
-    queue = cl.CommandQueue(cl_context)
-    x = np.arange(ps.N, dtype=cl.cltypes.int)
+    x = np.arange(ps.N, dtype=np.int32)
     y = np.zeros_like(x)
-    x_g = cl.Buffer(cl_context, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=x)
-    y_g = cl.Buffer(cl_context, mf.WRITE_ONLY, x.nbytes)
-    program.test_parity(queue, (ps.N,), None, x_g, y_g)
-    cl.enqueue_copy(queue, y, y_g)
+    kernel_args = [x, y]
 
+    results = run_kernel("test_parity", kernel, ps.N, kernel_args, {}, compiler_options=["-DTESTING"])
     y_ref = np.array([parity(ps.radix, i) for i in range(ps.N)]) 
-    assert np.all(y == y_ref)
+
+    assert np.all(results[1] == y_ref)
 ```
 
 ## Outer loop

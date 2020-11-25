@@ -48,14 +48,21 @@ void radix3_fma(float2 t0, float2 t1, float2 t2, float2 w0, float2 w1, float2* x
                    2*s4.y - s5.y);
 
     *xa = s3;
-    *xb = s5; //pseudo code in paper says s6
-    *xc = s6; //pseudo code in paper says s5
+    *xb = s5; //pseudo code in karner2001multiply paper says s6
+    *xc = s6; //pseudo code in karner2001multiply paper says s5
 }
+
 
 
 float radix4_fma(float2 t0, float2 t1, float2 t2, float2 t3,
                 float2 w0, float2 w1,
                 float2* x0, float2* x1, float2 *x2, float2* x3) {
+   
+   //adapted from pedram2013transforming, however
+   //some versions of the pedram2013transforming paper, including the one hosted by IEEE and the one hosted here:
+   //https://www.cs.utexas.edu/users/flame/pubs/LAC_fft.pdf
+   //contains serious errors in the FMA-optimized radix-4 pseudocode
+   //finally corrected based on the pseudocode reported in karner1998top
 
     float2 a, b, c, d;
 

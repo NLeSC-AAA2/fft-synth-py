@@ -16,8 +16,7 @@ setup(
     packages=find_packages(),
 
     install_requires=[
-          "numba"
-        , "numpy"
+        "numpy"
     ],
     tests_require=test_deps,
     extras_require={

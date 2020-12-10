@@ -94,11 +94,17 @@ def test_fft_1024():
     assert abs(y_Z - y_ref).max() < 1e-3
 
 
-def test_fft_64(tmp_path):
+cases = [
+    ParitySplitting(64, 4),
+    ParitySplitting(256, 4),
+    ParitySplitting(1024, 4)
+]
+
+@pytest.mark.parametrize('ps', cases)
+def test_fft_radix_4(tmp_path, ps):
     from contextlib import redirect_stdout
     from fftsynth.generator import (write_fft)
     code_path = tmp_path / "fft.cl"
-    ps = ParitySplitting(1024, 4)
     with open(code_path, "w") as f:
         with redirect_stdout(f):
             write_fft(ps)
@@ -135,10 +141,10 @@ __kernel void test_comp_perm_4(int r, __global const int *x, __global int *y) {
 """)
     kernel_file_content_64 = open(code_path, "r").read()
 
-    x = np.arange(mc.L, dtype=np.int32)
+    x = np.arange(ps.L, dtype=np.int32)
 
     print("comp_idx")
-    for k in range(1, 5):
+    for k in range(1, ps.depth):
         for j in range(4):
             y = np.zeros_like(x)
             kernel_args = [np.int32(k), np.int32(j), x, y]

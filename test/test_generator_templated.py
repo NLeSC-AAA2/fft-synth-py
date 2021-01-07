@@ -3,7 +3,8 @@ import numpy as np
 from kernel_tuner import run_kernel # type: ignore
 
 from fftsynth.parity import ParitySplitting, parity
-from fftsynth.generator_templated import generate_transpose_function, generate_parity_function, generate_outer_loop_function
+from fftsynth.twiddle import make_twiddle
+from fftsynth.generator_templated import generate_transpose_function, generate_parity_function, generate_twiddle_array
 
 cases = [
     ParitySplitting(64, 4),
@@ -36,3 +37,9 @@ def test_transpose_4(parity_splitting):
     y_ref = x.reshape(parity_splitting.factors).T.flatten()
 
     assert np.all(results[1] == y_ref)
+
+
+@pytest.mark.parametrize('parity_splitting', cases)
+def test_generate_twiddle_array(parity_splitting):
+    print(generate_twiddle_array(parity_splitting, make_twiddle(parity_splitting.N, parity_splitting.N)))
+    assert(False)

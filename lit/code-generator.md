@@ -104,7 +104,7 @@ import numpy as np
 from kernel_tuner import run_kernel # type: ignore
 
 from fftsynth.parity import ParitySplitting, parity
-from fftsynth.generator import gen_parity_fn, gen_transpose_fn
+from fftsynth.generator import write_macros, gen_parity_fn, gen_transpose_fn
 
 cases = [
     ParitySplitting(64, 4),
@@ -155,6 +155,9 @@ inline int parity_{ps.radix}(int i) {{
 def test_transpose_4(ps):
     source = gen_transpose_fn(ps)
     kernel = f"""
+    #define DIVR(x) ((x) / {ps.radix})
+    #define MODR(x) ((x) % {ps.radix})
+    #define MULR(x) ((x) * {ps.radix})
     {source}
 
     __kernel void test_transpose(__global const int *x, __global int *y) {{
@@ -179,6 +182,9 @@ def test_transpose_4(ps):
 def test_parity_4(ps):
     source = gen_parity_fn(ps)
     kernel = f"""
+    #define DIVR(x) ((x) / {ps.radix})
+    #define MODR(x) ((x) % {ps.radix})
+    #define MULR(x) ((x) * {ps.radix})
     {source}
 
     __kernel void test_parity(__global const int *x, __global int *y) {{
@@ -190,6 +196,7 @@ def test_parity_4(ps):
     y = np.zeros_like(x)
     kernel_args = [x, y]
 
+    print(kernel)
     results = run_kernel("test_parity", kernel, ps.N, kernel_args, {}, compiler_options=["-DTESTING"])
     y_ref = np.array([parity(ps.radix, i) for i in range(ps.N)]) 
 

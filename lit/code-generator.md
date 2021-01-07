@@ -196,7 +196,6 @@ def test_parity_4(ps):
     y = np.zeros_like(x)
     kernel_args = [x, y]
 
-    print(kernel)
     results = run_kernel("test_parity", kernel, ps.N, kernel_args, {}, compiler_options=["-DTESTING"])
     y_ref = np.array([parity(ps.radix, i) for i in range(ps.N)]) 
 

@@ -39,16 +39,25 @@ def channels(N: int, radix: int) -> Iterator[Tuple[int, Iterator[int]]]:
 # ~\~ end
 # ~\~ begin <<lit/parity-splitting.md|parity-index-functions>>[0]
 def comp_idx(radix: int, i: int, j: int, k: int) -> int:
-    base = (i & ~(radix**k - 1))
-    rem  = (i &  (radix**k - 1))
+    """Computes the array index of the k-th iteration of the FFT. We view the
+    input array as a multi-dimensional array of shape [r,r,r, ...]. Each iteration
+    we perform the butterfly operation on two axes within the n-dimensional array.
+
+    Here we factor out `i` into `rem=i % r**k` and `base=i - rem`, and then construct
+    result as `rem + j*r**k + base*r`. God knows why."""
+    rem  = i % radix**k
+    base = i - rem
     return rem + j * radix**k + base * radix
 
 
 def comp_perm(radix: int, i: int) -> int:
-    base = (i & ~(radix - 1))
-    rem = (i & (radix - 1))
+    """In each iteration we use a different permutation of indices. We take the
+    parity of the highest digits of i, and use that number to cycle the lowest digit
+    around."""
+    rem  = i % radix
+    base = i - rem
     p = parity(radix, base)
-    return base | ((rem - p) % radix)
+    return base + (rem - p) % radix
 # ~\~ end
 # ~\~ begin <<lit/parity-splitting.md|parity-splitting-interface>>[0]
 @dataclass

@@ -7,7 +7,7 @@ test_deps = [
     , "pytest-cov>=2.8.1,<3"
     , "pytest-mypy>=0.4.2,<1"
     , "flake8>=3,<4"
-    , "opencl"
+    , "pyopencl"
     , "kernel_tuner[opencl]" ]
 
 setup(
@@ -16,8 +16,7 @@ setup(
     packages=find_packages(),
 
     install_requires=[
-          "numba"
-        , "numpy"
+        "numpy"
     ],
     tests_require=test_deps,
     extras_require={

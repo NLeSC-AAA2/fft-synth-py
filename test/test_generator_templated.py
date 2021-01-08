@@ -42,4 +42,4 @@ def test_transpose_4(parity_splitting):
 @pytest.mark.parametrize('parity_splitting', cases)
 def test_generate_twiddle_array(parity_splitting):
     print(generate_twiddle_array(parity_splitting, make_twiddle(parity_splitting.N, parity_splitting.N)))
-    assert(False)
+    assert(True)

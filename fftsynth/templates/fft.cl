@@ -1,25 +1,23 @@
-#include "transpose.cl"
-#include "parity.cl"
-
-void fft_{{ N }}_mc(__restrict float2 * s0, __restrict float2 * s1, __restrict float2 * s2, __restrict float2 * s3)
+void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %})
 {
     int wp = 0;
 
     for ( int k = 0; k < {{ depth }}; ++k )
     {
-        int j = (k == 0 ? 0 : ipow({{ radix }}, k - 1));
+        int j = (k == 0 ? 0 : ipow(k - 1));
 
-        for ( int i = 0; i < {{ L }}; ++i )
+        for ( int i = 0; i < {{ M }}; ++i )
         {
+        int a;
             if ( k != 0 )
             {
-                a = comp_idx_4(i >> 2, k-1);
+                a = comp_idx_4(DIVR(i), k-1);
             }
             else
             {
-                a = comp_perm_4(i >> 2, i&3);
+                a = comp_perm_4(DIVR(i), MODR(i));
             }
-            fft_4(s0, s1, s2, s3, i&3, a, a+j, a+2*j, a+3*j, wp);
+            fft_{{ radix }}({% for i in range(radix) %} s{{ i }},{% endfor %} MODR(i), {% for i in range(radix) %} a + {{ i }} * j,{% endfor %} wp);
             if ( k != 0 )
             {
                 ++wp;
@@ -31,9 +29,8 @@ void fft_{{ N }}_mc(__restrict float2 * s0, __restrict float2 * s1, __restrict f
 __kernel void fft_{{ N }}(__global const float2 * restrict x, __global float2 * restrict y)
 {
     {% for i in range(radix) %}
-    float2 s{{ i }}[{{ L }}];
+    float2 s{{ i }}[{{ M }}];
     {% endfor }
-    float2 s{{ radix }}[{{ L }}];
 
     for ( int j = 0; j < {{ N }}; ++j )
     {
@@ -43,12 +40,12 @@ __kernel void fft_{{ N }}(__global const float2 * restrict x, __global float2 * 
         switch ( p )
         {
             {% for p in range(radix) %}
-            case {{ p }}: s{{ p }}[i/{{ radix }}] = x[j]; break;
+            case {{ p }}: s{{ p }}[DIVR(i)] = x[j]; break;
             {% endfor %}
         }
     }
 
-    fft_1024_mc({% for i in range(radix) %} s{{ i }} {% endfor %});
+    fft_{{ N }}_ps({% for i in range(radix) %} s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %});
 
     for ( int i = 0; i < {{ N }}; ++i )
     {
@@ -57,7 +54,7 @@ __kernel void fft_{{ N }}(__global const float2 * restrict x, __global float2 * 
         switch ( p )
         {
             {% for p in range(radix) %}
-            case {{ p }}: y[i] = s{{ p }}[i/{{ radix }}]; break;
+            case {{ p }}: y[i] = s{{ p }}[DIVR(i)]; break;
             {% endfor %}
         }
     }

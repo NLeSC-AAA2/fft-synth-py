@@ -4,9 +4,8 @@ inline int transpose_{{ radix }}(int j)
     
     for ( int l = 0; l < {{ depth }}; ++l )
     {
-        x *= {{ radix }};
-        x += j % {{ radix }};
-        j /= {{ radix }};
+        x = MULR(x) + MODR(j);
+        j = DIVR(j);
     }
     return x;
 }

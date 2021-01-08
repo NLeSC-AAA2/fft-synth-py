@@ -1,13 +1,13 @@
 inline int parity_{{ radix }}(int i)
 {
-    int x = i % {{ radix }};
+    int x = MODR(i);
 
     for ( int a = 0; a < {{ depth }}; ++a )
     {
-        i /= {{ radix }};
-        x += i % {{ radix }};
+        i = DIVR(i);
+        x += MODR(i);
     }
-    return x % {{ radix }};
+    return MODR(x);
 }
 
 #ifdef TESTING

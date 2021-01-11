@@ -88,6 +88,15 @@ def generate_fft_functions(parity_splitting: ParitySplitting):
                            M=parity_splitting.M)
 
 
+def generate_codelets():
+    """
+    Generate OpenCL codelets for FFT.
+    """
+    template = template_environment.get_template("codelets.cl")
+
+    return template.render()
+
+
 def generate_fft(parity_splitting: ParitySplitting):
     """
     Generate and print the complete OpenCL FFT.
@@ -103,6 +112,8 @@ def generate_fft(parity_splitting: ParitySplitting):
     print(generate_ipow_function(parity_splitting))
     print("\n")
     print(generate_index_functions(parity_splitting))
+    print("\n")
+    print(generate_codelets())
     print("\n")
     print(generate_fft_functions(parity_splitting))
 

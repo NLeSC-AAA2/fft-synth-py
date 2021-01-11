@@ -2,10 +2,10 @@
 # ~\~ begin <<lit/code-generator.md|test/test_generator.py>>[0]
 import pytest
 import numpy as np
-from kernel_tuner import run_kernel # type: ignore
+from kernel_tuner import run_kernel  # type: ignore
 
 from fftsynth.parity import ParitySplitting, parity
-from fftsynth.generator import write_macros, gen_parity_fn, gen_transpose_fn
+from fftsynth.generator import gen_parity_fn, gen_transpose_fn
 
 cases = [
     ParitySplitting(64, 4),
@@ -15,7 +15,7 @@ cases = [
 
 # ~\~ begin <<lit/code-generator.md|test-parity>>[0]
 @pytest.mark.parametrize('ps', cases)
-def test_parity_4(ps):
+def test_parity_4(ps: ParitySplitting):
     source = gen_parity_fn(ps)
     kernel = f"""
     #define DIVR(x) ((x) / {ps.radix})
@@ -40,7 +40,7 @@ def test_parity_4(ps):
 
 # ~\~ begin <<lit/code-generator.md|test-transpose>>[0]
 @pytest.mark.parametrize('ps', cases)
-def test_transpose_4(ps):
+def test_transpose_4(ps: ParitySplitting):
     source = gen_transpose_fn(ps)
     kernel = f"""
     #define DIVR(x) ((x) / {ps.radix})

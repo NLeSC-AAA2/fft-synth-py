@@ -1060,10 +1060,10 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p><span><em>«test/test_generator.py»=</em></span></p>
 <div class="sourceCode" id="cb13" data-file="test/test_generator.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="im">import</span> pytest</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true"></a><span class="im">from</span> kernel_tuner <span class="im">import</span> run_kernel <span class="co"># type: ignore</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true"></a><span class="im">from</span> kernel_tuner <span class="im">import</span> run_kernel  <span class="co"># type: ignore</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true"></a></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true"></a><span class="im">from</span> fftsynth.parity <span class="im">import</span> ParitySplitting, parity</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true"></a><span class="im">from</span> fftsynth.generator <span class="im">import</span> write_macros, gen_parity_fn, gen_transpose_fn</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true"></a><span class="im">from</span> fftsynth.generator <span class="im">import</span> gen_parity_fn, gen_transpose_fn</span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true"></a></span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true"></a>cases <span class="op">=</span> [</span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true"></a>    ParitySplitting(<span class="dv">64</span>, <span class="dv">4</span>),</span>
@@ -1108,7 +1108,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div class="annotated-code">
 <p><span><em>«test-transpose»=</em></span></p>
 <div class="sourceCode" id="test-transpose"><pre class="sourceCode python"><code class="sourceCode python"><span id="test-transpose-1"><a href="#test-transpose-1" aria-hidden="true"></a><span class="at">@pytest.mark.parametrize</span>(<span class="st">&#39;ps&#39;</span>, cases)</span>
-<span id="test-transpose-2"><a href="#test-transpose-2" aria-hidden="true"></a><span class="kw">def</span> test_transpose_4(ps):</span>
+<span id="test-transpose-2"><a href="#test-transpose-2" aria-hidden="true"></a><span class="kw">def</span> test_transpose_4(ps: ParitySplitting):</span>
 <span id="test-transpose-3"><a href="#test-transpose-3" aria-hidden="true"></a>    source <span class="op">=</span> gen_transpose_fn(ps)</span>
 <span id="test-transpose-4"><a href="#test-transpose-4" aria-hidden="true"></a>    kernel <span class="op">=</span> <span class="ss">f&quot;&quot;&quot;</span></span>
 <span id="test-transpose-5"><a href="#test-transpose-5" aria-hidden="true"></a><span class="ss">    #define DIVR(x) ((x) / </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">)</span></span>
@@ -1134,7 +1134,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div class="annotated-code">
 <p><span><em>«test-parity»=</em></span></p>
 <div class="sourceCode" id="test-parity"><pre class="sourceCode python"><code class="sourceCode python"><span id="test-parity-1"><a href="#test-parity-1" aria-hidden="true"></a><span class="at">@pytest.mark.parametrize</span>(<span class="st">&#39;ps&#39;</span>, cases)</span>
-<span id="test-parity-2"><a href="#test-parity-2" aria-hidden="true"></a><span class="kw">def</span> test_parity_4(ps):</span>
+<span id="test-parity-2"><a href="#test-parity-2" aria-hidden="true"></a><span class="kw">def</span> test_parity_4(ps: ParitySplitting):</span>
 <span id="test-parity-3"><a href="#test-parity-3" aria-hidden="true"></a>    source <span class="op">=</span> gen_parity_fn(ps)</span>
 <span id="test-parity-4"><a href="#test-parity-4" aria-hidden="true"></a>    kernel <span class="op">=</span> <span class="ss">f&quot;&quot;&quot;</span></span>
 <span id="test-parity-5"><a href="#test-parity-5" aria-hidden="true"></a><span class="ss">    #define DIVR(x) ((x) / </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">)</span></span>
@@ -1312,7 +1312,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 
 <footer class="py-4 bg-dark text-white-50 footer"><div class="container">
 Generated from the Entangled Bootstrap template.<br />
-2021-01-07 — version: 0.1.0
+2021-01-11 — version: 0.1.0
 </div></footer>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

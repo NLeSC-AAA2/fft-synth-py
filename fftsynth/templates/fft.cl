@@ -30,7 +30,7 @@ __kernel void fft_{{ N }}(__global const float2 * restrict x, __global float2 * 
 {
     {% for i in range(radix) %}
     float2 s{{ i }}[{{ M }}];
-    {% endfor %}
+    {%- endfor %}
 
     for ( int j = 0; j < {{ N }}; ++j )
     {
@@ -41,7 +41,7 @@ __kernel void fft_{{ N }}(__global const float2 * restrict x, __global float2 * 
         {
             {% for p in range(radix) %}
             case {{ p }}: s{{ p }}[DIVR(i)] = x[j]; break;
-            {% endfor %}
+            {%- endfor %}
         }
     }
 
@@ -55,7 +55,7 @@ __kernel void fft_{{ N }}(__global const float2 * restrict x, __global float2 * 
         {
             {% for p in range(radix) %}
             case {{ p }}: y[i] = s{{ p }}[DIVR(i)]; break;
-            {% endfor %}
+            {%- endfor %}
         }
     }
 }

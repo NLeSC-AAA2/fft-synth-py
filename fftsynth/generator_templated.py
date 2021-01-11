@@ -92,11 +92,17 @@ def generate_fft(parity_splitting: ParitySplitting):
     Generate and print the complete OpenCL FFT.
     """
     print(generate_macros(parity_splitting))
+    print("\n")
     print(generate_twiddle_array(parity_splitting))
+    print("\n")
     print(generate_parity_function(parity_splitting))
+    print("\n")
     print(generate_transpose_function(parity_splitting))
+    print("\n")
     print(generate_ipow_function(parity_splitting))
+    print("\n")
     print(generate_index_functions(parity_splitting))
+    print("\n")
     print(generate_fft_functions(parity_splitting))
 
 

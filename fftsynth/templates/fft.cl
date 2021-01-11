@@ -30,7 +30,7 @@ __kernel void fft_{{ N }}(__global const float2 * restrict x, __global float2 * 
 {
     {% for i in range(radix) %}
     float2 s{{ i }}[{{ M }}];
-    {% endfor }
+    {% endfor %}
 
     for ( int j = 0; j < {{ N }}; ++j )
     {

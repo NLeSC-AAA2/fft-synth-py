@@ -3,7 +3,7 @@
 #define MODR(x) ((x) & 3)
 #define MULR(x) ((x) << 2)
 {% else %}
-#define DIVR(x) ((x) / {ps.radix})
-#define MODR(x) ((x) % {ps.radix})
-#define MULR(x) ((x) * {ps.radix})
+#define DIVR(x) ((x) / {{ radix }})
+#define MODR(x) ((x) % {{ radix }})
+#define MULR(x) ((x) * {{ radix }})
 {% endif %}

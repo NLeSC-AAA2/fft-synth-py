@@ -427,7 +427,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div id="test-slash-test_radix_4_ps-dot-py-container" class="collapse">
 <div class="sourceCode" id="cb8" data-file="test/test_radix_4_ps.py" style="max-height: 50vh"><pre class="sourceCode python bootstrap-fold overflow-auto"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="im">import</span> pytest               <span class="co"># type: ignore</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a><span class="im">import</span> numpy <span class="im">as</span> np          <span class="co"># type: ignore</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a><span class="im">from</span> kernel_tuner <span class="im">import</span> run_kernel <span class="co"># type: ignore</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a><span class="im">from</span> kernel_tuner <span class="im">import</span> run_kernel  <span class="co"># type: ignore</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a></span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a><span class="im">from</span> fftsynth.parity <span class="im">import</span> parity</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true"></a><span class="im">from</span> fftsynth.parity <span class="im">import</span> ParitySplitting, comp_idx, comp_perm</span>
@@ -498,10 +498,10 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb8-71"><a href="#cb8-71" aria-hidden="true"></a>    <span class="cf">for</span> cycle <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
 <span id="cb8-72"><a href="#cb8-72" aria-hidden="true"></a>        y <span class="op">=</span> np.zeros_like(x)</span>
 <span id="cb8-73"><a href="#cb8-73" aria-hidden="true"></a>        kernel_args <span class="op">=</span> [np.int32(cycle), x, y]</span>
-<span id="cb8-74"><a href="#cb8-74" aria-hidden="true"></a>        y_ref <span class="op">=</span> np.fft.fft(np.roll(x[...,<span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[...,<span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true"></a>        y_ref <span class="op">=</span> np.fft.fft(np.roll(x[..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[..., <span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>))</span>
 <span id="cb8-75"><a href="#cb8-75" aria-hidden="true"></a></span>
 <span id="cb8-76"><a href="#cb8-76" aria-hidden="true"></a>        results <span class="op">=</span> run_kernel(<span class="st">&quot;test_fft_4&quot;</span>, kernel_file_content, N, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="cb8-77"><a href="#cb8-77" aria-hidden="true"></a>        y_Z <span class="op">=</span> np.roll(results[<span class="dv">2</span>][...,<span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>results[<span class="dv">2</span>][...,<span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true"></a>        y_Z <span class="op">=</span> np.roll(results[<span class="dv">2</span>][..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>results[<span class="dv">2</span>][..., <span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb8-78"><a href="#cb8-78" aria-hidden="true"></a></span>
 <span id="cb8-79"><a href="#cb8-79" aria-hidden="true"></a>        <span class="cf">assert</span> <span class="bu">abs</span>(y_Z <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-4</span></span>
 <span id="cb8-80"><a href="#cb8-80" aria-hidden="true"></a></span>
@@ -513,8 +513,8 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb8-86"><a href="#cb8-86" aria-hidden="true"></a></span>
 <span id="cb8-87"><a href="#cb8-87" aria-hidden="true"></a>    results <span class="op">=</span> run_kernel(<span class="st">&quot;fft_1024&quot;</span>, kernel_file_content, <span class="dv">1</span>, kernel_args, {})</span>
 <span id="cb8-88"><a href="#cb8-88" aria-hidden="true"></a></span>
-<span id="cb8-89"><a href="#cb8-89" aria-hidden="true"></a>    y_Z <span class="op">=</span> results[<span class="dv">1</span>][...,<span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>results[<span class="dv">1</span>][...,<span class="dv">1</span>]</span>
-<span id="cb8-90"><a href="#cb8-90" aria-hidden="true"></a>    y_ref <span class="op">=</span> np.fft.fft(x[...,<span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[...,<span class="dv">1</span>])</span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true"></a>    y_Z <span class="op">=</span> results[<span class="dv">1</span>][..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>results[<span class="dv">1</span>][..., <span class="dv">1</span>]</span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true"></a>    y_ref <span class="op">=</span> np.fft.fft(x[..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[..., <span class="dv">1</span>])</span>
 <span id="cb8-91"><a href="#cb8-91" aria-hidden="true"></a></span>
 <span id="cb8-92"><a href="#cb8-92" aria-hidden="true"></a>    <span class="cf">assert</span> <span class="bu">abs</span>(y_Z <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-3</span></span>
 <span id="cb8-93"><a href="#cb8-93" aria-hidden="true"></a></span>
@@ -617,10 +617,10 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb8-190"><a href="#cb8-190" aria-hidden="true"></a>    <span class="cf">for</span> cycle <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
 <span id="cb8-191"><a href="#cb8-191" aria-hidden="true"></a>        y <span class="op">=</span> np.zeros_like(x)</span>
 <span id="cb8-192"><a href="#cb8-192" aria-hidden="true"></a>        kernel_args <span class="op">=</span> [np.int32(cycle), x, y]</span>
-<span id="cb8-193"><a href="#cb8-193" aria-hidden="true"></a>        y_ref <span class="op">=</span> np.fft.fft(np.roll(x[...,<span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[...,<span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb8-193"><a href="#cb8-193" aria-hidden="true"></a>        y_ref <span class="op">=</span> np.fft.fft(np.roll(x[..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[..., <span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>))</span>
 <span id="cb8-194"><a href="#cb8-194" aria-hidden="true"></a></span>
 <span id="cb8-195"><a href="#cb8-195" aria-hidden="true"></a>        results <span class="op">=</span> run_kernel(<span class="st">&quot;test_fft_4&quot;</span>, kernel_file_content_64, ps.N, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="cb8-196"><a href="#cb8-196" aria-hidden="true"></a>        y_Z <span class="op">=</span> np.roll(results[<span class="dv">2</span>][...,<span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>results[<span class="dv">2</span>][...,<span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb8-196"><a href="#cb8-196" aria-hidden="true"></a>        y_Z <span class="op">=</span> np.roll(results[<span class="dv">2</span>][..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>results[<span class="dv">2</span>][..., <span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb8-197"><a href="#cb8-197" aria-hidden="true"></a></span>
 <span id="cb8-198"><a href="#cb8-198" aria-hidden="true"></a>        <span class="cf">assert</span> <span class="bu">abs</span>(y_Z <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-4</span></span>
 <span id="cb8-199"><a href="#cb8-199" aria-hidden="true"></a></span>
@@ -631,8 +631,8 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb8-204"><a href="#cb8-204" aria-hidden="true"></a></span>
 <span id="cb8-205"><a href="#cb8-205" aria-hidden="true"></a>    results <span class="op">=</span> run_kernel(<span class="ss">f&quot;fft_</span><span class="sc">{ps.N}</span><span class="ss">&quot;</span>, kernel_file_content_64, <span class="dv">1</span>, kernel_args, {})</span>
 <span id="cb8-206"><a href="#cb8-206" aria-hidden="true"></a></span>
-<span id="cb8-207"><a href="#cb8-207" aria-hidden="true"></a>    y_Z <span class="op">=</span> results[<span class="dv">1</span>][...,<span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>results[<span class="dv">1</span>][...,<span class="dv">1</span>]</span>
-<span id="cb8-208"><a href="#cb8-208" aria-hidden="true"></a>    y_ref <span class="op">=</span> np.fft.fft(x[...,<span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[...,<span class="dv">1</span>])</span>
+<span id="cb8-207"><a href="#cb8-207" aria-hidden="true"></a>    y_Z <span class="op">=</span> results[<span class="dv">1</span>][..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>results[<span class="dv">1</span>][..., <span class="dv">1</span>]</span>
+<span id="cb8-208"><a href="#cb8-208" aria-hidden="true"></a>    y_ref <span class="op">=</span> np.fft.fft(x[..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[..., <span class="dv">1</span>])</span>
 <span id="cb8-209"><a href="#cb8-209" aria-hidden="true"></a></span>
 <span id="cb8-210"><a href="#cb8-210" aria-hidden="true"></a>    <span class="cf">assert</span> <span class="bu">abs</span>(y_Z <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-3</span></span></code></pre></div>
 </div>

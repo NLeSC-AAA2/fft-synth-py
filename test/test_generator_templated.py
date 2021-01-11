@@ -13,26 +13,26 @@ cases = [
 
 
 @pytest.mark.parametrize("parity_splitting", cases)
-def test_parity_4(parity_splitting: ParitySplitting):
+def test_parity(parity_splitting: ParitySplitting):
     kernel = generate_macros(parity_splitting) + generate_parity_function(parity_splitting)
     x = np.arange(parity_splitting.N, dtype=np.int32)
     y = np.zeros_like(x)
     kernel_args = [x, y]
 
-    results = run_kernel("test_parity", kernel, parity_splitting.N, kernel_args, {}, compiler_options=["-DTESTING"])
+    results = run_kernel("test_parity_{}".format(parity_splitting.radix), kernel, parity_splitting.N, kernel_args, {}, compiler_options=["-DTESTING"])
     y_ref = np.array([parity(parity_splitting.radix, i) for i in range(parity_splitting.N)])
 
     assert np.all(results[1] == y_ref)
 
 
 @pytest.mark.parametrize('parity_splitting', cases)
-def test_transpose_4(parity_splitting: ParitySplitting):
+def test_transpose(parity_splitting: ParitySplitting):
     kernel = generate_macros(parity_splitting) + generate_transpose_function(parity_splitting)
     x = np.arange(parity_splitting.N, dtype=np.int32)
     y = np.zeros_like(x)
     kernel_args = [x, y]
 
-    results = run_kernel("test_transpose", kernel, parity_splitting.N, kernel_args, {}, compiler_options=["-DTESTING"])
+    results = run_kernel("test_transpose_{}".format(parity_splitting.radix), kernel, parity_splitting.N, kernel_args, {}, compiler_options=["-DTESTING"])
     y_ref = x.reshape(parity_splitting.factors).T.flatten()
 
     assert np.all(results[1] == y_ref)

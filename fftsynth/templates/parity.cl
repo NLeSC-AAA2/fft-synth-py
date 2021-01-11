@@ -11,7 +11,7 @@ inline int parity_{{ radix }}(int i)
 }
 
 #ifdef TESTING
-__kernel void test_parity(__global const int * x, __global int * y)
+__kernel void test_parity_{{ radix }}(__global const int * x, __global int * y)
 {
     int i = get_global_id(0);
     

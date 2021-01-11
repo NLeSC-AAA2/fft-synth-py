@@ -11,7 +11,7 @@ inline int transpose_{{ radix }}(int j)
 }
 
 #ifdef TESTING
-__kernel void test_transpose(__global const int * x, __global int * y)
+__kernel void test_transpose_{{ radix }}(__global const int * x, __global int * y)
 {
     int i = get_global_id(0);
     

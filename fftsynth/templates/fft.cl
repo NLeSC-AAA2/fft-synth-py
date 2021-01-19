@@ -67,6 +67,9 @@ void fft_{{ N }}(__global const float2 * restrict x, __global float2 * restrict 
     for ( int i = 0; i < {{ N }}; ++i )
     {
         int p = parity_{{ radix }}(i);
+        #ifdef OPENCL_FPGA
+        float2 y;
+        #endif // OPENCL_FPGA
         
         switch ( p )
         {

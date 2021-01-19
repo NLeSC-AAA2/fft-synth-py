@@ -1243,6 +1243,9 @@ void fft_1024(__global const float2 * restrict x, __global float2 * restrict y)
     for ( int i = 0; i < 1024; ++i )
     {
         int p = parity_4(i);
+        #ifdef OPENCL_FPGA
+        float2 y;
+        #endif // OPENCL_FPGA
         
         switch ( p )
         {

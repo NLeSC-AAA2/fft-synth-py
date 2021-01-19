@@ -1,0 +1,21 @@
+#ifdef OPENCL_FPGA
+__kernel
+__attribute__((max_global_work_dim(0)))
+void source(__global const volatile float2 * in, unsigned count)
+{
+    for ( unsigned i = 0; i < count; i++ )
+    {
+        write_channel_intel(in_channel, in[i]);
+    }
+}
+
+__kernel
+__attribute__((max_global_work_dim(0)))
+void sink(__global float2 *out, unsigned count)
+{
+    for ( unsigned i = 0; i < count; i++ )
+    {
+        out[i] = read_channel_intel(out_channel);
+    }
+}
+#endif // OPENCL_FPGA

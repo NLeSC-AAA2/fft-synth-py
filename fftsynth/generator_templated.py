@@ -8,11 +8,11 @@ template_loader = FileSystemLoader("fftsynth/templates")
 template_environment = Environment(loader=template_loader)
 
 
-def generate_macros(parity_splitting: ParitySplitting):
+def generate_preprocessor(parity_splitting: ParitySplitting):
     """
-    Generate the preprocessor macros necessary for the FFT.
+    Generate the preprocessor directives necessary for the FFT.
     """
-    template = template_environment.get_template("macros.cl")
+    template = template_environment.get_template("preprocessor.cl")
 
     return template.render(radix=parity_splitting.radix)
 
@@ -36,6 +36,15 @@ def generate_twiddle_array(parity_splitting: ParitySplitting):
 
     return template.render(radix=parity_splitting.radix,
                            W=W)
+
+
+def generate_fpga_functions():
+    """
+    Generate OpenCL code for FPGA functions.
+    """
+    template = template_environment.get_template("fpga.cl")
+
+    return template.render()
 
 
 def generate_transpose_function(parity_splitting: ParitySplitting):
@@ -101,9 +110,11 @@ def generate_fft(parity_splitting: ParitySplitting):
     """
     Generate and print the complete OpenCL FFT.
     """
-    print(generate_macros(parity_splitting))
+    print(generate_preprocessor(parity_splitting))
     print("\n")
     print(generate_twiddle_array(parity_splitting))
+    print("\n")
+    print(generate_fpga_functions())
     print("\n")
     print(generate_parity_function(parity_splitting))
     print("\n")

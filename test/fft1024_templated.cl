@@ -1,6 +1,11 @@
 /* FFT
  * command: python -m fftsynth.generator_templated --radix 4 --depth 5
  */
+#ifdef OPENCL_FPGA
+#pragma OPENCL EXTENSION cl_intel_channels : enable
+#include <ihc_apint.h>
+channel float2 in_channel, out_channel;
+#endif // OPENCL_FPGA
 
 #define DIVR(x) ((x) >> 2)
 #define MODR(x) ((x) & 3)
@@ -1037,6 +1042,29 @@ __constant float2 W[1024][3] = {
 };
 
 
+#ifdef OPENCL_FPGA
+__kernel
+__attribute__((max_global_work_dim(0)))
+void source(__global const volatile float2 * in, unsigned count)
+{
+    for ( unsigned i = 0; i < count; i++ )
+    {
+        write_channel_intel(in_channel, in[i]);
+    }
+}
+
+__kernel
+__attribute__((max_global_work_dim(0)))
+void sink(__global float2 *out, unsigned count)
+{
+    for ( unsigned i = 0; i < count; i++ )
+    {
+        out[i] = read_channel_intel(out_channel);
+    }
+}
+#endif // OPENCL_FPGA
+
+
 inline int parity_4(int i)
 {
     int x = MODR(i);
@@ -1150,9 +1178,12 @@ void fft_1024_ps( float2 * restrict s0, float2 * restrict s1, float2 * restrict 
     {
         int j = (k == 0 ? 0 : ipow(k - 1));
 
+        #ifdef OPENCL_FPGA
+        #pragma ivdep
+        #endif // OPENCL_FPGA
         for ( int i = 0; i < 256; ++i )
         {
-        int a;
+            int a;
             if ( k != 0 )
             {
                 a = comp_idx_4(DIVR(i), k-1);
@@ -1170,7 +1201,14 @@ void fft_1024_ps( float2 * restrict s0, float2 * restrict s1, float2 * restrict 
     }
 }
 
-__kernel void fft_1024(__global const float2 * restrict x, __global float2 * restrict y)
+__kernel
+#ifdef OPENCL_FPGA
+__attribute__((autorun))
+__attribute__((max_global_work_dim(0)))
+void fft_1024()
+#else
+void fft_1024(__global const float2 * restrict x, __global float2 * restrict y)
+#endif // OPENCL_FPGA
 {
     
     float2 s0[256];
@@ -1178,11 +1216,18 @@ __kernel void fft_1024(__global const float2 * restrict x, __global float2 * res
     float2 s2[256];
     float2 s3[256];
 
+    #ifdef OPENCL_FPGA
+    while ( true )
+    {
+    #endif // OPENCL_FPGA
     for ( int j = 0; j < 1024; ++j )
     {
         int i = transpose_4(j);
         int p = parity_4(i);
-        
+
+        #ifdef OPENCL_FPGA
+        float2 x = read_channel_intel(in_channel);
+        #endif // OPENCL_FPGA
         switch ( p )
         {
             
@@ -1201,11 +1246,25 @@ __kernel void fft_1024(__global const float2 * restrict x, __global float2 * res
         
         switch ( p )
         {
+            #ifdef OPENCL_FPGA
+            
+            case 0: y = s0[DIVR(i)]; break;
+            case 1: y = s1[DIVR(i)]; break;
+            case 2: y = s2[DIVR(i)]; break;
+            case 3: y = s3[DIVR(i)]; break;
+            #else
             
             case 0: y[i] = s0[DIVR(i)]; break;
             case 1: y[i] = s1[DIVR(i)]; break;
             case 2: y[i] = s2[DIVR(i)]; break;
             case 3: y[i] = s3[DIVR(i)]; break;
+            #endif // OPENCL_FPGA
         }
+        #ifdef OPENCL_FPGA
+        write_channel_intel(out_channel, y);
+        #endif // OPENCL_FPGA
     }
+    #ifdef OPENCL_FPGA
+    }
+    #endif // OPENCL_FPGA
 }

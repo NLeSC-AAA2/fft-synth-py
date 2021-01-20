@@ -1230,11 +1230,17 @@ void fft_1024(__global const float2 * restrict x, __global float2 * restrict y)
         #endif // OPENCL_FPGA
         switch ( p )
         {
-            
+            #ifdef OPENCL_FPGA
+            case 0: s0[DIVR(i)] = x; break;
+            case 1: s1[DIVR(i)] = x; break;
+            case 2: s2[DIVR(i)] = x; break;
+            case 3: s3[DIVR(i)] = x; break;
+            #else
             case 0: s0[DIVR(i)] = x[j]; break;
             case 1: s1[DIVR(i)] = x[j]; break;
             case 2: s2[DIVR(i)] = x[j]; break;
             case 3: s3[DIVR(i)] = x[j]; break;
+            #endif // OPENCL_FPGA
         }
     }
 
@@ -1250,13 +1256,11 @@ void fft_1024(__global const float2 * restrict x, __global float2 * restrict y)
         switch ( p )
         {
             #ifdef OPENCL_FPGA
-            
             case 0: y = s0[DIVR(i)]; break;
             case 1: y = s1[DIVR(i)]; break;
             case 2: y = s2[DIVR(i)]; break;
             case 3: y = s3[DIVR(i)]; break;
             #else
-            
             case 0: y[i] = s0[DIVR(i)]; break;
             case 1: y[i] = s1[DIVR(i)]; break;
             case 2: y[i] = s2[DIVR(i)]; break;

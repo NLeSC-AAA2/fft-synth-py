@@ -56,9 +56,15 @@ void fft_{{ N }}(__global const float2 * restrict x, __global float2 * restrict 
         #endif // OPENCL_FPGA
         switch ( p )
         {
-            {% for p in range(radix) %}
+            #ifdef OPENCL_FPGA
+            {%- for p in range(radix) %}
+            case {{ p }}: s{{ p }}[DIVR(i)] = x; break;
+            {%- endfor %}
+            #else
+            {%- for p in range(radix) %}
             case {{ p }}: s{{ p }}[DIVR(i)] = x[j]; break;
             {%- endfor %}
+            #endif // OPENCL_FPGA
         }
     }
 
@@ -74,11 +80,11 @@ void fft_{{ N }}(__global const float2 * restrict x, __global float2 * restrict 
         switch ( p )
         {
             #ifdef OPENCL_FPGA
-            {% for p in range(radix) %}
+            {%- for p in range(radix) %}
             case {{ p }}: y = s{{ p }}[DIVR(i)]; break;
             {%- endfor %}
             #else
-            {% for p in range(radix) %}
+            {%- for p in range(radix) %}
             case {{ p }}: y[i] = s{{ p }}[DIVR(i)]; break;
             {%- endfor %}
             #endif // OPENCL_FPGA

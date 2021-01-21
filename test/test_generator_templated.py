@@ -14,7 +14,7 @@ cases = [
 
 @pytest.mark.parametrize("parity_splitting", cases)
 def test_parity(parity_splitting: ParitySplitting):
-    kernel = generate_preprocessor(parity_splitting) + generate_parity_function(parity_splitting)
+    kernel = generate_preprocessor(parity_splitting, False) + generate_parity_function(parity_splitting)
     x = np.arange(parity_splitting.N, dtype=np.int32)
     y = np.zeros_like(x)
     kernel_args = [x, y]
@@ -27,7 +27,7 @@ def test_parity(parity_splitting: ParitySplitting):
 
 @pytest.mark.parametrize('parity_splitting', cases)
 def test_transpose(parity_splitting: ParitySplitting):
-    kernel = generate_preprocessor(parity_splitting) + generate_transpose_function(parity_splitting)
+    kernel = generate_preprocessor(parity_splitting, False) + generate_transpose_function(parity_splitting)
     x = np.arange(parity_splitting.N, dtype=np.int32)
     y = np.zeros_like(x)
     kernel_args = [x, y]

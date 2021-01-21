@@ -8,13 +8,13 @@ template_loader = FileSystemLoader("fftsynth/templates")
 template_environment = Environment(loader=template_loader)
 
 
-def generate_preprocessor(parity_splitting: ParitySplitting):
+def generate_preprocessor(parity_splitting: ParitySplitting, fpga: bool):
     """
     Generate the preprocessor directives necessary for the FFT.
     """
     template = template_environment.get_template("preprocessor.cl")
 
-    return template.render(radix=parity_splitting.radix)
+    return template.render(radix=parity_splitting.radix, fpga=fpga)
 
 
 def generate_twiddle_array(parity_splitting: ParitySplitting):
@@ -85,7 +85,7 @@ def generate_index_functions(parity_splitting: ParitySplitting):
     return template.render(radix=parity_splitting.radix)
 
 
-def generate_fft_functions(parity_splitting: ParitySplitting):
+def generate_fft_functions(parity_splitting: ParitySplitting, fpga: bool):
     """
     Generate outer loop for OpenCL FFT.
     """
@@ -94,7 +94,8 @@ def generate_fft_functions(parity_splitting: ParitySplitting):
     return template.render(N=parity_splitting.N,
                            depth=parity_splitting.depth,
                            radix=parity_splitting.radix,
-                           M=parity_splitting.M)
+                           M=parity_splitting.M,
+                           fpga=fpga)
 
 
 def generate_codelets():
@@ -106,16 +107,17 @@ def generate_codelets():
     return template.render()
 
 
-def generate_fft(parity_splitting: ParitySplitting):
+def generate_fft(parity_splitting: ParitySplitting, fpga: bool):
     """
     Generate and print the complete OpenCL FFT.
     """
-    print(generate_preprocessor(parity_splitting))
+    print(generate_preprocessor(parity_splitting, fpga))
     print("\n")
     print(generate_twiddle_array(parity_splitting))
     print("\n")
-    print(generate_fpga_functions())
-    print("\n")
+    if fpga:
+        print(generate_fpga_functions())
+        print("\n")
     print(generate_parity_function(parity_splitting))
     print("\n")
     print(generate_transpose_function(parity_splitting))
@@ -126,7 +128,7 @@ def generate_fft(parity_splitting: ParitySplitting):
     print("\n")
     print(generate_codelets())
     print("\n")
-    print(generate_fft_functions(parity_splitting))
+    print(generate_fft_functions(parity_splitting, fpga))
 
 
 if __name__ == "__main__":
@@ -135,10 +137,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate an OpenCL FFT kernel")
     parser.add_argument("--radix", type=int, default=4, help="FFT radix")
     parser.add_argument("--depth", type=int, default=3, help="FFT depth")
+    parser.add_argument("--fpga", action="store_true")
     args = parser.parse_args()
     print("/* FFT")
     print(f" * command: python -m fftsynth.generator_templated {' '.join(sys.argv[1:])}")
     print(" */")
     N = args.radix**args.depth
     ps = ParitySplitting(N, args.radix)
-    generate_fft(ps)
+    generate_fft(ps, args.fpga)

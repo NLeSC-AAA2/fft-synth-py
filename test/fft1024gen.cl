@@ -1097,7 +1097,7 @@ inline int comp_perm_4(int i, int rem) {
 
 inline int comp_idx_4(int i, int k) {
     int rem = i % ipow(k);
-    int base = rem - i;
+    int base = i - rem;
     return MULR(base) + rem;
 }
 
@@ -1118,17 +1118,19 @@ void fft_1024_ps(float2 * restrict s0, float2 * restrict s1, float2 * restrict s
          }
     }
 }
+__kernel void fft_1024(__global const float2 * restrict x, __global float2 * restrict y)
 
-    __kernel void fft_1024(__global const float2 * restrict x, __global float2 * restrict y)
     {
         float2 s0[256];
 float2 s1[256];
 float2 s2[256];
 float2 s3[256];
 
+        
         for (int j = 0; j < 1024; ++j) {
             int i = transpose_4(j);
             int p = parity_4(i);
+            
             switch (p) {
                 case 0: s0[DIVR(i)] = x[j]; break;
 case 1: s1[DIVR(i)] = x[j]; break;
@@ -1141,11 +1143,14 @@ case 3: s3[DIVR(i)] = x[j]; break;
 
         for (int i = 0; i < 1024; ++i) {
             int p = parity_4(i);
+            
             switch (p) {
                 case 0: y[i] = s0[DIVR(i)]; break;
 case 1: y[i] = s1[DIVR(i)]; break;
 case 2: y[i] = s2[DIVR(i)]; break;
 case 3: y[i] = s3[DIVR(i)]; break;
             }
+            
         }
+        
     }

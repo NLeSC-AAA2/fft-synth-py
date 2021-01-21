@@ -350,7 +350,7 @@ def test_fft_64(tmp_path):
     ps = ParitySplitting(1024, 4)
     with open(code_path, "w") as f:
         with redirect_stdout(f):
-            write_fft(ps)
+            write_fft(ps, False)
             print(
 """#ifdef TESTING
 __kernel void test_fft_4(int cycle, __global const float2 *x, __global float2 *y)

@@ -88,24 +88,51 @@ inline int comp_perm_{ps.radix}(int i, int rem) {{
 # ~\~ end
 
 # ~\~ begin <<lit/code-generator.md|generate-fft>>[0]
-def write_fft_fn(ps: ParitySplitting):
+def write_fft_fn(ps: ParitySplitting, fpga: bool):
     # ~\~ begin <<lit/code-generator.md|generate-outer-fft>>[0]
     declare_arrays = "\n".join(
         f"float2 s{i}[{ps.M}];" for i in range(ps.radix))
     mc_args = ", ".join(
         f"s{i}" for i in range(ps.radix))
-    read_cases = "\n".join(
-        f"case {p}: s{p}[DIVR(i)] = x[j]; break;" for p in range(ps.radix))
-    write_cases = "\n".join(
-        f"case {p}: y[i] = s{p}[DIVR(i)]; break;" for p in range(ps.radix))
+    if fpga:
+        read_cases = "\n".join(
+            f"case {p}: s{p}[DIVR(i)] = x; break;" for p in range(ps.radix))
+    else:
+        read_cases = "\n".join(
+            f"case {p}: s{p}[DIVR(i)] = x[j]; break;" for p in range(ps.radix))
+    if fpga:
+        write_cases = "\n".join(
+            f"case {p}: y = s{p}[DIVR(i)]; break;" for p in range(ps.radix))
+    else:
+        write_cases = "\n".join(
+            f"case {p}: y[i] = s{p}[DIVR(i)]; break;" for p in range(ps.radix))
+    if fpga:
+        print(f"__kernel __attribute__((autorun)) __attribute__((max_global_work_dim(0))) void fft_{ps.N} ()")
+    else:
+        print(f"__kernel void fft_{ps.N}(__global const float2 * restrict x, __global float2 * restrict y)")
+    loop_begin = ""
+    loop_end = ""
+    if fpga:
+        loop_begin = "while ( true ) {"
+        loop_end = "}"
+    fpga_read = ""
+    if fpga:
+        fpga_read = "float2 x = read_channel_intel(in_channel);"
+    fpga_write = ""
+    if fpga:
+        fpga_write = "write_channel_intel(out_channel, y);"
+    fpga_y = ""
+    if fpga:
+        fpga_y = "float2 y;"
     print(f"""
-    __kernel void fft_{ps.N}(__global const float2 * restrict x, __global float2 * restrict y)
     {{
         {declare_arrays}
 
+        {loop_begin}
         for (int j = 0; j < {ps.N}; ++j) {{
             int i = transpose_{ps.radix}(j);
             int p = parity_{ps.radix}(i);
+            {fpga_read}
             switch (p) {{
                 {read_cases}
             }}
@@ -115,44 +142,53 @@ def write_fft_fn(ps: ParitySplitting):
 
         for (int i = 0; i < {ps.N}; ++i) {{
             int p = parity_{ps.radix}(i);
+            {fpga_y}
             switch (p) {{
                 {write_cases}
             }}
+            {fpga_write}
         }}
+        {loop_end}
     }}""")
     # ~\~ end
 
-def write_outer_loop_fn(ps: ParitySplitting):
+def write_outer_loop_fn(ps: ParitySplitting, fpga: bool):
     args = [f"float2 * restrict s{i}" for i in range(ps.radix)]
     print(f"void fft_{ps.N}_ps({', '.join(args)})")
-    print( "{")
-    print( "    int wp = 0;")
+    print("{")
+    print("    int wp = 0;")
     print(f"    for (int k = 0; k < {ps.depth}; ++k) {{")
     with indent("         "):
         # ~\~ begin <<lit/code-generator.md|fft-inner-loop>>[0]
         print(f"int j = (k == 0 ? 0 : ipow(k - 1));")
+        if fpga:
+            print("#pragma ivdep")
         print(f"for (int i = 0; i < {ps.M}; ++i) {{")
         # ~\~ end
         # ~\~ begin <<lit/code-generator.md|fft-inner-loop>>[1]
-        print( "int a;")
-        print( "if (k != 0) {")
+        print("int a;")
+        print("if (k != 0) {")
         print(f"    a = comp_idx_{ps.radix}(DIVR(i), k-1);")
-        print( "} else {")
+        print("} else {")
         print(f"    a = comp_perm_{ps.radix}(DIVR(i), MODR(i));")
-        print( "}")
+        print("}")
         fft_args = [f"s{i}" for i in range(ps.radix)] \
-                 + [ "MODR(i)"] \
+                 + ["MODR(i)"] \
                  + [f"a + {n}*j" for n in range(ps.radix)] \
-                 + [ "wp"]
+                 + ["wp"]
         print(f"fft_{ps.radix}({', '.join(fft_args)});")
-        print( "if (k != 0) ++wp;")
-        print( "}")
+        print("if (k != 0) ++wp;")
+        print("}")
         # ~\~ end
-    print( "    }")
-    print( "}")
+    print("    }")
+    print("}")
 # ~\~ end
 
-def write_macros(ps):
+def write_macros(ps: ParitySplitting, fpga: bool):
+    if fpga:
+        print("#pragma OPENCL EXTENSION cl_intel_channels : enable")
+        print("#include <ihc_apint.h>")
+        print("channel float2 in_channel, out_channel;")
     if ps.radix == 4:
         print("#define DIVR(x) ((x) >> 2)")
         print("#define MODR(x) ((x) & 3)")
@@ -204,8 +240,28 @@ void fft_4(
     }
 }""")
 
-def write_fft(ps: ParitySplitting):
-    write_macros(ps)
+def write_fft(ps: ParitySplitting, fpga: bool):
+    write_macros(ps, fpga)
+    if fpga:
+        print("""
+__kernel __attribute__((max_global_work_dim(0)))
+void source(__global const volatile float2 * in, unsigned count)
+{
+    for ( unsigned i = 0; i < count; i++ )
+    {
+        write_channel_intel(in_channel, in[i]);
+    }
+}
+
+__kernel __attribute__((max_global_work_dim(0)))
+void sink(__global float2 *out, unsigned count)
+{
+    for ( unsigned i = 0; i < count; i++ )
+    {
+        out[i] = read_channel_intel(out_channel);
+    }
+}
+        """)
     write_twiddles(ps)
     write_codelet()
     print(gen_parity_fn(ps))
@@ -213,8 +269,8 @@ def write_fft(ps: ParitySplitting):
     write_ipow(ps)
     write_comp_perm(ps)
     write_comp_idx(ps)
-    write_outer_loop_fn(ps)
-    write_fft_fn(ps)
+    write_outer_loop_fn(ps, fpga)
+    write_fft_fn(ps, fpga)
 
 if __name__ == "__main__":
     import sys
@@ -222,11 +278,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate an OpenCL FFT kernel")
     parser.add_argument("--radix", type=int, default=4, help="FFT radix")
     parser.add_argument("--depth", type=int, default=3, help="FFT depth")
+    parser.add_argument("--fpga", action="store_true")
     args = parser.parse_args()
     print( "/* FFT")
     print(f" * command: python -m fftsynth.generate {' '.join(sys.argv[1:])}")
     print( " */")
     N = args.radix**args.depth
     ps = ParitySplitting(N, args.radix)
-    write_fft(ps)
+    write_fft(ps, args.fpga)
 # ~\~ end

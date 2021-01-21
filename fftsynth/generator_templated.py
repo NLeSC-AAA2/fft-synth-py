@@ -22,7 +22,7 @@ def generate_twiddle_array(parity_splitting: ParitySplitting):
     Generate OpenCL constant array for twiddle factors
     """
     template = template_environment.get_template("twiddles.cl")
-    W = numpy.ones(shape=[parity_splitting.radix, parity_splitting.radix])
+    twiddles = numpy.ones(shape=[parity_splitting.radix, parity_splitting.radix])
     perm = numpy.array([comp_perm(parity_splitting.radix, i) for i in range(parity_splitting.M)])
 
     n = parity_splitting.radix
@@ -31,11 +31,11 @@ def generate_twiddle_array(parity_splitting: ParitySplitting):
         w_r_x = (numpy.ones(shape=[parity_splitting.M // n, parity_splitting.radix, n]) * w) \
             .transpose([0, 2, 1]) \
             .reshape([-1, parity_splitting.radix])[perm]
-        W = numpy.r_[W, w_r_x]
+        twiddles = numpy.r_[twiddles, w_r_x]
         n *= parity_splitting.radix
 
     return template.render(radix=parity_splitting.radix,
-                           W=W)
+                           W=twiddles)
 
 
 def generate_fpga_functions():
@@ -136,9 +136,9 @@ if __name__ == "__main__":
     parser.add_argument("--radix", type=int, default=4, help="FFT radix")
     parser.add_argument("--depth", type=int, default=3, help="FFT depth")
     args = parser.parse_args()
-    print( "/* FFT")
+    print("/* FFT")
     print(f" * command: python -m fftsynth.generator_templated {' '.join(sys.argv[1:])}")
-    print( " */")
+    print(" */")
     N = args.radix**args.depth
     ps = ParitySplitting(N, args.radix)
     generate_fft(ps)

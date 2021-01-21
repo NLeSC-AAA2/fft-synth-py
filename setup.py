@@ -16,7 +16,8 @@ setup(
     packages=find_packages(),
 
     install_requires=[
-        "numpy"
+        "numpy",
+        "jinja2"
     ],
     tests_require=test_deps,
     extras_require={

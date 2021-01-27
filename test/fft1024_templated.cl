@@ -1041,11 +1041,18 @@ inline int parity_4(int i)
 {
     int x = MODR(i);
 
-    for ( int a = 0; a < 5; ++a )
-    {
-        i = DIVR(i);
-        x += MODR(i);
-    }
+    
+    i = DIVR(i);
+    x += MODR(i);
+    i = DIVR(i);
+    x += MODR(i);
+    i = DIVR(i);
+    x += MODR(i);
+    i = DIVR(i);
+    x += MODR(i);
+    i = DIVR(i);
+    x += MODR(i);
+
     return MODR(x);
 }
 
@@ -1062,12 +1069,19 @@ __kernel void test_parity_4(__global const int * x, __global int * y)
 inline int transpose_4(int j)
 {
     int x = 0;
+
     
-    for ( int l = 0; l < 5; ++l )
-    {
-        x = MULR(x) + MODR(j);
-        j = DIVR(j);
-    }
+    x = MULR(x) + MODR(j);
+    j = DIVR(j);
+    x = MULR(x) + MODR(j);
+    j = DIVR(j);
+    x = MULR(x) + MODR(j);
+    j = DIVR(j);
+    x = MULR(x) + MODR(j);
+    j = DIVR(j);
+    x = MULR(x) + MODR(j);
+    j = DIVR(j);
+
     return x;
 }
 

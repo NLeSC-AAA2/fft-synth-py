@@ -2,11 +2,11 @@ inline int parity_{{ radix }}(int i)
 {
     int x = MODR(i);
 
-    for ( int a = 0; a < {{ depth }}; ++a )
-    {
-        i = DIVR(i);
-        x += MODR(i);
-    }
+    {% for item in range(depth) %}
+    i = DIVR(i);
+    x += MODR(i);
+    {%- endfor %}
+
     return MODR(x);
 }
 

@@ -1,12 +1,12 @@
 inline int transpose_{{ radix }}(int j)
 {
     int x = 0;
-    
-    for ( int l = 0; l < {{ depth }}; ++l )
-    {
-        x = MULR(x) + MODR(j);
-        j = DIVR(j);
-    }
+
+    {% for item in range(depth) %}
+    x = MULR(x) + MODR(j);
+    j = DIVR(j);
+    {%- endfor %}
+
     return x;
 }
 

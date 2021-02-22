@@ -32,14 +32,14 @@ void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if
 __kernel {%if fpga %}__attribute__((autorun)) __attribute__((max_global_work_dim(0))){% endif %}
 void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global float2 * restrict y{% endif %})
 {
-    {%- for i in range(radix) %}
-    float2 s{{ i }}[{{ M }}];
-    {%- endfor %}
-
     {% if fpga -%}
     while ( true )
     {
     {% endif -%}
+    {%- for i in range(radix) %}
+    float2 s{{ i }}[{{ M }}];
+    {%- endfor %}
+
     for ( int j = 0; j < {{ N }}; ++j )
     {
         int i = transpose_{{ radix }}(j);

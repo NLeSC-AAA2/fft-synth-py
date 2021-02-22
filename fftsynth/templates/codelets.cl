@@ -3,12 +3,26 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
     float2 t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;
     __constant float2 *w = W[iw];
 
+    {% if fpga %}
+    switch (cycle) {
+        case 1: SWAP(int, i0, i1); SWAP(int, i2, i3); SWAP(int, i0, i2); break;
+        case 2: SWAP(int, i0, i2); SWAP(int, i1, i3); break;
+        case 3: SWAP(int, i0, i1); SWAP(int, i1, i3); SWAP(int, i1, i2); break;
+    }
+    t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3];
+    switch (cycle) {
+        case 1: SWAP(float2, t0, t1); SWAP(float2, t1, t2); SWAP(float2, t2, t3); break;
+        case 2: SWAP(float2, t0, t2); SWAP(float2, t1, t3); break;
+        case 3: SWAP(float2, t2, t3); SWAP(float2, t0, t1); SWAP(float2, t0, t2); break;
+    }
+    {% else %}
     switch (cycle) {
         case 0: t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3]; break;
         case 1: t0 = s1[i0]; t1 = s2[i1]; t2 = s3[i2]; t3 = s0[i3]; break;
         case 2: t0 = s2[i0]; t1 = s3[i1]; t2 = s0[i2]; t3 = s1[i3]; break;
         case 3: t0 = s3[i0]; t1 = s0[i1]; t2 = s1[i2]; t3 = s2[i3]; break;
     }
+    {% endif %}
 
     ws0 = t0;
     ws1 = (float2) (w[0].x * t1.x - w[0].y * t1.y,
@@ -27,10 +41,19 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
     t2 = a - b;
     t3 = (float2) (c.x - d.y, c.y + d.x);
 
+    {% if fpga %}
+    switch (cycle) {
+        case 1: SWAP(float2, t2, t3); SWAP(float2, t1, t2); SWAP(float2, t0, t1); break;
+        case 2: SWAP(float2, t1, t3); SWAP(float2, t0, t2); break;
+        case 3: SWAP(float2, t0, t2); SWAP(float2, t0, t1); SWAP(float2, t2, t3); break;
+    }
+    s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;
+    {% else %}
     switch (cycle) {
         case 0: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; break;
         case 1: s1[i0] = t0; s2[i1] = t1; s3[i2] = t2; s0[i3] = t3; break;
         case 2: s2[i0] = t0; s3[i1] = t1; s0[i2] = t2; s1[i3] = t3; break;
         case 3: s3[i0] = t0; s0[i1] = t1; s1[i2] = t2; s2[i3] = t3; break;
     }
+    {% endif %}
 }

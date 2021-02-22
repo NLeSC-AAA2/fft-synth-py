@@ -98,13 +98,13 @@ def generate_fft_functions(parity_splitting: ParitySplitting, fpga: bool):
                            fpga=fpga)
 
 
-def generate_codelets():
+def generate_codelets(fpga: bool):
     """
     Generate OpenCL codelets for FFT.
     """
     template = template_environment.get_template("codelets.cl")
 
-    return template.render()
+    return template.render(fpga=fpga)
 
 
 def generate_fft(parity_splitting: ParitySplitting, fpga: bool):
@@ -126,7 +126,7 @@ def generate_fft(parity_splitting: ParitySplitting, fpga: bool):
     print("\n")
     print(generate_index_functions(parity_splitting))
     print("\n")
-    print(generate_codelets())
+    print(generate_codelets(fpga))
     print("\n")
     print(generate_fft_functions(parity_splitting, fpga))
 

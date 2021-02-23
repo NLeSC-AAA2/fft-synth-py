@@ -126,9 +126,8 @@ def write_fft_fn(ps: ParitySplitting, fpga: bool):
         fpga_y = "float2 y;"
     print(f"""
     {{
-        {declare_arrays}
-
         {loop_begin}
+        {declare_arrays}
         for (int j = 0; j < {ps.N}; ++j) {{
             int i = transpose_{ps.radix}(j);
             int p = parity_{ps.radix}(i);
@@ -189,6 +188,7 @@ def write_macros(ps: ParitySplitting, fpga: bool):
         print("#pragma OPENCL EXTENSION cl_intel_channels : enable")
         print("#include <ihc_apint.h>")
         print("channel float2 in_channel, out_channel;")
+        print("#define SWAP(type, x, y) do { type temp = x; x = y, y = temp; } while ( false );")
     if ps.radix == 4:
         print("#define DIVR(x) ((x) >> 2)")
         print("#define MODR(x) ((x) & 3)")
@@ -198,7 +198,49 @@ def write_macros(ps: ParitySplitting, fpga: bool):
         print(f"#define MODR(x) ((x) % {ps.radix})")
         print(f"#define MULR(x) ((x) * {ps.radix})")
 
-def write_codelet():
+
+def write_codelet(fpga: bool):
+    read_input = str()
+    store_output = str()
+    if fpga:
+        read_input = """
+        switch (cycle) {
+        case 1: SWAP(int, i0, i1); SWAP(int, i2, i3); SWAP(int, i0, i2); break;
+        case 2: SWAP(int, i0, i2); SWAP(int, i1, i3); break;
+        case 3: SWAP(int, i0, i1); SWAP(int, i1, i3); SWAP(int, i1, i2); break;
+    }
+    t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3];
+    switch (cycle) {
+        case 1: SWAP(float2, t0, t1); SWAP(float2, t1, t2); SWAP(float2, t2, t3); break;
+        case 2: SWAP(float2, t0, t2); SWAP(float2, t1, t3); break;
+        case 3: SWAP(float2, t2, t3); SWAP(float2, t0, t1); SWAP(float2, t0, t2); break;
+    }
+        """
+        store_output = """
+        switch (cycle) {
+        case 1: SWAP(float2, t2, t3); SWAP(float2, t1, t2); SWAP(float2, t0, t1); break;
+        case 2: SWAP(float2, t1, t3); SWAP(float2, t0, t2); break;
+        case 3: SWAP(float2, t0, t2); SWAP(float2, t0, t1); SWAP(float2, t2, t3); break;
+    }
+    s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;
+        """
+    else:
+        read_input = """
+        switch (cycle) {
+        case 0: t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3]; break;
+        case 1: t0 = s1[i0]; t1 = s2[i1]; t2 = s3[i2]; t3 = s0[i3]; break;
+        case 2: t0 = s2[i0]; t1 = s3[i1]; t2 = s0[i2]; t3 = s1[i3]; break;
+        case 3: t0 = s3[i0]; t1 = s0[i1]; t2 = s1[i2]; t3 = s2[i3]; break;
+    }
+        """
+        store_output = """
+        switch (cycle) {
+        case 0: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; break;
+        case 1: s1[i0] = t0; s2[i1] = t1; s3[i2] = t2; s0[i3] = t3; break;
+        case 2: s2[i0] = t0; s3[i1] = t1; s0[i2] = t2; s1[i3] = t3; break;
+        case 3: s3[i0] = t0; s0[i1] = t1; s1[i2] = t2; s2[i3] = t3; break;
+    }
+        """
     print("""
 void fft_4(
     float2 * restrict s0, float2 * restrict s1,
@@ -207,14 +249,9 @@ void fft_4(
 {
     float2 t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;
     __constant float2 *w = W[iw];
-
-    switch (cycle) {
-        case 0: t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3]; break;
-        case 1: t0 = s1[i0]; t1 = s2[i1]; t2 = s3[i2]; t3 = s0[i3]; break;
-        case 2: t0 = s2[i0]; t1 = s3[i1]; t2 = s0[i2]; t3 = s1[i3]; break;
-        case 3: t0 = s3[i0]; t1 = s0[i1]; t2 = s1[i2]; t3 = s2[i3]; break;
-    }
-
+    """)
+    print(read_input)
+    print("""
     ws0 = t0;
     ws1 = (float2) (w[0].x * t1.x - w[0].y * t1.y,
                     w[0].x * t1.y + w[0].y * t1.x);
@@ -230,15 +267,10 @@ void fft_4(
     t0 = a + b;
     t1 = (float2) (c.x + d.y, c.y - d.x);
     t2 = a - b;
-    t3 = (float2) (c.x - d.y, c.y + d.x);
+    t3 = (float2) (c.x - d.y, c.y + d.x);""")
+    print(store_output)
+    print("}")
 
-    switch (cycle) {
-        case 0: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; break;
-        case 1: s1[i0] = t0; s2[i1] = t1; s3[i2] = t2; s0[i3] = t3; break;
-        case 2: s2[i0] = t0; s3[i1] = t1; s0[i2] = t2; s1[i3] = t3; break;
-        case 3: s3[i0] = t0; s0[i1] = t1; s1[i2] = t2; s2[i3] = t3; break;
-    }
-}""")
 
 def write_fft(ps: ParitySplitting, fpga: bool):
     write_macros(ps, fpga)
@@ -263,7 +295,7 @@ void sink(__global float2 *out, unsigned count)
 }
         """)
     write_twiddles(ps)
-    write_codelet()
+    write_codelet(fpga)
     print(gen_parity_fn(ps))
     print(gen_transpose_fn(ps))
     write_ipow(ps)

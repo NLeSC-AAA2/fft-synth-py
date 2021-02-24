@@ -124,11 +124,14 @@ def write_fft_fn(ps: ParitySplitting, fpga: bool):
     fpga_y = ""
     if fpga:
         fpga_y = "float2 y;"
+    n_type = "unsigned int"
+    if fpga:
+        n_type = "uint{}_t".format(int(np.ceil(np.log2(ps.N + 0.5))))
     print(f"""
     {{
         {loop_begin}
         {declare_arrays}
-        for (int j = 0; j < {ps.N}; ++j) {{
+        for ({n_type} j = 0; j != {ps.N}; ++j) {{
             int i = transpose_{ps.radix}(j);
             int p = parity_{ps.radix}(i);
             {fpga_read}
@@ -139,7 +142,7 @@ def write_fft_fn(ps: ParitySplitting, fpga: bool):
 
         fft_{ps.N}_ps({mc_args});
 
-        for (int i = 0; i < {ps.N}; ++i) {{
+        for ({n_type} i = 0; i != {ps.N}; ++i) {{
             int p = parity_{ps.radix}(i);
             {fpga_y}
             switch (p) {{
@@ -152,17 +155,22 @@ def write_fft_fn(ps: ParitySplitting, fpga: bool):
     # ~\~ end
 
 def write_outer_loop_fn(ps: ParitySplitting, fpga: bool):
+    depth_type = "unsigned int"
+    m_type = "unsigned int"
+    if fpga:
+        depth_type = "uint{}_t".format(int(np.ceil(np.log2(ps.depth + 0.5))))
+        m_type = "uint{}_t".format(int(np.ceil(np.log2(ps.M + 0.5))))
     args = [f"float2 * restrict s{i}" for i in range(ps.radix)]
     print(f"void fft_{ps.N}_ps({', '.join(args)})")
     print("{")
     print("    int wp = 0;")
-    print(f"    for (int k = 0; k < {ps.depth}; ++k) {{")
+    print(f"    for ({depth_type} k = 0; k != {ps.depth}; ++k) {{")
     with indent("         "):
         # ~\~ begin <<lit/code-generator.md|fft-inner-loop>>[0]
         print(f"int j = (k == 0 ? 0 : ipow(k - 1));")
         if fpga:
             print("#pragma ivdep")
-        print(f"for (int i = 0; i < {ps.M}; ++i) {{")
+        print(f"for ({m_type} i = 0; i != {ps.M}; ++i) {{")
         # ~\~ end
         # ~\~ begin <<lit/code-generator.md|fft-inner-loop>>[1]
         print("int a;")
@@ -279,6 +287,7 @@ def write_fft(ps: ParitySplitting, fpga: bool):
 __kernel __attribute__((max_global_work_dim(0)))
 void source(__global const volatile float2 * in, unsigned count)
 {
+    #pragma ii 1
     for ( unsigned i = 0; i < count; i++ )
     {
         write_channel_intel(in_channel, in[i]);
@@ -288,6 +297,7 @@ void source(__global const volatile float2 * in, unsigned count)
 __kernel __attribute__((max_global_work_dim(0)))
 void sink(__global float2 *out, unsigned count)
 {
+    #pragma ii 1
     for ( unsigned i = 0; i < count; i++ )
     {
         out[i] = read_channel_intel(out_channel);

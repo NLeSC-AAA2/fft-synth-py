@@ -90,12 +90,22 @@ def generate_fft_functions(parity_splitting: ParitySplitting, fpga: bool):
     Generate outer loop for OpenCL FFT.
     """
     template = template_environment.get_template("fft.cl")
+    depth_type = "unsigned int"
+    m_type = "unsigned int"
+    n_type = "unsigned int"
+    if fpga:
+        depth_type = "uint{}_t".format(int(numpy.ceil(numpy.log2(parity_splitting.depth + 0.5))))
+        m_type = "uint{}_t".format(int(numpy.ceil(numpy.log2(parity_splitting.M + 0.5))))
+        n_type = "uint{}_t".format(int(numpy.ceil(numpy.log2(parity_splitting.N + 0.5))))
 
     return template.render(N=parity_splitting.N,
                            depth=parity_splitting.depth,
                            radix=parity_splitting.radix,
                            M=parity_splitting.M,
-                           fpga=fpga)
+                           fpga=fpga,
+                           depth_type=depth_type,
+                           m_type=m_type,
+                           n_type=n_type)
 
 
 def generate_codelets(fpga: bool):

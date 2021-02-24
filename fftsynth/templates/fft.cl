@@ -2,14 +2,14 @@ void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if
 {
     int wp = 0;
 
-    for ( int k = 0; k < {{ depth }}; ++k )
+    for ( {{ depth_type }} k = 0; k != {{ depth }}; ++k )
     {
         int j = (k == 0 ? 0 : ipow(k - 1));
 
         {% if fpga -%}
         #pragma ivdep
         {% endif -%}
-        for ( int i = 0; i < {{ M }}; ++i )
+        for ( {{ m_type }} i = 0; i != {{ M }}; ++i )
         {
             int a;
             if ( k != 0 )
@@ -40,7 +40,7 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
     float2 s{{ i }}[{{ M }}];
     {%- endfor %}
 
-    for ( int j = 0; j < {{ N }}; ++j )
+    for ( {{ n_type }} j = 0; j != {{ N }}; ++j )
     {
         int i = transpose_{{ radix }}(j);
         int p = parity_{{ radix }}(i);
@@ -64,7 +64,7 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
 
     fft_{{ N }}_ps({% for i in range(radix) %} s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %});
 
-    for ( int i = 0; i < {{ N }}; ++i )
+    for ( {{ n_type }} i = 0; i != {{ N }}; ++i )
     {
         int p = parity_{{ radix }}(i);
         {% if fpga -%}

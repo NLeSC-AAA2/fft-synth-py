@@ -7,7 +7,7 @@ from kernel_tuner import run_kernel     # type: ignore
 
 from pkg_resources import resource_filename
 
-filename = resource_filename("fftsynth", "opencl/fma-codelets.cl")
+filename = resource_filename("fftsynth", "templates/fma-codelets.cl")
 
 
 @pytest.mark.parametrize('radix', [2, 3, 4, 5])

@@ -671,9 +671,9 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>Now we have six multiplications and six additions, but they are completely contained in six FMA operations.</p>
 <h2 id="higher-radix">Higher radix</h2>
 <div class="fold-block">
-<button class="btn btn-outline-primary btn-sm fold-toggle" type="button" data-toggle="collapse" data-target="#fftsynth-slash-opencl-slash-fma-codelets-dot-cl-container" aria-controls="fftsynth-slash-opencl-slash-fma-codelets-dot-cl-container">&lt;&lt;fftsynth/opencl/fma-codelets.cl&gt;&gt;=</button>
-<div id="fftsynth-slash-opencl-slash-fma-codelets-dot-cl-container" class="collapse">
-<div class="sourceCode" id="cb10" data-file="fftsynth/opencl/fma-codelets.cl" style="max-height: 50vh"><pre class="sourceCode opencl bootstrap-fold overflow-auto"><code class="sourceCode opencl"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a>&lt;&lt;fma-radix2&gt;&gt;</span>
+<button class="btn btn-outline-primary btn-sm fold-toggle" type="button" data-toggle="collapse" data-target="#fftsynth-slash-templates-slash-fma-codelets-dot-cl-container" aria-controls="fftsynth-slash-templates-slash-fma-codelets-dot-cl-container">&lt;&lt;fftsynth/templates/fma-codelets.cl&gt;&gt;=</button>
+<div id="fftsynth-slash-templates-slash-fma-codelets-dot-cl-container" class="collapse">
+<div class="sourceCode" id="cb10" data-file="fftsynth/templates/fma-codelets.cl" style="max-height: 50vh"><pre class="sourceCode opencl bootstrap-fold overflow-auto"><code class="sourceCode opencl"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a>&lt;&lt;fma-radix2&gt;&gt;</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true"></a><span class="dt">void</span> radix3_fma(<span class="dt">float2</span> t0, <span class="dt">float2</span> t1, <span class="dt">float2</span> t2, <span class="dt">float2</span> w0, <span class="dt">float2</span> w1, <span class="dt">float2</span>* xa, <span class="dt">float2</span>* xb, <span class="dt">float2</span>* xc) {</span>
@@ -939,7 +939,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true"></a></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true"></a><span class="im">from</span> pkg_resources <span class="im">import</span> resource_filename</span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true"></a></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true"></a>filename <span class="op">=</span> resource_filename(<span class="st">&quot;fftsynth&quot;</span>, <span class="st">&quot;opencl/fma-codelets.cl&quot;</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true"></a>filename <span class="op">=</span> resource_filename(<span class="st">&quot;fftsynth&quot;</span>, <span class="st">&quot;templates/fma-codelets.cl&quot;</span>)</span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true"></a></span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true"></a></span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true"></a><span class="at">@pytest.mark.parametrize</span>(<span class="st">&#39;radix&#39;</span>, [<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>])</span>

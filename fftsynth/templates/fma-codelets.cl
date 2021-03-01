@@ -1,5 +1,5 @@
-/* ~\~ language=OpenCL filename=fftsynth/opencl/fma-codelets.cl */
-/* ~\~ begin <<lit/fma-codelets.md|fftsynth/opencl/fma-codelets.cl>>[0] */
+/* ~\~ language=OpenCL filename=fftsynth/templates/fma-codelets.cl */
+/* ~\~ begin <<lit/fma-codelets.md|fftsynth/templates/fma-codelets.cl>>[0] */
 /* ~\~ begin <<lit/fma-codelets.md|fma-radix2>>[0] */
 void radix2_fma(float2 e, float2 o, float2 w, float2* xa, float2* xb)
 {

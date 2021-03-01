@@ -37,7 +37,7 @@ Now we have six multiplications and six additions, but they are completely conta
 
 ## Higher radix
 
-``` {.opencl .bootstrap-fold file=fftsynth/opencl/fma-codelets.cl}
+``` {.opencl .bootstrap-fold file=fftsynth/templates/fma-codelets.cl}
 <<fma-radix2>>
 
 
@@ -302,7 +302,7 @@ from kernel_tuner import run_kernel     # type: ignore
 
 from pkg_resources import resource_filename
 
-filename = resource_filename("fftsynth", "opencl/fma-codelets.cl")
+filename = resource_filename("fftsynth", "templates/fma-codelets.cl")
 
 
 @pytest.mark.parametrize('radix', [2, 3, 4, 5])

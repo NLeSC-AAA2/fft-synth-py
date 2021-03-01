@@ -24,12 +24,10 @@ setup(
         "test": test_deps
     },
     include_package_data=True,
-    # package_data={
-    #     # If any package contains *.txt or *.rst files, include them:
-    #     '': ['*.txt', '*.rst'],
-    #     # And include any *.msg files found in the 'hello' package, too:
-    #     'hello': ['*.msg'],
-    # },
+    package_data={
+        # If any package contains *.txt or *.rst files, include them:
+        '': ['*.cl']
+    },
 
     # metadata to display on PyPI
     author="Johan Hidding",

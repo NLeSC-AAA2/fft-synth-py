@@ -3,12 +3,12 @@
 from setuptools import setup, find_packages  # type: ignore
 
 test_deps = [
-      "pytest>=5,<6"
-    , "pytest-cov>=2.8.1,<3"
-    , "pytest-mypy>=0.4.2,<1"
-    , "flake8>=3,<4"
-    , "pyopencl"
-    , "kernel_tuner[opencl]" ]
+      "pytest>=5,<6",
+      "pytest-cov>=2.8.1,<3",
+      "pytest-mypy>=0.4.2,<1",
+      "flake8>=3,<4",
+      "pyopencl",
+      "kernel_tuner[opencl]"]
 
 setup(
     name="fftsynth",
@@ -39,18 +39,17 @@ setup(
     url="https://nlesc-aaa2.github.io/fftsynth-py",   # project home page, if any
 
     classifiers=[
-          'License :: OSI Approved :: Apache Software License'
-        , 'Development Status :: 3 - Alpha'
-        , 'Intended Audience :: Science/Research'
-        , 'Environment :: Console'
-        , 'Natural Language :: English'
-        , 'Operating System :: OS Independent'
-        , 'Programming Language :: Python :: 3.7'
-        , 'Programming Language :: Python :: 3.8'
-        , 'Topic :: Scientific/Engineering'
-        , 'Topic :: Software Development'
+          'License :: OSI Approved :: Apache Software License',
+          'Development Status :: 3 - Alpha',
+          'Intended Audience :: Science/Research',
+          'Environment :: Console',
+          'Natural Language :: English',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python :: 3.7',
+          'Programming Language :: Python :: 3.8',
+          'Topic :: Scientific/Engineering',
+          'Topic :: Software Development'
     ],
 
     # could also include long_description, download_url, etc.
 )
-

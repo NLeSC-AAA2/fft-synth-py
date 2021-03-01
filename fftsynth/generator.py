@@ -164,6 +164,7 @@ def write_outer_loop_fn(ps: ParitySplitting, fpga: bool):
     print(f"void fft_{ps.N}_ps({', '.join(args)})")
     print("{")
     print("    int wp = 0;")
+    print("     #pragma unroll")
     print(f"    for ({depth_type} k = 0; k != {ps.depth}; ++k) {{")
     with indent("         "):
         # ~\~ begin <<lit/code-generator.md|fft-inner-loop>>[0]

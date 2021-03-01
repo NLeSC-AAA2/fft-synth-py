@@ -1123,12 +1123,14 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
     float2 t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;
     __constant float2 *w = W[iw];
 
+    
     switch (cycle) {
         case 0: t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3]; break;
         case 1: t0 = s1[i0]; t1 = s2[i1]; t2 = s3[i2]; t3 = s0[i3]; break;
         case 2: t0 = s2[i0]; t1 = s3[i1]; t2 = s0[i2]; t3 = s1[i3]; break;
         case 3: t0 = s3[i0]; t1 = s0[i1]; t2 = s1[i2]; t3 = s2[i3]; break;
     }
+    
 
     ws0 = t0;
     ws1 = (float2) (w[0].x * t1.x - w[0].y * t1.y,
@@ -1147,12 +1149,14 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
     t2 = a - b;
     t3 = (float2) (c.x - d.y, c.y + d.x);
 
+    
     switch (cycle) {
         case 0: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; break;
         case 1: s1[i0] = t0; s2[i1] = t1; s3[i2] = t2; s0[i3] = t3; break;
         case 2: s2[i0] = t0; s3[i1] = t1; s0[i2] = t2; s1[i3] = t3; break;
         case 3: s3[i0] = t0; s0[i1] = t1; s1[i2] = t2; s2[i3] = t3; break;
     }
+    
 }
 
 
@@ -1160,11 +1164,12 @@ void fft_1024_ps( float2 * restrict s0, float2 * restrict s1, float2 * restrict 
 {
     int wp = 0;
 
-    for ( int k = 0; k < 5; ++k )
+    #pragma unroll
+    for ( unsigned int k = 0; k != 5; ++k )
     {
         int j = (k == 0 ? 0 : ipow(k - 1));
 
-        for ( int i = 0; i < 256; ++i )
+        for ( unsigned int i = 0; i != 256; ++i )
         {
             int a;
             if ( k != 0 )
@@ -1187,12 +1192,13 @@ void fft_1024_ps( float2 * restrict s0, float2 * restrict s1, float2 * restrict 
 __kernel 
 void fft_1024(__global const float2 * restrict x, __global float2 * restrict y)
 {
+    
     float2 s0[256];
     float2 s1[256];
     float2 s2[256];
     float2 s3[256];
 
-    for ( int j = 0; j < 1024; ++j )
+    for ( unsigned int j = 0; j != 1024; ++j )
     {
         int i = transpose_4(j);
         int p = parity_4(i);
@@ -1208,7 +1214,7 @@ void fft_1024(__global const float2 * restrict x, __global float2 * restrict y)
 
     fft_1024_ps( s0, s1, s2, s3);
 
-    for ( int i = 0; i < 1024; ++i )
+    for ( unsigned int i = 0; i != 1024; ++i )
     {
         int p = parity_4(i);
         switch ( p )

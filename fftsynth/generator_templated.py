@@ -1,10 +1,11 @@
 from jinja2 import Environment, FileSystemLoader
 import numpy
+from pkg_resources import resource_filename
 
 from .parity import ParitySplitting, comp_perm
 from .twiddle import make_twiddle
 
-template_loader = FileSystemLoader("fftsynth/templates")
+template_loader = FileSystemLoader(resource_filename("fftsynth", "templates"))
 template_environment = Environment(loader=template_loader)
 
 

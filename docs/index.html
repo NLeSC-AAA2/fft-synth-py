@@ -123,7 +123,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <main role="main" class="flex-fill"><div class="container my-5">
 <h1 id="about">About</h1>
 <h2 id="license">License</h2>
-<p>Copyright 2020 Johan Hidding, Ben van Werkhoven, Netherlands eScience Center</p>
+<p>Copyright 2020 Johan Hidding, Alessio Sclocco, Ben van Werkhoven, Netherlands eScience Center</p>
 <blockquote>
 <p>This template is licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>; you may not use this file except in compliance with the License. You may obtain a copy of the License at</p>
 <pre><code>http://www.apache.org/licenses/LICENSE-2.0</code></pre>
@@ -157,13 +157,13 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>We approach the FFT algorithm by casting the array to an multi-dimensional array, where each dimension represents one step in the FFT.</p>
 <div id="fig:cooley-tukey" class="fignos">
 <figure>
-<img src="img/cooley-tukey-20.svg" alt="" /><figcaption><span>Figure 1:</span> A <span class="math inline">\(N=20\)</span> Fourier transform is broken up into an <span class="math inline">\(5 \times 2 \times 2\)</span> fast Fourier transform.</figcaption>
+<img src="img/cooley-tukey-20.svg" alt="" /><figcaption><span>Figure 1:</span> A <span class="math inline">\(N=20\)</span> Fourier transform is broken up into an <span class="math inline">\(5 \times 2 \times 2\)</span> fast Fourier transform.</figcaption>
 </figure>
 </div>
 <p>Another way to illustrate the FFT algorithm is by visualising the data flow.</p>
 <div id="fig:fft-dataflow" class="fignos">
 <figure>
-<img src="img/dataflow.svg" alt="" /><figcaption><span>Figure 2:</span> Data flow in a radix-2 FFT</figcaption>
+<img src="img/dataflow.svg" alt="" /><figcaption><span>Figure 2:</span> Data flow in a radix-2 FFT</figcaption>
 </figure>
 </div>
 <p>We will refer to the smallest Fourier transform inside an FFT as a <strong>butterfly</strong> operation. In the case of a radix-2 FFT, as illustrated in Figure <a href="#fig:fft-dataflow">2</a>, this is the operation of performing a 2-FT on any two elements within the array, commonly including the multiplication with a twiddle factor.</p>
@@ -1418,7 +1418,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 
 <footer class="py-4 bg-dark text-white-50 footer"><div class="container">
 Generated from the Entangled Bootstrap template.<br />
-2021-03-01 — version: 0.1.0
+2021-03-02 — version: 0.1.0
 </div></footer>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

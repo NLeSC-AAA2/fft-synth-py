@@ -2,7 +2,6 @@ void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if
 {
     int wp = 0;
 
-    #pragma unroll
     for ( {{ depth_type }} k = 0; k != {{ depth }}; ++k )
     {
         int j = (k == 0 ? 0 : ipow(k - 1));

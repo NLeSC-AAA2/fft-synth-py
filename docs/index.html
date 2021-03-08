@@ -449,198 +449,28 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true"></a>    <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">1</span>] <span class="op">==</span> y_ref)</span>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true"></a></span>
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true"></a></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true"></a><span class="kw">def</span> test_comp_idx_4():</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true"></a>    x <span class="op">=</span> np.arange(mc.L, dtype<span class="op">=</span>np.int32)</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true"></a></span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">5</span>):</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true"></a>            y <span class="op">=</span> np.zeros_like(x)</span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true"></a>            kernel_args <span class="op">=</span> [np.int32(k), np.int32(j), x, y]</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true"></a><span class="kw">def</span> test_transpose_4():</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true"></a>    x <span class="op">=</span> np.arange(N, dtype<span class="op">=</span>np.int32)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true"></a>    kernel_args <span class="op">=</span> [x, y]</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true"></a></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true"></a>    results <span class="op">=</span> run_kernel(<span class="st">&quot;test_transpose_4&quot;</span>, kernel_file_content, N, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true"></a>    y_ref <span class="op">=</span> x.reshape(mc.factors).T.flatten()</span>
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true"></a></span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true"></a>            results <span class="op">=</span> run_kernel(<span class="st">&quot;test_comp_idx_4&quot;</span>, kernel_file_content, mc.L, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true"></a>            y_ref <span class="op">=</span> mc.index_loc <span class="op">\</span></span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true"></a>                .reshape([<span class="op">-</span><span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">4</span><span class="op">**</span>k]) <span class="op">\</span></span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true"></a>                .transpose([<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">1</span>]) <span class="op">\</span></span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true"></a>                .reshape([<span class="op">-</span><span class="dv">1</span>, <span class="dv">4</span>])[::<span class="dv">4</span>, j]</span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true"></a>            y_ref_2 <span class="op">=</span> np.array([comp_idx(<span class="dv">4</span>, i, j, k<span class="op">-</span><span class="dv">1</span>) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(mc.L)])</span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true"></a></span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true"></a>            <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">3</span>] <span class="op">==</span> y_ref)</span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true"></a>            <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">3</span>] <span class="op">==</span> y_ref_2)</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true"></a>    <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">1</span>] <span class="op">==</span> y_ref)</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true"></a></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true"></a></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true"></a><span class="kw">def</span> test_fft_1024():</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true"></a>    x <span class="op">=</span> np.random.normal(size<span class="op">=</span>(<span class="dv">1024</span>, <span class="dv">2</span>)).astype(np.float32)</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true"></a>    kernel_args <span class="op">=</span> [x, y]</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true"></a></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true"></a>    results <span class="op">=</span> run_kernel(<span class="st">&quot;fft_1024&quot;</span>, kernel_file_content, <span class="dv">1</span>, kernel_args, {})</span>
 <span id="cb8-42"><a href="#cb8-42" aria-hidden="true"></a></span>
-<span id="cb8-43"><a href="#cb8-43" aria-hidden="true"></a></span>
-<span id="cb8-44"><a href="#cb8-44" aria-hidden="true"></a><span class="kw">def</span> test_comp_perm_4():</span>
-<span id="cb8-45"><a href="#cb8-45" aria-hidden="true"></a>    x <span class="op">=</span> np.arange(mc.L, dtype<span class="op">=</span>np.int32)</span>
-<span id="cb8-46"><a href="#cb8-46" aria-hidden="true"></a></span>
-<span id="cb8-47"><a href="#cb8-47" aria-hidden="true"></a>    <span class="cf">for</span> r <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true"></a>        y <span class="op">=</span> np.zeros_like(x)</span>
-<span id="cb8-49"><a href="#cb8-49" aria-hidden="true"></a>        kernel_args <span class="op">=</span> [np.int32(r), x, y]</span>
-<span id="cb8-50"><a href="#cb8-50" aria-hidden="true"></a></span>
-<span id="cb8-51"><a href="#cb8-51" aria-hidden="true"></a>        results <span class="op">=</span> run_kernel(<span class="st">&quot;test_comp_perm_4&quot;</span>, kernel_file_content, mc.L, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="cb8-52"><a href="#cb8-52" aria-hidden="true"></a>        y_ref <span class="op">=</span> np.array([comp_perm(radix, i<span class="op">*</span>radix <span class="op">+</span> r) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(mc.L)])</span>
-<span id="cb8-53"><a href="#cb8-53" aria-hidden="true"></a></span>
-<span id="cb8-54"><a href="#cb8-54" aria-hidden="true"></a>        <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">2</span>] <span class="op">==</span> y_ref)</span>
-<span id="cb8-55"><a href="#cb8-55" aria-hidden="true"></a></span>
-<span id="cb8-56"><a href="#cb8-56" aria-hidden="true"></a></span>
-<span id="cb8-57"><a href="#cb8-57" aria-hidden="true"></a><span class="kw">def</span> test_transpose_4():</span>
-<span id="cb8-58"><a href="#cb8-58" aria-hidden="true"></a>    x <span class="op">=</span> np.arange(N, dtype<span class="op">=</span>np.int32)</span>
-<span id="cb8-59"><a href="#cb8-59" aria-hidden="true"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
-<span id="cb8-60"><a href="#cb8-60" aria-hidden="true"></a>    kernel_args <span class="op">=</span> [x, y]</span>
-<span id="cb8-61"><a href="#cb8-61" aria-hidden="true"></a></span>
-<span id="cb8-62"><a href="#cb8-62" aria-hidden="true"></a>    results <span class="op">=</span> run_kernel(<span class="st">&quot;test_transpose_4&quot;</span>, kernel_file_content, N, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="cb8-63"><a href="#cb8-63" aria-hidden="true"></a>    y_ref <span class="op">=</span> x.reshape(mc.factors).T.flatten()</span>
-<span id="cb8-64"><a href="#cb8-64" aria-hidden="true"></a></span>
-<span id="cb8-65"><a href="#cb8-65" aria-hidden="true"></a>    <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">1</span>] <span class="op">==</span> y_ref)</span>
-<span id="cb8-66"><a href="#cb8-66" aria-hidden="true"></a></span>
-<span id="cb8-67"><a href="#cb8-67" aria-hidden="true"></a></span>
-<span id="cb8-68"><a href="#cb8-68" aria-hidden="true"></a><span class="kw">def</span> test_fft4_4():</span>
-<span id="cb8-69"><a href="#cb8-69" aria-hidden="true"></a>    x <span class="op">=</span> np.random.normal(size<span class="op">=</span>(<span class="dv">1024</span>, <span class="dv">4</span>, <span class="dv">2</span>)).astype(np.float32)</span>
-<span id="cb8-70"><a href="#cb8-70" aria-hidden="true"></a></span>
-<span id="cb8-71"><a href="#cb8-71" aria-hidden="true"></a>    <span class="cf">for</span> cycle <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb8-72"><a href="#cb8-72" aria-hidden="true"></a>        y <span class="op">=</span> np.zeros_like(x)</span>
-<span id="cb8-73"><a href="#cb8-73" aria-hidden="true"></a>        kernel_args <span class="op">=</span> [np.int32(cycle), x, y]</span>
-<span id="cb8-74"><a href="#cb8-74" aria-hidden="true"></a>        y_ref <span class="op">=</span> np.fft.fft(np.roll(x[..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[..., <span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>))</span>
-<span id="cb8-75"><a href="#cb8-75" aria-hidden="true"></a></span>
-<span id="cb8-76"><a href="#cb8-76" aria-hidden="true"></a>        results <span class="op">=</span> run_kernel(<span class="st">&quot;test_fft_4&quot;</span>, kernel_file_content, N, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="cb8-77"><a href="#cb8-77" aria-hidden="true"></a>        y_Z <span class="op">=</span> np.roll(results[<span class="dv">2</span>][..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>results[<span class="dv">2</span>][..., <span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb8-78"><a href="#cb8-78" aria-hidden="true"></a></span>
-<span id="cb8-79"><a href="#cb8-79" aria-hidden="true"></a>        <span class="cf">assert</span> <span class="bu">abs</span>(y_Z <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-4</span></span>
-<span id="cb8-80"><a href="#cb8-80" aria-hidden="true"></a></span>
-<span id="cb8-81"><a href="#cb8-81" aria-hidden="true"></a></span>
-<span id="cb8-82"><a href="#cb8-82" aria-hidden="true"></a><span class="kw">def</span> test_fft_1024():</span>
-<span id="cb8-83"><a href="#cb8-83" aria-hidden="true"></a>    x <span class="op">=</span> np.random.normal(size<span class="op">=</span>(<span class="dv">1024</span>, <span class="dv">2</span>)).astype(np.float32)</span>
-<span id="cb8-84"><a href="#cb8-84" aria-hidden="true"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
-<span id="cb8-85"><a href="#cb8-85" aria-hidden="true"></a>    kernel_args <span class="op">=</span> [x, y]</span>
-<span id="cb8-86"><a href="#cb8-86" aria-hidden="true"></a></span>
-<span id="cb8-87"><a href="#cb8-87" aria-hidden="true"></a>    results <span class="op">=</span> run_kernel(<span class="st">&quot;fft_1024&quot;</span>, kernel_file_content, <span class="dv">1</span>, kernel_args, {})</span>
-<span id="cb8-88"><a href="#cb8-88" aria-hidden="true"></a></span>
-<span id="cb8-89"><a href="#cb8-89" aria-hidden="true"></a>    y_Z <span class="op">=</span> results[<span class="dv">1</span>][..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>results[<span class="dv">1</span>][..., <span class="dv">1</span>]</span>
-<span id="cb8-90"><a href="#cb8-90" aria-hidden="true"></a>    y_ref <span class="op">=</span> np.fft.fft(x[..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[..., <span class="dv">1</span>])</span>
-<span id="cb8-91"><a href="#cb8-91" aria-hidden="true"></a></span>
-<span id="cb8-92"><a href="#cb8-92" aria-hidden="true"></a>    <span class="cf">assert</span> <span class="bu">abs</span>(y_Z <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-3</span></span>
-<span id="cb8-93"><a href="#cb8-93" aria-hidden="true"></a></span>
-<span id="cb8-94"><a href="#cb8-94" aria-hidden="true"></a></span>
-<span id="cb8-95"><a href="#cb8-95" aria-hidden="true"></a>cases <span class="op">=</span> [</span>
-<span id="cb8-96"><a href="#cb8-96" aria-hidden="true"></a>    ParitySplitting(<span class="dv">64</span>, <span class="dv">4</span>),</span>
-<span id="cb8-97"><a href="#cb8-97" aria-hidden="true"></a>    ParitySplitting(<span class="dv">256</span>, <span class="dv">4</span>),</span>
-<span id="cb8-98"><a href="#cb8-98" aria-hidden="true"></a>    ParitySplitting(<span class="dv">1024</span>, <span class="dv">4</span>)</span>
-<span id="cb8-99"><a href="#cb8-99" aria-hidden="true"></a>]</span>
-<span id="cb8-100"><a href="#cb8-100" aria-hidden="true"></a></span>
-<span id="cb8-101"><a href="#cb8-101" aria-hidden="true"></a><span class="at">@pytest.mark.parametrize</span>(<span class="st">&#39;ps&#39;</span>, cases)</span>
-<span id="cb8-102"><a href="#cb8-102" aria-hidden="true"></a><span class="kw">def</span> test_fft_radix_4(tmp_path, ps):</span>
-<span id="cb8-103"><a href="#cb8-103" aria-hidden="true"></a>    <span class="im">from</span> contextlib <span class="im">import</span> redirect_stdout</span>
-<span id="cb8-104"><a href="#cb8-104" aria-hidden="true"></a>    <span class="im">from</span> fftsynth.generator <span class="im">import</span> (write_fft)</span>
-<span id="cb8-105"><a href="#cb8-105" aria-hidden="true"></a>    code_path <span class="op">=</span> tmp_path <span class="op">/</span> <span class="st">&quot;fft.cl&quot;</span></span>
-<span id="cb8-106"><a href="#cb8-106" aria-hidden="true"></a>    <span class="cf">with</span> <span class="bu">open</span>(code_path, <span class="st">&quot;w&quot;</span>) <span class="im">as</span> f:</span>
-<span id="cb8-107"><a href="#cb8-107" aria-hidden="true"></a>        <span class="cf">with</span> redirect_stdout(f):</span>
-<span id="cb8-108"><a href="#cb8-108" aria-hidden="true"></a>            write_fft(ps, <span class="va">False</span>)</span>
-<span id="cb8-109"><a href="#cb8-109" aria-hidden="true"></a>            <span class="bu">print</span>(</span>
-<span id="cb8-110"><a href="#cb8-110" aria-hidden="true"></a><span class="st">&quot;&quot;&quot;#ifdef TESTING</span></span>
-<span id="cb8-111"><a href="#cb8-111" aria-hidden="true"></a><span class="st">__kernel void test_fft_4(int cycle, __global const float2 *x, __global float2 *y)</span></span>
-<span id="cb8-112"><a href="#cb8-112" aria-hidden="true"></a><span class="st">{</span></span>
-<span id="cb8-113"><a href="#cb8-113" aria-hidden="true"></a><span class="st">    int i = get_global_id(0);</span></span>
-<span id="cb8-114"><a href="#cb8-114" aria-hidden="true"></a><span class="st">    float2 s[4][1];</span></span>
-<span id="cb8-115"><a href="#cb8-115" aria-hidden="true"></a><span class="st">    for (int k = 0; k &lt; 4; ++k) s[k][0] = x[i*4+k];</span></span>
-<span id="cb8-116"><a href="#cb8-116" aria-hidden="true"></a><span class="st">    fft_4(s[0], s[1], s[2], s[3], cycle, 0, 0, 0, 0, 0);</span></span>
-<span id="cb8-117"><a href="#cb8-117" aria-hidden="true"></a><span class="st">    for (int k = 0; k &lt; 4; ++k) y[i*4+k] = s[k][0];</span></span>
-<span id="cb8-118"><a href="#cb8-118" aria-hidden="true"></a><span class="st">}</span></span>
-<span id="cb8-119"><a href="#cb8-119" aria-hidden="true"></a><span class="st">__kernel void test_transpose_4(__global const int *x, __global int *y) {</span></span>
-<span id="cb8-120"><a href="#cb8-120" aria-hidden="true"></a><span class="st">    int i = get_global_id(0);</span></span>
-<span id="cb8-121"><a href="#cb8-121" aria-hidden="true"></a><span class="st">    y[i] = transpose_4(x[i]);</span></span>
-<span id="cb8-122"><a href="#cb8-122" aria-hidden="true"></a><span class="st">}</span></span>
-<span id="cb8-123"><a href="#cb8-123" aria-hidden="true"></a></span>
-<span id="cb8-124"><a href="#cb8-124" aria-hidden="true"></a><span class="st">__kernel void test_parity_4(__global const int *x, __global int *y) {</span></span>
-<span id="cb8-125"><a href="#cb8-125" aria-hidden="true"></a><span class="st">    int i = get_global_id(0);</span></span>
-<span id="cb8-126"><a href="#cb8-126" aria-hidden="true"></a><span class="st">    y[i] = parity_4(x[i]);</span></span>
-<span id="cb8-127"><a href="#cb8-127" aria-hidden="true"></a><span class="st">}</span></span>
-<span id="cb8-128"><a href="#cb8-128" aria-hidden="true"></a></span>
-<span id="cb8-129"><a href="#cb8-129" aria-hidden="true"></a><span class="st">__kernel void test_comp_idx_4(int k, int j, __global const int *x, __global int *y) {</span></span>
-<span id="cb8-130"><a href="#cb8-130" aria-hidden="true"></a><span class="st">    int i = get_global_id(0);</span></span>
-<span id="cb8-131"><a href="#cb8-131" aria-hidden="true"></a><span class="st">    y[i] = comp_idx_4(i, k-1) + j * (1 &lt;&lt; 2*(k-1));</span></span>
-<span id="cb8-132"><a href="#cb8-132" aria-hidden="true"></a><span class="st">}</span></span>
-<span id="cb8-133"><a href="#cb8-133" aria-hidden="true"></a></span>
-<span id="cb8-134"><a href="#cb8-134" aria-hidden="true"></a><span class="st">__kernel void test_comp_perm_4(int r, __global const int *x, __global int *y) {</span></span>
-<span id="cb8-135"><a href="#cb8-135" aria-hidden="true"></a><span class="st">    int i = get_global_id(0);</span></span>
-<span id="cb8-136"><a href="#cb8-136" aria-hidden="true"></a><span class="st">    y[i] = comp_perm_4(x[i], r);</span></span>
-<span id="cb8-137"><a href="#cb8-137" aria-hidden="true"></a><span class="st">}</span></span>
-<span id="cb8-138"><a href="#cb8-138" aria-hidden="true"></a><span class="st">#endif</span></span>
-<span id="cb8-139"><a href="#cb8-139" aria-hidden="true"></a><span class="st">&quot;&quot;&quot;</span>)</span>
-<span id="cb8-140"><a href="#cb8-140" aria-hidden="true"></a>    kernel_file_content_64 <span class="op">=</span> <span class="bu">open</span>(code_path, <span class="st">&quot;r&quot;</span>).read()</span>
-<span id="cb8-141"><a href="#cb8-141" aria-hidden="true"></a></span>
-<span id="cb8-142"><a href="#cb8-142" aria-hidden="true"></a>    x <span class="op">=</span> np.arange(ps.L, dtype<span class="op">=</span>np.int32)</span>
-<span id="cb8-143"><a href="#cb8-143" aria-hidden="true"></a></span>
-<span id="cb8-144"><a href="#cb8-144" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;comp_idx&quot;</span>)</span>
-<span id="cb8-145"><a href="#cb8-145" aria-hidden="true"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, ps.depth):</span>
-<span id="cb8-146"><a href="#cb8-146" aria-hidden="true"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb8-147"><a href="#cb8-147" aria-hidden="true"></a>            y <span class="op">=</span> np.zeros_like(x)</span>
-<span id="cb8-148"><a href="#cb8-148" aria-hidden="true"></a>            kernel_args <span class="op">=</span> [np.int32(k), np.int32(j), x, y]</span>
-<span id="cb8-149"><a href="#cb8-149" aria-hidden="true"></a></span>
-<span id="cb8-150"><a href="#cb8-150" aria-hidden="true"></a>            results <span class="op">=</span> run_kernel(<span class="st">&quot;test_comp_idx_4&quot;</span>, kernel_file_content_64, ps.L, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="cb8-151"><a href="#cb8-151" aria-hidden="true"></a>            y_ref <span class="op">=</span> ps.index_loc <span class="op">\</span></span>
-<span id="cb8-152"><a href="#cb8-152" aria-hidden="true"></a>                .reshape([<span class="op">-</span><span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">4</span><span class="op">**</span>k]) <span class="op">\</span></span>
-<span id="cb8-153"><a href="#cb8-153" aria-hidden="true"></a>                .transpose([<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">1</span>]) <span class="op">\</span></span>
-<span id="cb8-154"><a href="#cb8-154" aria-hidden="true"></a>                .reshape([<span class="op">-</span><span class="dv">1</span>, <span class="dv">4</span>])[::<span class="dv">4</span>, j]</span>
-<span id="cb8-155"><a href="#cb8-155" aria-hidden="true"></a>            y_ref_2 <span class="op">=</span> np.array([comp_idx(<span class="dv">4</span>, i, j, k<span class="op">-</span><span class="dv">1</span>) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(ps.L)])</span>
-<span id="cb8-156"><a href="#cb8-156" aria-hidden="true"></a></span>
-<span id="cb8-157"><a href="#cb8-157" aria-hidden="true"></a>            <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">3</span>] <span class="op">==</span> y_ref)</span>
-<span id="cb8-158"><a href="#cb8-158" aria-hidden="true"></a>            <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">3</span>] <span class="op">==</span> y_ref_2)</span>
-<span id="cb8-159"><a href="#cb8-159" aria-hidden="true"></a></span>
-<span id="cb8-160"><a href="#cb8-160" aria-hidden="true"></a></span>
-<span id="cb8-161"><a href="#cb8-161" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;comp_perm&quot;</span>)</span>
-<span id="cb8-162"><a href="#cb8-162" aria-hidden="true"></a>    x <span class="op">=</span> np.arange(ps.L, dtype<span class="op">=</span>np.int32)</span>
-<span id="cb8-163"><a href="#cb8-163" aria-hidden="true"></a></span>
-<span id="cb8-164"><a href="#cb8-164" aria-hidden="true"></a>    <span class="cf">for</span> r <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb8-165"><a href="#cb8-165" aria-hidden="true"></a>        y <span class="op">=</span> np.zeros_like(x)</span>
-<span id="cb8-166"><a href="#cb8-166" aria-hidden="true"></a>        kernel_args <span class="op">=</span> [np.int32(r), x, y]</span>
-<span id="cb8-167"><a href="#cb8-167" aria-hidden="true"></a></span>
-<span id="cb8-168"><a href="#cb8-168" aria-hidden="true"></a>        results <span class="op">=</span> run_kernel(<span class="st">&quot;test_comp_perm_4&quot;</span>, kernel_file_content, ps.L, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="cb8-169"><a href="#cb8-169" aria-hidden="true"></a>        y_ref <span class="op">=</span> np.array([comp_perm(radix, i<span class="op">*</span>radix <span class="op">+</span> r) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(ps.L)])</span>
-<span id="cb8-170"><a href="#cb8-170" aria-hidden="true"></a></span>
-<span id="cb8-171"><a href="#cb8-171" aria-hidden="true"></a>        <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">2</span>] <span class="op">==</span> y_ref)</span>
-<span id="cb8-172"><a href="#cb8-172" aria-hidden="true"></a></span>
-<span id="cb8-173"><a href="#cb8-173" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;parity&quot;</span>)</span>
-<span id="cb8-174"><a href="#cb8-174" aria-hidden="true"></a>    x <span class="op">=</span> np.arange(ps.N, dtype<span class="op">=</span>np.int32)</span>
-<span id="cb8-175"><a href="#cb8-175" aria-hidden="true"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
-<span id="cb8-176"><a href="#cb8-176" aria-hidden="true"></a>    y_ref <span class="op">=</span> np.array([parity(ps.radix, i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(ps.N)])</span>
-<span id="cb8-177"><a href="#cb8-177" aria-hidden="true"></a>    kernel_args <span class="op">=</span> [x, y]</span>
-<span id="cb8-178"><a href="#cb8-178" aria-hidden="true"></a></span>
-<span id="cb8-179"><a href="#cb8-179" aria-hidden="true"></a>    results <span class="op">=</span> run_kernel(<span class="st">&quot;test_parity_4&quot;</span>, kernel_file_content_64, ps.N, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="cb8-180"><a href="#cb8-180" aria-hidden="true"></a></span>
-<span id="cb8-181"><a href="#cb8-181" aria-hidden="true"></a>    <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">1</span>] <span class="op">==</span> y_ref)</span>
-<span id="cb8-182"><a href="#cb8-182" aria-hidden="true"></a></span>
-<span id="cb8-183"><a href="#cb8-183" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;transpose&quot;</span>)</span>
-<span id="cb8-184"><a href="#cb8-184" aria-hidden="true"></a>    x <span class="op">=</span> np.arange(ps.N, dtype<span class="op">=</span>np.int32)</span>
-<span id="cb8-185"><a href="#cb8-185" aria-hidden="true"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
-<span id="cb8-186"><a href="#cb8-186" aria-hidden="true"></a>    kernel_args <span class="op">=</span> [x, y]</span>
-<span id="cb8-187"><a href="#cb8-187" aria-hidden="true"></a></span>
-<span id="cb8-188"><a href="#cb8-188" aria-hidden="true"></a>    results <span class="op">=</span> run_kernel(<span class="st">&quot;test_transpose_4&quot;</span>, kernel_file_content_64, ps.N, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="cb8-189"><a href="#cb8-189" aria-hidden="true"></a>    y_ref <span class="op">=</span> x.reshape(ps.factors).T.flatten()</span>
-<span id="cb8-190"><a href="#cb8-190" aria-hidden="true"></a></span>
-<span id="cb8-191"><a href="#cb8-191" aria-hidden="true"></a>    <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">1</span>] <span class="op">==</span> y_ref)</span>
-<span id="cb8-192"><a href="#cb8-192" aria-hidden="true"></a></span>
-<span id="cb8-193"><a href="#cb8-193" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;fft4&quot;</span>)</span>
-<span id="cb8-194"><a href="#cb8-194" aria-hidden="true"></a>    x <span class="op">=</span> np.random.normal(size<span class="op">=</span>(ps.N, <span class="dv">4</span>, <span class="dv">2</span>)).astype(np.float32)</span>
-<span id="cb8-195"><a href="#cb8-195" aria-hidden="true"></a></span>
-<span id="cb8-196"><a href="#cb8-196" aria-hidden="true"></a>    <span class="cf">for</span> cycle <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb8-197"><a href="#cb8-197" aria-hidden="true"></a>        y <span class="op">=</span> np.zeros_like(x)</span>
-<span id="cb8-198"><a href="#cb8-198" aria-hidden="true"></a>        kernel_args <span class="op">=</span> [np.int32(cycle), x, y]</span>
-<span id="cb8-199"><a href="#cb8-199" aria-hidden="true"></a>        y_ref <span class="op">=</span> np.fft.fft(np.roll(x[..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[..., <span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>))</span>
-<span id="cb8-200"><a href="#cb8-200" aria-hidden="true"></a></span>
-<span id="cb8-201"><a href="#cb8-201" aria-hidden="true"></a>        results <span class="op">=</span> run_kernel(<span class="st">&quot;test_fft_4&quot;</span>, kernel_file_content_64, ps.N, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="cb8-202"><a href="#cb8-202" aria-hidden="true"></a>        y_Z <span class="op">=</span> np.roll(results[<span class="dv">2</span>][..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>results[<span class="dv">2</span>][..., <span class="dv">1</span>], <span class="op">-</span>cycle, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb8-203"><a href="#cb8-203" aria-hidden="true"></a></span>
-<span id="cb8-204"><a href="#cb8-204" aria-hidden="true"></a>        <span class="cf">assert</span> <span class="bu">abs</span>(y_Z <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-4</span></span>
-<span id="cb8-205"><a href="#cb8-205" aria-hidden="true"></a></span>
-<span id="cb8-206"><a href="#cb8-206" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;fft&quot;</span>)</span>
-<span id="cb8-207"><a href="#cb8-207" aria-hidden="true"></a>    x <span class="op">=</span> np.random.normal(size<span class="op">=</span>(ps.N, <span class="dv">2</span>)).astype(np.float32)</span>
-<span id="cb8-208"><a href="#cb8-208" aria-hidden="true"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
-<span id="cb8-209"><a href="#cb8-209" aria-hidden="true"></a>    kernel_args <span class="op">=</span> [x, y]</span>
-<span id="cb8-210"><a href="#cb8-210" aria-hidden="true"></a></span>
-<span id="cb8-211"><a href="#cb8-211" aria-hidden="true"></a>    results <span class="op">=</span> run_kernel(<span class="ss">f&quot;fft_</span><span class="sc">{ps.N}</span><span class="ss">&quot;</span>, kernel_file_content_64, <span class="dv">1</span>, kernel_args, {})</span>
-<span id="cb8-212"><a href="#cb8-212" aria-hidden="true"></a></span>
-<span id="cb8-213"><a href="#cb8-213" aria-hidden="true"></a>    y_Z <span class="op">=</span> results[<span class="dv">1</span>][..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>results[<span class="dv">1</span>][..., <span class="dv">1</span>]</span>
-<span id="cb8-214"><a href="#cb8-214" aria-hidden="true"></a>    y_ref <span class="op">=</span> np.fft.fft(x[..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[..., <span class="dv">1</span>])</span>
-<span id="cb8-215"><a href="#cb8-215" aria-hidden="true"></a></span>
-<span id="cb8-216"><a href="#cb8-216" aria-hidden="true"></a>    <span class="cf">assert</span> <span class="bu">abs</span>(y_Z <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-3</span></span></code></pre></div>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true"></a>    y_Z <span class="op">=</span> results[<span class="dv">1</span>][..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>results[<span class="dv">1</span>][..., <span class="dv">1</span>]</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true"></a>    y_ref <span class="op">=</span> np.fft.fft(x[..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[..., <span class="dv">1</span>])</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true"></a></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true"></a>    <span class="cf">assert</span> <span class="bu">abs</span>(y_Z <span class="op">-</span> y_ref).<span class="bu">max</span>() <span class="op">&lt;</span> <span class="fl">1e-3</span></span></code></pre></div>
 </div>
 </div>
 <h1 id="fused-multiply-add-codelets">Fused-Multiply-Add codelets</h1>
@@ -967,458 +797,578 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h1 id="code-generator">Code generator</h1>
 <div class="annotated-code">
 <p><span><em>«fftsynth/generator.py»=</em></span></p>
-<div class="sourceCode" id="cb12" data-file="fftsynth/generator.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="im">from</span> .indent <span class="im">import</span> indent</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a><span class="im">from</span> .parity <span class="im">import</span> (ParitySplitting, comp_idx, comp_perm)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a><span class="im">from</span> .twiddle <span class="im">import</span> (make_twiddle)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>twiddles<span class="op">&gt;&gt;</span></span>
+<div class="sourceCode" id="cb12" data-file="fftsynth/generator.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="im">from</span> jinja2 <span class="im">import</span> Environment, FileSystemLoader</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a><span class="im">import</span> numpy</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a><span class="im">from</span> pkg_resources <span class="im">import</span> resource_filename</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true"></a><span class="im">from</span> .parity <span class="im">import</span> ParitySplitting, comp_perm</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true"></a><span class="im">from</span> .twiddle <span class="im">import</span> make_twiddle</span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>transpose<span class="op">&gt;&gt;</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true"></a></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>parity<span class="op">&gt;&gt;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true"></a>template_loader <span class="op">=</span> FileSystemLoader(resource_filename(<span class="st">&quot;fftsynth&quot;</span>, <span class="st">&quot;templates&quot;</span>))</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true"></a>template_environment <span class="op">=</span> Environment(loader<span class="op">=</span>template_loader)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true"></a></span>
 <span id="cb12-11"><a href="#cb12-11" aria-hidden="true"></a></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>index<span class="op">-</span>fn<span class="op">&gt;&gt;</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>preprocessor<span class="op">&gt;&gt;</span></span>
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true"></a></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>fft<span class="op">&gt;&gt;</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true"></a></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true"></a><span class="kw">def</span> write_macros(ps: ParitySplitting, fpga: <span class="bu">bool</span>):</span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true"></a>    <span class="cf">if</span> fpga:</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="st">&quot;#pragma OPENCL EXTENSION cl_intel_channels : enable&quot;</span>)</span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="st">&quot;#include &lt;ihc_apint.h&gt;&quot;</span>)</span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="st">&quot;channel float2 in_channel, out_channel;&quot;</span>)</span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="st">&quot;#define SWAP(type, x, y) do { type temp = x; x = y, y = temp; } while ( false );&quot;</span>)</span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true"></a>    <span class="cf">if</span> ps.radix <span class="op">==</span> <span class="dv">4</span>:</span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="st">&quot;#define DIVR(x) ((x) &gt;&gt; 2)&quot;</span>)</span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="st">&quot;#define MODR(x) ((x) &amp; 3)&quot;</span>)</span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="st">&quot;#define MULR(x) ((x) &lt;&lt; 2)&quot;</span>)</span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true"></a>    <span class="cf">else</span>:</span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="ss">f&quot;#define DIVR(x) ((x) / </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">)&quot;</span>)</span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="ss">f&quot;#define MODR(x) ((x) % </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">)&quot;</span>)</span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="ss">f&quot;#define MULR(x) ((x) * </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">)&quot;</span>)</span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>twiddle<span class="op">-</span>array<span class="op">&gt;&gt;</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true"></a></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>fpga<span class="op">-</span>functions<span class="op">&gt;&gt;</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true"></a></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>transpose<span class="op">-</span>function<span class="op">&gt;&gt;</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true"></a></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true"></a></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>parity<span class="op">-</span>function<span class="op">&gt;&gt;</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true"></a></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true"></a></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>ipow<span class="op">-</span>function<span class="op">&gt;&gt;</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true"></a></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true"></a></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>index<span class="op">-</span>functions<span class="op">&gt;&gt;</span></span>
 <span id="cb12-31"><a href="#cb12-31" aria-hidden="true"></a></span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true"></a><span class="kw">def</span> write_codelet(fpga: <span class="bu">bool</span>):</span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true"></a>    read_input <span class="op">=</span> <span class="bu">str</span>()</span>
-<span id="cb12-34"><a href="#cb12-34" aria-hidden="true"></a>    store_output <span class="op">=</span> <span class="bu">str</span>()</span>
-<span id="cb12-35"><a href="#cb12-35" aria-hidden="true"></a>    <span class="cf">if</span> fpga:</span>
-<span id="cb12-36"><a href="#cb12-36" aria-hidden="true"></a>        read_input <span class="op">=</span> <span class="st">&quot;&quot;&quot;</span></span>
-<span id="cb12-37"><a href="#cb12-37" aria-hidden="true"></a><span class="st">        switch (cycle) {</span></span>
-<span id="cb12-38"><a href="#cb12-38" aria-hidden="true"></a><span class="st">        case 1: SWAP(int, i0, i1); SWAP(int, i2, i3); SWAP(int, i0, i2); break;</span></span>
-<span id="cb12-39"><a href="#cb12-39" aria-hidden="true"></a><span class="st">        case 2: SWAP(int, i0, i2); SWAP(int, i1, i3); break;</span></span>
-<span id="cb12-40"><a href="#cb12-40" aria-hidden="true"></a><span class="st">        case 3: SWAP(int, i0, i1); SWAP(int, i1, i3); SWAP(int, i1, i2); break;</span></span>
-<span id="cb12-41"><a href="#cb12-41" aria-hidden="true"></a><span class="st">    }</span></span>
-<span id="cb12-42"><a href="#cb12-42" aria-hidden="true"></a><span class="st">    t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3];</span></span>
-<span id="cb12-43"><a href="#cb12-43" aria-hidden="true"></a><span class="st">    switch (cycle) {</span></span>
-<span id="cb12-44"><a href="#cb12-44" aria-hidden="true"></a><span class="st">        case 1: SWAP(float2, t0, t1); SWAP(float2, t1, t2); SWAP(float2, t2, t3); break;</span></span>
-<span id="cb12-45"><a href="#cb12-45" aria-hidden="true"></a><span class="st">        case 2: SWAP(float2, t0, t2); SWAP(float2, t1, t3); break;</span></span>
-<span id="cb12-46"><a href="#cb12-46" aria-hidden="true"></a><span class="st">        case 3: SWAP(float2, t2, t3); SWAP(float2, t0, t1); SWAP(float2, t0, t2); break;</span></span>
-<span id="cb12-47"><a href="#cb12-47" aria-hidden="true"></a><span class="st">    }</span></span>
-<span id="cb12-48"><a href="#cb12-48" aria-hidden="true"></a><span class="st">        &quot;&quot;&quot;</span></span>
-<span id="cb12-49"><a href="#cb12-49" aria-hidden="true"></a>        store_output <span class="op">=</span> <span class="st">&quot;&quot;&quot;</span></span>
-<span id="cb12-50"><a href="#cb12-50" aria-hidden="true"></a><span class="st">        switch (cycle) {</span></span>
-<span id="cb12-51"><a href="#cb12-51" aria-hidden="true"></a><span class="st">        case 1: SWAP(float2, t2, t3); SWAP(float2, t1, t2); SWAP(float2, t0, t1); break;</span></span>
-<span id="cb12-52"><a href="#cb12-52" aria-hidden="true"></a><span class="st">        case 2: SWAP(float2, t1, t3); SWAP(float2, t0, t2); break;</span></span>
-<span id="cb12-53"><a href="#cb12-53" aria-hidden="true"></a><span class="st">        case 3: SWAP(float2, t0, t2); SWAP(float2, t0, t1); SWAP(float2, t2, t3); break;</span></span>
-<span id="cb12-54"><a href="#cb12-54" aria-hidden="true"></a><span class="st">    }</span></span>
-<span id="cb12-55"><a href="#cb12-55" aria-hidden="true"></a><span class="st">    s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;</span></span>
-<span id="cb12-56"><a href="#cb12-56" aria-hidden="true"></a><span class="st">        &quot;&quot;&quot;</span></span>
-<span id="cb12-57"><a href="#cb12-57" aria-hidden="true"></a>    <span class="cf">else</span>:</span>
-<span id="cb12-58"><a href="#cb12-58" aria-hidden="true"></a>        read_input <span class="op">=</span> <span class="st">&quot;&quot;&quot;</span></span>
-<span id="cb12-59"><a href="#cb12-59" aria-hidden="true"></a><span class="st">        switch (cycle) {</span></span>
-<span id="cb12-60"><a href="#cb12-60" aria-hidden="true"></a><span class="st">        case 0: t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3]; break;</span></span>
-<span id="cb12-61"><a href="#cb12-61" aria-hidden="true"></a><span class="st">        case 1: t0 = s1[i0]; t1 = s2[i1]; t2 = s3[i2]; t3 = s0[i3]; break;</span></span>
-<span id="cb12-62"><a href="#cb12-62" aria-hidden="true"></a><span class="st">        case 2: t0 = s2[i0]; t1 = s3[i1]; t2 = s0[i2]; t3 = s1[i3]; break;</span></span>
-<span id="cb12-63"><a href="#cb12-63" aria-hidden="true"></a><span class="st">        case 3: t0 = s3[i0]; t1 = s0[i1]; t2 = s1[i2]; t3 = s2[i3]; break;</span></span>
-<span id="cb12-64"><a href="#cb12-64" aria-hidden="true"></a><span class="st">    }</span></span>
-<span id="cb12-65"><a href="#cb12-65" aria-hidden="true"></a><span class="st">        &quot;&quot;&quot;</span></span>
-<span id="cb12-66"><a href="#cb12-66" aria-hidden="true"></a>        store_output <span class="op">=</span> <span class="st">&quot;&quot;&quot;</span></span>
-<span id="cb12-67"><a href="#cb12-67" aria-hidden="true"></a><span class="st">        switch (cycle) {</span></span>
-<span id="cb12-68"><a href="#cb12-68" aria-hidden="true"></a><span class="st">        case 0: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; break;</span></span>
-<span id="cb12-69"><a href="#cb12-69" aria-hidden="true"></a><span class="st">        case 1: s1[i0] = t0; s2[i1] = t1; s3[i2] = t2; s0[i3] = t3; break;</span></span>
-<span id="cb12-70"><a href="#cb12-70" aria-hidden="true"></a><span class="st">        case 2: s2[i0] = t0; s3[i1] = t1; s0[i2] = t2; s1[i3] = t3; break;</span></span>
-<span id="cb12-71"><a href="#cb12-71" aria-hidden="true"></a><span class="st">        case 3: s3[i0] = t0; s0[i1] = t1; s1[i2] = t2; s2[i3] = t3; break;</span></span>
-<span id="cb12-72"><a href="#cb12-72" aria-hidden="true"></a><span class="st">    }</span></span>
-<span id="cb12-73"><a href="#cb12-73" aria-hidden="true"></a><span class="st">        &quot;&quot;&quot;</span></span>
-<span id="cb12-74"><a href="#cb12-74" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;&quot;&quot;</span></span>
-<span id="cb12-75"><a href="#cb12-75" aria-hidden="true"></a><span class="st">void fft_4(</span></span>
-<span id="cb12-76"><a href="#cb12-76" aria-hidden="true"></a><span class="st">    float2 * restrict s0, float2 * restrict s1,</span></span>
-<span id="cb12-77"><a href="#cb12-77" aria-hidden="true"></a><span class="st">    float2 * restrict s2, float2 * restrict s3,</span></span>
-<span id="cb12-78"><a href="#cb12-78" aria-hidden="true"></a><span class="st">    int cycle, int i0, int i1, int i2, int i3, int iw)</span></span>
-<span id="cb12-79"><a href="#cb12-79" aria-hidden="true"></a><span class="st">{</span></span>
-<span id="cb12-80"><a href="#cb12-80" aria-hidden="true"></a><span class="st">    float2 t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;</span></span>
-<span id="cb12-81"><a href="#cb12-81" aria-hidden="true"></a><span class="st">    __constant float2 *w = W[iw];</span></span>
-<span id="cb12-82"><a href="#cb12-82" aria-hidden="true"></a><span class="st">    &quot;&quot;&quot;</span>)</span>
-<span id="cb12-83"><a href="#cb12-83" aria-hidden="true"></a>    <span class="bu">print</span>(read_input)</span>
-<span id="cb12-84"><a href="#cb12-84" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;&quot;&quot;</span></span>
-<span id="cb12-85"><a href="#cb12-85" aria-hidden="true"></a><span class="st">    ws0 = t0;</span></span>
-<span id="cb12-86"><a href="#cb12-86" aria-hidden="true"></a><span class="st">    ws1 = (float2) (w[0].x * t1.x - w[0].y * t1.y,</span></span>
-<span id="cb12-87"><a href="#cb12-87" aria-hidden="true"></a><span class="st">                    w[0].x * t1.y + w[0].y * t1.x);</span></span>
-<span id="cb12-88"><a href="#cb12-88" aria-hidden="true"></a><span class="st">    ws2 = (float2) (w[1].x * t2.x - w[1].y * t2.y,</span></span>
-<span id="cb12-89"><a href="#cb12-89" aria-hidden="true"></a><span class="st">                    w[1].x * t2.y + w[1].y * t2.x);</span></span>
-<span id="cb12-90"><a href="#cb12-90" aria-hidden="true"></a><span class="st">    ws3 = (float2) (w[2].x * t3.x - w[2].y * t3.y,</span></span>
-<span id="cb12-91"><a href="#cb12-91" aria-hidden="true"></a><span class="st">                    w[2].x * t3.y + w[2].y * t3.x);</span></span>
-<span id="cb12-92"><a href="#cb12-92" aria-hidden="true"></a></span>
-<span id="cb12-93"><a href="#cb12-93" aria-hidden="true"></a><span class="st">    a = ws0 + ws2;</span></span>
-<span id="cb12-94"><a href="#cb12-94" aria-hidden="true"></a><span class="st">    b = ws1 + ws3;</span></span>
-<span id="cb12-95"><a href="#cb12-95" aria-hidden="true"></a><span class="st">    c = ws0 - ws2;</span></span>
-<span id="cb12-96"><a href="#cb12-96" aria-hidden="true"></a><span class="st">    d = ws1 - ws3;</span></span>
-<span id="cb12-97"><a href="#cb12-97" aria-hidden="true"></a><span class="st">    t0 = a + b;</span></span>
-<span id="cb12-98"><a href="#cb12-98" aria-hidden="true"></a><span class="st">    t1 = (float2) (c.x + d.y, c.y - d.x);</span></span>
-<span id="cb12-99"><a href="#cb12-99" aria-hidden="true"></a><span class="st">    t2 = a - b;</span></span>
-<span id="cb12-100"><a href="#cb12-100" aria-hidden="true"></a><span class="st">    t3 = (float2) (c.x - d.y, c.y + d.x);&quot;&quot;&quot;</span>)</span>
-<span id="cb12-101"><a href="#cb12-101" aria-hidden="true"></a>    <span class="bu">print</span>(store_output)</span>
-<span id="cb12-102"><a href="#cb12-102" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;}&quot;</span>)</span>
-<span id="cb12-103"><a href="#cb12-103" aria-hidden="true"></a></span>
-<span id="cb12-104"><a href="#cb12-104" aria-hidden="true"></a></span>
-<span id="cb12-105"><a href="#cb12-105" aria-hidden="true"></a><span class="kw">def</span> write_fft(ps: ParitySplitting, fpga: <span class="bu">bool</span>):</span>
-<span id="cb12-106"><a href="#cb12-106" aria-hidden="true"></a>    write_macros(ps, fpga)</span>
-<span id="cb12-107"><a href="#cb12-107" aria-hidden="true"></a>    <span class="cf">if</span> fpga:</span>
-<span id="cb12-108"><a href="#cb12-108" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="st">&quot;&quot;&quot;</span></span>
-<span id="cb12-109"><a href="#cb12-109" aria-hidden="true"></a><span class="st">__kernel __attribute__((max_global_work_dim(0)))</span></span>
-<span id="cb12-110"><a href="#cb12-110" aria-hidden="true"></a><span class="st">void source(__global const volatile float2 * in, unsigned count)</span></span>
-<span id="cb12-111"><a href="#cb12-111" aria-hidden="true"></a><span class="st">{</span></span>
-<span id="cb12-112"><a href="#cb12-112" aria-hidden="true"></a><span class="st">    #pragma ii 1</span></span>
-<span id="cb12-113"><a href="#cb12-113" aria-hidden="true"></a><span class="st">    for ( unsigned i = 0; i &lt; count; i++ )</span></span>
-<span id="cb12-114"><a href="#cb12-114" aria-hidden="true"></a><span class="st">    {</span></span>
-<span id="cb12-115"><a href="#cb12-115" aria-hidden="true"></a><span class="st">        write_channel_intel(in_channel, in[i]);</span></span>
-<span id="cb12-116"><a href="#cb12-116" aria-hidden="true"></a><span class="st">    }</span></span>
-<span id="cb12-117"><a href="#cb12-117" aria-hidden="true"></a><span class="st">}</span></span>
-<span id="cb12-118"><a href="#cb12-118" aria-hidden="true"></a></span>
-<span id="cb12-119"><a href="#cb12-119" aria-hidden="true"></a><span class="st">__kernel __attribute__((max_global_work_dim(0)))</span></span>
-<span id="cb12-120"><a href="#cb12-120" aria-hidden="true"></a><span class="st">void sink(__global float2 *out, unsigned count)</span></span>
-<span id="cb12-121"><a href="#cb12-121" aria-hidden="true"></a><span class="st">{</span></span>
-<span id="cb12-122"><a href="#cb12-122" aria-hidden="true"></a><span class="st">    #pragma ii 1</span></span>
-<span id="cb12-123"><a href="#cb12-123" aria-hidden="true"></a><span class="st">    for ( unsigned i = 0; i &lt; count; i++ )</span></span>
-<span id="cb12-124"><a href="#cb12-124" aria-hidden="true"></a><span class="st">    {</span></span>
-<span id="cb12-125"><a href="#cb12-125" aria-hidden="true"></a><span class="st">        out[i] = read_channel_intel(out_channel);</span></span>
-<span id="cb12-126"><a href="#cb12-126" aria-hidden="true"></a><span class="st">    }</span></span>
-<span id="cb12-127"><a href="#cb12-127" aria-hidden="true"></a><span class="st">}</span></span>
-<span id="cb12-128"><a href="#cb12-128" aria-hidden="true"></a><span class="st">        &quot;&quot;&quot;</span>)</span>
-<span id="cb12-129"><a href="#cb12-129" aria-hidden="true"></a>    write_twiddles(ps)</span>
-<span id="cb12-130"><a href="#cb12-130" aria-hidden="true"></a>    write_codelet(fpga)</span>
-<span id="cb12-131"><a href="#cb12-131" aria-hidden="true"></a>    <span class="bu">print</span>(gen_parity_fn(ps))</span>
-<span id="cb12-132"><a href="#cb12-132" aria-hidden="true"></a>    <span class="bu">print</span>(gen_transpose_fn(ps))</span>
-<span id="cb12-133"><a href="#cb12-133" aria-hidden="true"></a>    write_ipow(ps)</span>
-<span id="cb12-134"><a href="#cb12-134" aria-hidden="true"></a>    write_comp_perm(ps)</span>
-<span id="cb12-135"><a href="#cb12-135" aria-hidden="true"></a>    write_comp_idx(ps)</span>
-<span id="cb12-136"><a href="#cb12-136" aria-hidden="true"></a>    write_outer_loop_fn(ps, fpga)</span>
-<span id="cb12-137"><a href="#cb12-137" aria-hidden="true"></a>    write_fft_fn(ps, fpga)</span>
-<span id="cb12-138"><a href="#cb12-138" aria-hidden="true"></a></span>
-<span id="cb12-139"><a href="#cb12-139" aria-hidden="true"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
-<span id="cb12-140"><a href="#cb12-140" aria-hidden="true"></a>    <span class="im">import</span> sys</span>
-<span id="cb12-141"><a href="#cb12-141" aria-hidden="true"></a>    <span class="im">import</span> argparse</span>
-<span id="cb12-142"><a href="#cb12-142" aria-hidden="true"></a>    parser <span class="op">=</span> argparse.ArgumentParser(description<span class="op">=</span><span class="st">&quot;Generate an OpenCL FFT kernel&quot;</span>)</span>
-<span id="cb12-143"><a href="#cb12-143" aria-hidden="true"></a>    parser.add_argument(<span class="st">&quot;--radix&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">int</span>, default<span class="op">=</span><span class="dv">4</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;FFT radix&quot;</span>)</span>
-<span id="cb12-144"><a href="#cb12-144" aria-hidden="true"></a>    parser.add_argument(<span class="st">&quot;--depth&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">int</span>, default<span class="op">=</span><span class="dv">3</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;FFT depth&quot;</span>)</span>
-<span id="cb12-145"><a href="#cb12-145" aria-hidden="true"></a>    parser.add_argument(<span class="st">&quot;--fpga&quot;</span>, action<span class="op">=</span><span class="st">&quot;store_true&quot;</span>)</span>
-<span id="cb12-146"><a href="#cb12-146" aria-hidden="true"></a>    args <span class="op">=</span> parser.parse_args()</span>
-<span id="cb12-147"><a href="#cb12-147" aria-hidden="true"></a>    <span class="bu">print</span>( <span class="st">&quot;/* FFT&quot;</span>)</span>
-<span id="cb12-148"><a href="#cb12-148" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="ss">f&quot; * command: python -m fftsynth.generate </span><span class="sc">{</span><span class="st">&#39; &#39;</span><span class="sc">.</span>join(sys.argv[<span class="dv">1</span>:])<span class="sc">}</span><span class="ss">&quot;</span>)</span>
-<span id="cb12-149"><a href="#cb12-149" aria-hidden="true"></a>    <span class="bu">print</span>( <span class="st">&quot; */&quot;</span>)</span>
-<span id="cb12-150"><a href="#cb12-150" aria-hidden="true"></a>    N <span class="op">=</span> args.radix<span class="op">**</span>args.depth</span>
-<span id="cb12-151"><a href="#cb12-151" aria-hidden="true"></a>    ps <span class="op">=</span> ParitySplitting(N, args.radix)</span>
-<span id="cb12-152"><a href="#cb12-152" aria-hidden="true"></a>    write_fft(ps, args.fpga)</span></code></pre></div>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true"></a></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>fft<span class="op">-</span>functions<span class="op">&gt;&gt;</span></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true"></a></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true"></a></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true"></a><span class="op">&lt;&lt;</span>generate<span class="op">-</span>codelets<span class="op">&gt;&gt;</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true"></a></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true"></a></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true"></a><span class="kw">def</span> generate_fft(parity_splitting: ParitySplitting, fpga: <span class="bu">bool</span>):</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true"></a><span class="co">    Generate and print the complete OpenCL FFT.</span></span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true"></a>    <span class="bu">print</span>(generate_preprocessor(parity_splitting, fpga))</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true"></a>    <span class="bu">print</span>(generate_twiddle_array(parity_splitting))</span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true"></a>    <span class="cf">if</span> fpga:</span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true"></a>        <span class="bu">print</span>(generate_fpga_functions())</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true"></a>    <span class="bu">print</span>(generate_parity_function(parity_splitting))</span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true"></a>    <span class="bu">print</span>(generate_transpose_function(parity_splitting))</span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true"></a>    <span class="bu">print</span>(generate_ipow_function(parity_splitting))</span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true"></a>    <span class="bu">print</span>(generate_index_functions(parity_splitting))</span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true"></a>    <span class="bu">print</span>(generate_codelets(fpga))</span>
+<span id="cb12-59"><a href="#cb12-59" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb12-60"><a href="#cb12-60" aria-hidden="true"></a>    <span class="bu">print</span>(generate_fft_functions(parity_splitting, fpga))</span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true"></a></span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true"></a></span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb12-64"><a href="#cb12-64" aria-hidden="true"></a>    <span class="im">import</span> sys</span>
+<span id="cb12-65"><a href="#cb12-65" aria-hidden="true"></a>    <span class="im">import</span> argparse</span>
+<span id="cb12-66"><a href="#cb12-66" aria-hidden="true"></a>    parser <span class="op">=</span> argparse.ArgumentParser(description<span class="op">=</span><span class="st">&quot;Generate an OpenCL FFT kernel&quot;</span>)</span>
+<span id="cb12-67"><a href="#cb12-67" aria-hidden="true"></a>    parser.add_argument(<span class="st">&quot;--radix&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">int</span>, default<span class="op">=</span><span class="dv">4</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;FFT radix&quot;</span>)</span>
+<span id="cb12-68"><a href="#cb12-68" aria-hidden="true"></a>    parser.add_argument(<span class="st">&quot;--depth&quot;</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">int</span>, default<span class="op">=</span><span class="dv">3</span>, <span class="bu">help</span><span class="op">=</span><span class="st">&quot;FFT depth&quot;</span>)</span>
+<span id="cb12-69"><a href="#cb12-69" aria-hidden="true"></a>    parser.add_argument(<span class="st">&quot;--fpga&quot;</span>, action<span class="op">=</span><span class="st">&quot;store_true&quot;</span>)</span>
+<span id="cb12-70"><a href="#cb12-70" aria-hidden="true"></a>    args <span class="op">=</span> parser.parse_args()</span>
+<span id="cb12-71"><a href="#cb12-71" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;/* FFT&quot;</span>)</span>
+<span id="cb12-72"><a href="#cb12-72" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="ss">f&quot; * command: python -m fftsynth.generator </span><span class="sc">{</span><span class="st">&#39; &#39;</span><span class="sc">.</span>join(sys.argv[<span class="dv">1</span>:])<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb12-73"><a href="#cb12-73" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot; */&quot;</span>)</span>
+<span id="cb12-74"><a href="#cb12-74" aria-hidden="true"></a>    N <span class="op">=</span> args.radix<span class="op">**</span>args.depth</span>
+<span id="cb12-75"><a href="#cb12-75" aria-hidden="true"></a>    ps <span class="op">=</span> ParitySplitting(N, args.radix)</span>
+<span id="cb12-76"><a href="#cb12-76" aria-hidden="true"></a>    generate_fft(ps, args.fpga)</span></code></pre></div>
+</div>
+<h3 id="codelets">Codelets</h3>
+<p>This is the parameterized OpenCL code used to compute an FFT-4.</p>
+<div class="annotated-code">
+<p><span><em>«fftsynth/templates/codelets.cl»=</em></span></p>
+<div class="sourceCode" id="cb13" data-file="fftsynth/templates/codelets.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="dt">void</span> fft_4(<span class="dt">float2</span> * <span class="dt">restrict</span> s0, <span class="dt">float2</span> * <span class="dt">restrict</span> s1, <span class="dt">float2</span> * <span class="dt">restrict</span> s2, <span class="dt">float2</span> * <span class="dt">restrict</span> s3,<span class="dt">int</span> cycle, <span class="dt">int</span> i0, <span class="dt">int</span> i1, <span class="dt">int</span> i2, <span class="dt">int</span> i3, <span class="dt">int</span> iw)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true"></a>{</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true"></a>    <span class="dt">float2</span> t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true"></a>    <span class="kw">__constant</span> <span class="dt">float2</span> *w = W[iw];</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">int</span>, i0, i1); SWAP(<span class="dt">int</span>, i2, i3); SWAP(<span class="dt">int</span>, i0, i2); <span class="kw">break</span>;</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP(<span class="dt">int</span>, i0, i2); SWAP(<span class="dt">int</span>, i1, i3); <span class="kw">break</span>;</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP(<span class="dt">int</span>, i0, i1); SWAP(<span class="dt">int</span>, i1, i3); SWAP(<span class="dt">int</span>, i1, i2); <span class="kw">break</span>;</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true"></a>    }</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true"></a>    t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3];</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t0, t1); SWAP(<span class="dt">float2</span>, t1, t2); SWAP(<span class="dt">float2</span>, t2, t3); <span class="kw">break</span>;</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP(<span class="dt">float2</span>, t0, t2); SWAP(<span class="dt">float2</span>, t1, t3); <span class="kw">break</span>;</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP(<span class="dt">float2</span>, t2, t3); SWAP(<span class="dt">float2</span>, t0, t1); SWAP(<span class="dt">float2</span>, t0, t2); <span class="kw">break</span>;</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true"></a>    }</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3]; <span class="kw">break</span>;</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: t0 = s1[i0]; t1 = s2[i1]; t2 = s3[i2]; t3 = s0[i3]; <span class="kw">break</span>;</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: t0 = s2[i0]; t1 = s3[i1]; t2 = s0[i2]; t3 = s1[i3]; <span class="kw">break</span>;</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: t0 = s3[i0]; t1 = s0[i1]; t2 = s1[i2]; t3 = s2[i3]; <span class="kw">break</span>;</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true"></a>    }</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true"></a>    {% endif %}</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true"></a></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true"></a>    ws0 = t0;</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true"></a>    ws1 = (<span class="dt">float2</span>) (w[<span class="dv">0</span>].x * t1.x - w[<span class="dv">0</span>].y * t1.y,</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true"></a>                    w[<span class="dv">0</span>].x * t1.y + w[<span class="dv">0</span>].y * t1.x);</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true"></a>    ws2 = (<span class="dt">float2</span>) (w[<span class="dv">1</span>].x * t2.x - w[<span class="dv">1</span>].y * t2.y,</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true"></a>                    w[<span class="dv">1</span>].x * t2.y + w[<span class="dv">1</span>].y * t2.x);</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true"></a>    ws3 = (<span class="dt">float2</span>) (w[<span class="dv">2</span>].x * t3.x - w[<span class="dv">2</span>].y * t3.y,</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true"></a>                    w[<span class="dv">2</span>].x * t3.y + w[<span class="dv">2</span>].y * t3.x);</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true"></a></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true"></a>    a = ws0 + ws2;</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true"></a>    b = ws1 + ws3;</span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true"></a>    c = ws0 - ws2;</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true"></a>    d = ws1 - ws3;</span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true"></a>    t0 = a + b;</span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true"></a>    t1 = (<span class="dt">float2</span>) (c.x + d.y, c.y - d.x);</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true"></a>    t2 = a - b;</span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true"></a>    t3 = (<span class="dt">float2</span>) (c.x - d.y, c.y + d.x);</span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true"></a></span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t2, t3); SWAP(<span class="dt">float2</span>, t1, t2); SWAP(<span class="dt">float2</span>, t0, t1); <span class="kw">break</span>;</span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP(<span class="dt">float2</span>, t1, t3); SWAP(<span class="dt">float2</span>, t0, t2); <span class="kw">break</span>;</span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP(<span class="dt">float2</span>, t0, t2); SWAP(<span class="dt">float2</span>, t0, t1); SWAP(<span class="dt">float2</span>, t2, t3); <span class="kw">break</span>;</span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true"></a>    }</span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true"></a>    s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;</span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: s1[i0] = t0; s2[i1] = t1; s3[i2] = t2; s0[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: s2[i0] = t0; s3[i1] = t1; s0[i2] = t2; s1[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: s3[i0] = t0; s0[i1] = t1; s1[i2] = t2; s2[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true"></a>    }</span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true"></a>    {% endif %}</span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true"></a>}</span></code></pre></div>
+</div>
+<p>What follows is the Python function used to generate the OpenCL code.</p>
+<div class="annotated-code">
+<p><span><em>«generate-codelets»=</em></span></p>
+<div class="sourceCode" id="generate-codelets"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-codelets-1"><a href="#generate-codelets-1" aria-hidden="true"></a><span class="kw">def</span> generate_codelets(fpga: <span class="bu">bool</span>):</span>
+<span id="generate-codelets-2"><a href="#generate-codelets-2" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="generate-codelets-3"><a href="#generate-codelets-3" aria-hidden="true"></a><span class="co">    Generate OpenCL codelets for FFT.</span></span>
+<span id="generate-codelets-4"><a href="#generate-codelets-4" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="generate-codelets-5"><a href="#generate-codelets-5" aria-hidden="true"></a>    template <span class="op">=</span> template_environment.get_template(<span class="st">&quot;codelets.cl&quot;</span>)</span>
+<span id="generate-codelets-6"><a href="#generate-codelets-6" aria-hidden="true"></a></span>
+<span id="generate-codelets-7"><a href="#generate-codelets-7" aria-hidden="true"></a>    <span class="cf">return</span> template.render(fpga<span class="op">=</span>fpga)</span></code></pre></div>
+</div>
+<h3 id="preprocessor">Preprocessor</h3>
+<p>This is the parameterized OpenCL code used to write the preprocessor directives.</p>
+<div class="annotated-code">
+<p><span><em>«fftsynth/templates/preprocessor.cl»=</em></span></p>
+<div class="sourceCode" id="cb14" data-file="fftsynth/templates/preprocessor.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a>{% <span class="kw">if</span> fpga -%}</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a><span class="ot">#pragma OPENCL EXTENSION cl_intel_channels : enable</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a><span class="ot">#include &lt;ihc_apint.h&gt;</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a>channel <span class="dt">float2</span> in_channel, out_channel;</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a><span class="ot">#define SWAP(type, x, y) do { type temp = x; x = y, y = temp; } while ( false );</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true"></a>{% endif -%}</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">4</span> %}</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true"></a><span class="ot">#define DIVR(x) ((x) &gt;&gt; 2)</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true"></a><span class="ot">#define MODR(x) ((x) &amp; 3)</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true"></a><span class="ot">#define MULR(x) ((x) &lt;&lt; 2)</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true"></a>{% <span class="kw">else</span> %}</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true"></a><span class="ot">#define DIVR(x) ((x) / {{ radix }})</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true"></a><span class="ot">#define MODR(x) ((x) % {{ radix }})</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true"></a><span class="ot">#define MULR(x) ((x) * {{ radix }})</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
+</div>
+<p>What follows is the Python function used to generate the OpenCL code.</p>
+<div class="annotated-code">
+<p><span><em>«generate-preprocessor»=</em></span></p>
+<div class="sourceCode" id="generate-preprocessor"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-preprocessor-1"><a href="#generate-preprocessor-1" aria-hidden="true"></a><span class="kw">def</span> generate_preprocessor(parity_splitting: ParitySplitting, fpga: <span class="bu">bool</span>):</span>
+<span id="generate-preprocessor-2"><a href="#generate-preprocessor-2" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="generate-preprocessor-3"><a href="#generate-preprocessor-3" aria-hidden="true"></a><span class="co">    Generate the preprocessor directives necessary for the FFT.</span></span>
+<span id="generate-preprocessor-4"><a href="#generate-preprocessor-4" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="generate-preprocessor-5"><a href="#generate-preprocessor-5" aria-hidden="true"></a>    template <span class="op">=</span> template_environment.get_template(<span class="st">&quot;preprocessor.cl&quot;</span>)</span>
+<span id="generate-preprocessor-6"><a href="#generate-preprocessor-6" aria-hidden="true"></a></span>
+<span id="generate-preprocessor-7"><a href="#generate-preprocessor-7" aria-hidden="true"></a>    <span class="cf">return</span> template.render(radix<span class="op">=</span>parity_splitting.radix, fpga<span class="op">=</span>fpga)</span></code></pre></div>
+</div>
+<h3 id="fpga-specific-code">FPGA specific code</h3>
+<p>This is the parameterized OpenCL code used to write the FPGA specific functions.</p>
+<div class="annotated-code">
+<p><span><em>«fftsynth/templates/fpga.cl»=</em></span></p>
+<div class="sourceCode" id="cb15" data-file="fftsynth/templates/fpga.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="kw">__kernel</span> __attribute__((max_global_work_dim(<span class="dv">0</span>)))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true"></a><span class="dt">void</span> source(<span class="kw">__global</span> <span class="dt">const</span> <span class="dt">volatile</span> <span class="dt">float2</span> * in, <span class="dt">unsigned</span> count)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true"></a>{</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true"></a>    <span class="ot">#pragma ii 1</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true"></a>    <span class="kw">for</span> ( <span class="dt">unsigned</span> i = <span class="dv">0</span>; i &lt; count; i++ )</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true"></a>    {</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true"></a>        write_channel_intel(in_channel, in[i]);</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true"></a>    }</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true"></a>}</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true"></a><span class="kw">__kernel</span> __attribute__((max_global_work_dim(<span class="dv">0</span>)))</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true"></a><span class="dt">void</span> sink(<span class="kw">__global</span> <span class="dt">float2</span> *out, <span class="dt">unsigned</span> count)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true"></a>{</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true"></a>    <span class="ot">#pragma ii 1</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true"></a>    <span class="kw">for</span> ( <span class="dt">unsigned</span> i = <span class="dv">0</span>; i &lt; count; i++ )</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true"></a>    {</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true"></a>        out[i] = read_channel_intel(out_channel);</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true"></a>    }</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true"></a>}</span></code></pre></div>
+</div>
+<p>What follows is the Python function used to generate the OpenCL code.</p>
+<div class="annotated-code">
+<p><span><em>«generate-fpga-functions»=</em></span></p>
+<div class="sourceCode" id="generate-fpga-functions"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-fpga-functions-1"><a href="#generate-fpga-functions-1" aria-hidden="true"></a><span class="kw">def</span> generate_fpga_functions():</span>
+<span id="generate-fpga-functions-2"><a href="#generate-fpga-functions-2" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="generate-fpga-functions-3"><a href="#generate-fpga-functions-3" aria-hidden="true"></a><span class="co">    Generate OpenCL code for FPGA functions.</span></span>
+<span id="generate-fpga-functions-4"><a href="#generate-fpga-functions-4" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="generate-fpga-functions-5"><a href="#generate-fpga-functions-5" aria-hidden="true"></a>    template <span class="op">=</span> template_environment.get_template(<span class="st">&quot;fpga.cl&quot;</span>)</span>
+<span id="generate-fpga-functions-6"><a href="#generate-fpga-functions-6" aria-hidden="true"></a></span>
+<span id="generate-fpga-functions-7"><a href="#generate-fpga-functions-7" aria-hidden="true"></a>    <span class="cf">return</span> template.render()</span></code></pre></div>
 </div>
 <h2 id="testing-2">Testing</h2>
 <p>To test we need to define small <code>__kernel</code> functions.</p>
 <div class="annotated-code">
 <p><span><em>«test/test_generator.py»=</em></span></p>
-<div class="sourceCode" id="cb13" data-file="test/test_generator.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="im">import</span> pytest</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true"></a><span class="im">from</span> kernel_tuner <span class="im">import</span> run_kernel  <span class="co"># type: ignore</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true"></a><span class="im">from</span> fftsynth.parity <span class="im">import</span> ParitySplitting, parity</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true"></a><span class="im">from</span> fftsynth.generator <span class="im">import</span> gen_parity_fn, gen_transpose_fn</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true"></a></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true"></a>cases <span class="op">=</span> [</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true"></a>    ParitySplitting(<span class="dv">64</span>, <span class="dv">4</span>),</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true"></a>    ParitySplitting(<span class="dv">81</span>, <span class="dv">3</span>),</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true"></a>    ParitySplitting(<span class="dv">125</span>, <span class="dv">5</span>)</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true"></a>]</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true"></a></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true"></a><span class="op">&lt;&lt;</span>test<span class="op">-</span>parity<span class="op">&gt;&gt;</span></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true"></a></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true"></a><span class="op">&lt;&lt;</span>test<span class="op">-</span>transpose<span class="op">&gt;&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb16" data-file="test/test_generator.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="im">import</span> pytest</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true"></a><span class="im">from</span> kernel_tuner <span class="im">import</span> run_kernel  <span class="co"># type: ignore</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true"></a><span class="im">from</span> fftsynth.parity <span class="im">import</span> ParitySplitting, parity</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true"></a><span class="im">from</span> fftsynth.generator <span class="im">import</span> generate_preprocessor, generate_transpose_function, generate_parity_function</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true"></a>cases <span class="op">=</span> [</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true"></a>    ParitySplitting(<span class="dv">64</span>, <span class="dv">4</span>),</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true"></a>    ParitySplitting(<span class="dv">81</span>, <span class="dv">3</span>),</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true"></a>    ParitySplitting(<span class="dv">125</span>, <span class="dv">5</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true"></a>]</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true"></a></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true"></a><span class="op">&lt;&lt;</span>test<span class="op">-</span>parity<span class="op">&gt;&gt;</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true"></a><span class="op">&lt;&lt;</span>test<span class="op">-</span>transpose<span class="op">&gt;&gt;</span></span></code></pre></div>
 </div>
 <h2 id="bit-math">Bit math</h2>
 <p>The <code>transpose_{r}</code> function should reverse the digits in a base-n representation of the integer.</p>
 <div class="annotated-code">
-<p><span><em>«generate-transpose»=</em></span></p>
-<div class="sourceCode" id="generate-transpose"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-transpose-1"><a href="#generate-transpose-1" aria-hidden="true"></a><span class="kw">def</span> gen_transpose_fn(ps: ParitySplitting):</span>
-<span id="generate-transpose-2"><a href="#generate-transpose-2" aria-hidden="true"></a>    <span class="cf">return</span> <span class="ss">f&quot;&quot;&quot;</span></span>
-<span id="generate-transpose-3"><a href="#generate-transpose-3" aria-hidden="true"></a><span class="ss">inline int transpose_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(int j) </span><span class="ch">{{</span></span>
-<span id="generate-transpose-4"><a href="#generate-transpose-4" aria-hidden="true"></a><span class="ss">    int x = 0;</span></span>
-<span id="generate-transpose-5"><a href="#generate-transpose-5" aria-hidden="true"></a><span class="ss">    for (int l = 0; l &lt; </span><span class="sc">{ps.</span>depth<span class="sc">}</span><span class="ss">; ++l) </span><span class="ch">{{</span></span>
-<span id="generate-transpose-6"><a href="#generate-transpose-6" aria-hidden="true"></a><span class="ss">        x = MULR(x) + MODR(j);</span></span>
-<span id="generate-transpose-7"><a href="#generate-transpose-7" aria-hidden="true"></a><span class="ss">        j = DIVR(j);</span></span>
-<span id="generate-transpose-8"><a href="#generate-transpose-8" aria-hidden="true"></a><span class="ss">    }}</span></span>
-<span id="generate-transpose-9"><a href="#generate-transpose-9" aria-hidden="true"></a><span class="ss">    return x;</span></span>
-<span id="generate-transpose-10"><a href="#generate-transpose-10" aria-hidden="true"></a><span class="ss">}}&quot;&quot;&quot;</span></span></code></pre></div>
+<p><span><em>«fftsynth/templates/transpose.cl»=</em></span></p>
+<div class="sourceCode" id="cb17" data-file="fftsynth/templates/transpose.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> transpose_{{ radix }}(<span class="dt">int</span> j)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true"></a>{</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true"></a>    <span class="dt">int</span> x = <span class="dv">0</span>;</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true"></a>    {% <span class="kw">for</span> item in range(depth) %}</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true"></a>    x = MULR(x) + MODR(j);</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true"></a>    j = DIVR(j);</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true"></a>    {%- endfor %}</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true"></a>    <span class="kw">return</span> x;</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true"></a>}</span></code></pre></div>
+</div>
+<div class="annotated-code">
+<p><span><em>«generate-transpose-function»=</em></span></p>
+<div class="sourceCode" id="generate-transpose-function"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-transpose-function-1"><a href="#generate-transpose-function-1" aria-hidden="true"></a><span class="kw">def</span> generate_transpose_function(parity_splitting: ParitySplitting):</span>
+<span id="generate-transpose-function-2"><a href="#generate-transpose-function-2" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="generate-transpose-function-3"><a href="#generate-transpose-function-3" aria-hidden="true"></a><span class="co">    Generate inline OpenCL function to reverse the digits in base-n representation.</span></span>
+<span id="generate-transpose-function-4"><a href="#generate-transpose-function-4" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="generate-transpose-function-5"><a href="#generate-transpose-function-5" aria-hidden="true"></a>    template <span class="op">=</span> template_environment.get_template(<span class="st">&quot;transpose.cl&quot;</span>)</span>
+<span id="generate-transpose-function-6"><a href="#generate-transpose-function-6" aria-hidden="true"></a></span>
+<span id="generate-transpose-function-7"><a href="#generate-transpose-function-7" aria-hidden="true"></a>    <span class="cf">return</span> template.render(radix<span class="op">=</span>parity_splitting.radix,</span>
+<span id="generate-transpose-function-8"><a href="#generate-transpose-function-8" aria-hidden="true"></a>                           depth<span class="op">=</span>parity_splitting.depth)</span></code></pre></div>
 </div>
 <p>The <code>parity_{r}</code> function should compute the parity of the index.</p>
 <div class="annotated-code">
-<p><span><em>«generate-parity»=</em></span></p>
-<div class="sourceCode" id="generate-parity"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-parity-1"><a href="#generate-parity-1" aria-hidden="true"></a><span class="kw">def</span> gen_parity_fn(ps: ParitySplitting):</span>
-<span id="generate-parity-2"><a href="#generate-parity-2" aria-hidden="true"></a>    <span class="cf">return</span> <span class="ss">f&quot;&quot;&quot;</span></span>
-<span id="generate-parity-3"><a href="#generate-parity-3" aria-hidden="true"></a><span class="ss">inline int parity_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(int i) </span><span class="ch">{{</span></span>
-<span id="generate-parity-4"><a href="#generate-parity-4" aria-hidden="true"></a><span class="ss">    int x = MODR(i);</span></span>
-<span id="generate-parity-5"><a href="#generate-parity-5" aria-hidden="true"></a><span class="ss">    for (int a = 0; a &lt; </span><span class="sc">{ps.</span>depth<span class="sc">}</span><span class="ss">; ++a) </span><span class="ch">{{</span></span>
-<span id="generate-parity-6"><a href="#generate-parity-6" aria-hidden="true"></a><span class="ss">        i = DIVR(i);</span></span>
-<span id="generate-parity-7"><a href="#generate-parity-7" aria-hidden="true"></a><span class="ss">        x += MODR(i);</span></span>
-<span id="generate-parity-8"><a href="#generate-parity-8" aria-hidden="true"></a><span class="ss">    }}</span></span>
-<span id="generate-parity-9"><a href="#generate-parity-9" aria-hidden="true"></a><span class="ss">    return MODR(x);</span></span>
-<span id="generate-parity-10"><a href="#generate-parity-10" aria-hidden="true"></a><span class="ss">}}&quot;&quot;&quot;</span></span></code></pre></div>
+<p><span><em>«fftsynth/templates/parity.cl»=</em></span></p>
+<div class="sourceCode" id="cb18" data-file="fftsynth/templates/parity.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> parity_{{ radix }}(<span class="dt">int</span> i)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true"></a>{</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true"></a>    <span class="dt">int</span> x = MODR(i);</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true"></a>    {% <span class="kw">for</span> item in range(depth) %}</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true"></a>    i = DIVR(i);</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true"></a>    x += MODR(i);</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true"></a>    {%- endfor %}</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true"></a>    <span class="kw">return</span> MODR(x);</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true"></a>}</span></code></pre></div>
+</div>
+<div class="annotated-code">
+<p><span><em>«generate-parity-function»=</em></span></p>
+<div class="sourceCode" id="generate-parity-function"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-parity-function-1"><a href="#generate-parity-function-1" aria-hidden="true"></a><span class="kw">def</span> generate_parity_function(parity_splitting: ParitySplitting):</span>
+<span id="generate-parity-function-2"><a href="#generate-parity-function-2" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="generate-parity-function-3"><a href="#generate-parity-function-3" aria-hidden="true"></a><span class="co">    Generate inline OpenCL function to compute the parity of the index.</span></span>
+<span id="generate-parity-function-4"><a href="#generate-parity-function-4" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="generate-parity-function-5"><a href="#generate-parity-function-5" aria-hidden="true"></a>    template <span class="op">=</span> template_environment.get_template(<span class="st">&quot;parity.cl&quot;</span>)</span>
+<span id="generate-parity-function-6"><a href="#generate-parity-function-6" aria-hidden="true"></a></span>
+<span id="generate-parity-function-7"><a href="#generate-parity-function-7" aria-hidden="true"></a>    <span class="cf">return</span> template.render(radix<span class="op">=</span>parity_splitting.radix,</span>
+<span id="generate-parity-function-8"><a href="#generate-parity-function-8" aria-hidden="true"></a>                           depth<span class="op">=</span>parity_splitting.depth)</span></code></pre></div>
 </div>
 <h3 id="testing-3">Testing</h3>
 <div class="annotated-code">
+<p><span><em>«fftsynth/templates/transpose.cl»+</em></span></p>
+<div class="sourceCode" id="cb19" data-file="fftsynth/templates/transpose.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_transpose_{{ radix }}(<span class="kw">__global</span> <span class="dt">const</span> <span class="dt">int</span> * x, <span class="kw">__global</span> <span class="dt">int</span> * y)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true"></a>{</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>);</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true"></a>    </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true"></a>    y[i] = transpose_{{ radix }}(x[i]);</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true"></a>}</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span></code></pre></div>
+</div>
+<div class="annotated-code">
 <p><span><em>«test-transpose»=</em></span></p>
-<div class="sourceCode" id="test-transpose"><pre class="sourceCode python"><code class="sourceCode python"><span id="test-transpose-1"><a href="#test-transpose-1" aria-hidden="true"></a><span class="at">@pytest.mark.parametrize</span>(<span class="st">&#39;ps&#39;</span>, cases)</span>
-<span id="test-transpose-2"><a href="#test-transpose-2" aria-hidden="true"></a><span class="kw">def</span> test_transpose_4(ps: ParitySplitting):</span>
-<span id="test-transpose-3"><a href="#test-transpose-3" aria-hidden="true"></a>    source <span class="op">=</span> gen_transpose_fn(ps)</span>
-<span id="test-transpose-4"><a href="#test-transpose-4" aria-hidden="true"></a>    kernel <span class="op">=</span> <span class="ss">f&quot;&quot;&quot;</span></span>
-<span id="test-transpose-5"><a href="#test-transpose-5" aria-hidden="true"></a><span class="ss">    #define DIVR(x) ((x) / </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">)</span></span>
-<span id="test-transpose-6"><a href="#test-transpose-6" aria-hidden="true"></a><span class="ss">    #define MODR(x) ((x) % </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">)</span></span>
-<span id="test-transpose-7"><a href="#test-transpose-7" aria-hidden="true"></a><span class="ss">    #define MULR(x) ((x) * </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">)</span></span>
-<span id="test-transpose-8"><a href="#test-transpose-8" aria-hidden="true"></a><span class="ss">    </span><span class="sc">{</span>source<span class="sc">}</span></span>
-<span id="test-transpose-9"><a href="#test-transpose-9" aria-hidden="true"></a></span>
-<span id="test-transpose-10"><a href="#test-transpose-10" aria-hidden="true"></a><span class="ss">    __kernel void test_transpose(__global const int *x, __global int *y) </span><span class="ch">{{</span></span>
-<span id="test-transpose-11"><a href="#test-transpose-11" aria-hidden="true"></a><span class="ss">        int i = get_global_id(0);</span></span>
-<span id="test-transpose-12"><a href="#test-transpose-12" aria-hidden="true"></a><span class="ss">        y[i] = transpose_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(x[i]);</span></span>
-<span id="test-transpose-13"><a href="#test-transpose-13" aria-hidden="true"></a><span class="ss">    }}</span></span>
-<span id="test-transpose-14"><a href="#test-transpose-14" aria-hidden="true"></a><span class="ss">    &quot;&quot;&quot;</span></span>
-<span id="test-transpose-15"><a href="#test-transpose-15" aria-hidden="true"></a>    x <span class="op">=</span> np.arange(ps.N, dtype<span class="op">=</span>np.int32)</span>
-<span id="test-transpose-16"><a href="#test-transpose-16" aria-hidden="true"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
-<span id="test-transpose-17"><a href="#test-transpose-17" aria-hidden="true"></a>    kernel_args <span class="op">=</span> [x, y]</span>
-<span id="test-transpose-18"><a href="#test-transpose-18" aria-hidden="true"></a></span>
-<span id="test-transpose-19"><a href="#test-transpose-19" aria-hidden="true"></a>    results <span class="op">=</span> run_kernel(<span class="st">&quot;test_transpose&quot;</span>, kernel, ps.N, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="test-transpose-20"><a href="#test-transpose-20" aria-hidden="true"></a>    y_ref <span class="op">=</span> x.reshape(ps.factors).T.flatten()</span>
-<span id="test-transpose-21"><a href="#test-transpose-21" aria-hidden="true"></a></span>
-<span id="test-transpose-22"><a href="#test-transpose-22" aria-hidden="true"></a>    <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">1</span>] <span class="op">==</span> y_ref)</span></code></pre></div>
+<div class="sourceCode" id="test-transpose"><pre class="sourceCode python"><code class="sourceCode python"><span id="test-transpose-1"><a href="#test-transpose-1" aria-hidden="true"></a><span class="at">@pytest.mark.parametrize</span>(<span class="st">&#39;parity_splitting&#39;</span>, cases)</span>
+<span id="test-transpose-2"><a href="#test-transpose-2" aria-hidden="true"></a><span class="kw">def</span> test_transpose(parity_splitting: ParitySplitting):</span>
+<span id="test-transpose-3"><a href="#test-transpose-3" aria-hidden="true"></a>    kernel <span class="op">=</span> generate_preprocessor(parity_splitting, <span class="va">False</span>) <span class="op">+</span> generate_transpose_function(parity_splitting)</span>
+<span id="test-transpose-4"><a href="#test-transpose-4" aria-hidden="true"></a>    x <span class="op">=</span> np.arange(parity_splitting.N, dtype<span class="op">=</span>np.int32)</span>
+<span id="test-transpose-5"><a href="#test-transpose-5" aria-hidden="true"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
+<span id="test-transpose-6"><a href="#test-transpose-6" aria-hidden="true"></a>    kernel_args <span class="op">=</span> [x, y]</span>
+<span id="test-transpose-7"><a href="#test-transpose-7" aria-hidden="true"></a></span>
+<span id="test-transpose-8"><a href="#test-transpose-8" aria-hidden="true"></a>    results <span class="op">=</span> run_kernel(<span class="st">&quot;test_transpose_</span><span class="sc">{}</span><span class="st">&quot;</span>.<span class="bu">format</span>(parity_splitting.radix), kernel, parity_splitting.N, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
+<span id="test-transpose-9"><a href="#test-transpose-9" aria-hidden="true"></a>    y_ref <span class="op">=</span> x.reshape(parity_splitting.factors).T.flatten()</span>
+<span id="test-transpose-10"><a href="#test-transpose-10" aria-hidden="true"></a></span>
+<span id="test-transpose-11"><a href="#test-transpose-11" aria-hidden="true"></a>    <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">1</span>] <span class="op">==</span> y_ref)</span></code></pre></div>
 </div>
 <h4 id="parity-2">Parity</h4>
 <div class="annotated-code">
-<p><span><em>«test-parity»=</em></span></p>
-<div class="sourceCode" id="test-parity"><pre class="sourceCode python"><code class="sourceCode python"><span id="test-parity-1"><a href="#test-parity-1" aria-hidden="true"></a><span class="at">@pytest.mark.parametrize</span>(<span class="st">&#39;ps&#39;</span>, cases)</span>
-<span id="test-parity-2"><a href="#test-parity-2" aria-hidden="true"></a><span class="kw">def</span> test_parity_4(ps: ParitySplitting):</span>
-<span id="test-parity-3"><a href="#test-parity-3" aria-hidden="true"></a>    source <span class="op">=</span> gen_parity_fn(ps)</span>
-<span id="test-parity-4"><a href="#test-parity-4" aria-hidden="true"></a>    kernel <span class="op">=</span> <span class="ss">f&quot;&quot;&quot;</span></span>
-<span id="test-parity-5"><a href="#test-parity-5" aria-hidden="true"></a><span class="ss">    #define DIVR(x) ((x) / </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">)</span></span>
-<span id="test-parity-6"><a href="#test-parity-6" aria-hidden="true"></a><span class="ss">    #define MODR(x) ((x) % </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">)</span></span>
-<span id="test-parity-7"><a href="#test-parity-7" aria-hidden="true"></a><span class="ss">    #define MULR(x) ((x) * </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">)</span></span>
-<span id="test-parity-8"><a href="#test-parity-8" aria-hidden="true"></a><span class="ss">    </span><span class="sc">{</span>source<span class="sc">}</span></span>
-<span id="test-parity-9"><a href="#test-parity-9" aria-hidden="true"></a></span>
-<span id="test-parity-10"><a href="#test-parity-10" aria-hidden="true"></a><span class="ss">    __kernel void test_parity(__global const int *x, __global int *y) </span><span class="ch">{{</span></span>
-<span id="test-parity-11"><a href="#test-parity-11" aria-hidden="true"></a><span class="ss">        int i = get_global_id(0);</span></span>
-<span id="test-parity-12"><a href="#test-parity-12" aria-hidden="true"></a><span class="ss">        y[i] = parity_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(x[i]);</span></span>
-<span id="test-parity-13"><a href="#test-parity-13" aria-hidden="true"></a><span class="ss">    }}</span></span>
-<span id="test-parity-14"><a href="#test-parity-14" aria-hidden="true"></a><span class="ss">    &quot;&quot;&quot;</span></span>
-<span id="test-parity-15"><a href="#test-parity-15" aria-hidden="true"></a>    x <span class="op">=</span> np.arange(ps.N, dtype<span class="op">=</span>np.int32)</span>
-<span id="test-parity-16"><a href="#test-parity-16" aria-hidden="true"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
-<span id="test-parity-17"><a href="#test-parity-17" aria-hidden="true"></a>    kernel_args <span class="op">=</span> [x, y]</span>
-<span id="test-parity-18"><a href="#test-parity-18" aria-hidden="true"></a></span>
-<span id="test-parity-19"><a href="#test-parity-19" aria-hidden="true"></a>    results <span class="op">=</span> run_kernel(<span class="st">&quot;test_parity&quot;</span>, kernel, ps.N, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="test-parity-20"><a href="#test-parity-20" aria-hidden="true"></a>    y_ref <span class="op">=</span> np.array([parity(ps.radix, i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(ps.N)]) </span>
-<span id="test-parity-21"><a href="#test-parity-21" aria-hidden="true"></a></span>
-<span id="test-parity-22"><a href="#test-parity-22" aria-hidden="true"></a>    <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">1</span>] <span class="op">==</span> y_ref)</span></code></pre></div>
+<p><span><em>«fftsynth/templates/parity.cl»+</em></span></p>
+<div class="sourceCode" id="cb20" data-file="fftsynth/templates/parity.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_parity_{{ radix }}(<span class="kw">__global</span> <span class="dt">const</span> <span class="dt">int</span> * x, <span class="kw">__global</span> <span class="dt">int</span> * y)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true"></a>{</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>);</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true"></a>    </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true"></a>    y[i] = parity_{{ radix }}(x[i]);</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true"></a>}</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span></code></pre></div>
 </div>
-<h2 id="outer-loop">Outer loop</h2>
 <div class="annotated-code">
-<p><span><em>«generate-fft»=</em></span></p>
-<div class="sourceCode" id="generate-fft"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-fft-1"><a href="#generate-fft-1" aria-hidden="true"></a><span class="kw">def</span> write_fft_fn(ps: ParitySplitting, fpga: <span class="bu">bool</span>):</span>
-<span id="generate-fft-2"><a href="#generate-fft-2" aria-hidden="true"></a>    <span class="op">&lt;&lt;</span>generate<span class="op">-</span>outer<span class="op">-</span>fft<span class="op">&gt;&gt;</span></span>
-<span id="generate-fft-3"><a href="#generate-fft-3" aria-hidden="true"></a></span>
-<span id="generate-fft-4"><a href="#generate-fft-4" aria-hidden="true"></a><span class="kw">def</span> write_outer_loop_fn(ps: ParitySplitting, fpga: <span class="bu">bool</span>):</span>
-<span id="generate-fft-5"><a href="#generate-fft-5" aria-hidden="true"></a>    depth_type <span class="op">=</span> <span class="st">&quot;unsigned int&quot;</span></span>
-<span id="generate-fft-6"><a href="#generate-fft-6" aria-hidden="true"></a>    m_type <span class="op">=</span> <span class="st">&quot;unsigned int&quot;</span></span>
-<span id="generate-fft-7"><a href="#generate-fft-7" aria-hidden="true"></a>    <span class="cf">if</span> fpga:</span>
-<span id="generate-fft-8"><a href="#generate-fft-8" aria-hidden="true"></a>        depth_type <span class="op">=</span> <span class="st">&quot;uint</span><span class="sc">{}</span><span class="st">_t&quot;</span>.<span class="bu">format</span>(<span class="bu">int</span>(np.ceil(np.log2(ps.depth <span class="op">+</span> <span class="fl">0.5</span>))))</span>
-<span id="generate-fft-9"><a href="#generate-fft-9" aria-hidden="true"></a>        m_type <span class="op">=</span> <span class="st">&quot;uint</span><span class="sc">{}</span><span class="st">_t&quot;</span>.<span class="bu">format</span>(<span class="bu">int</span>(np.ceil(np.log2(ps.M <span class="op">+</span> <span class="fl">0.5</span>))))</span>
-<span id="generate-fft-10"><a href="#generate-fft-10" aria-hidden="true"></a>    args <span class="op">=</span> [<span class="ss">f&quot;float2 * restrict s</span><span class="sc">{i}</span><span class="ss">&quot;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(ps.radix)]</span>
-<span id="generate-fft-11"><a href="#generate-fft-11" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="ss">f&quot;void fft_</span><span class="sc">{ps.N}</span><span class="ss">_ps(</span><span class="sc">{</span><span class="st">&#39;, &#39;</span><span class="sc">.</span>join(args)<span class="sc">}</span><span class="ss">)&quot;</span>)</span>
-<span id="generate-fft-12"><a href="#generate-fft-12" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;{&quot;</span>)</span>
-<span id="generate-fft-13"><a href="#generate-fft-13" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;    int wp = 0;&quot;</span>)</span>
-<span id="generate-fft-14"><a href="#generate-fft-14" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;     #pragma unroll&quot;</span>)</span>
-<span id="generate-fft-15"><a href="#generate-fft-15" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="ss">f&quot;    for (</span><span class="sc">{</span>depth_type<span class="sc">}</span><span class="ss"> k = 0; k != </span><span class="sc">{ps.</span>depth<span class="sc">}</span><span class="ss">; ++k) </span><span class="ch">{{</span><span class="ss">&quot;</span>)</span>
-<span id="generate-fft-16"><a href="#generate-fft-16" aria-hidden="true"></a>    <span class="cf">with</span> indent(<span class="st">&quot;         &quot;</span>):</span>
-<span id="generate-fft-17"><a href="#generate-fft-17" aria-hidden="true"></a>        <span class="op">&lt;&lt;</span>fft<span class="op">-</span>inner<span class="op">-</span>loop<span class="op">&gt;&gt;</span></span>
-<span id="generate-fft-18"><a href="#generate-fft-18" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;    }&quot;</span>)</span>
-<span id="generate-fft-19"><a href="#generate-fft-19" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;}&quot;</span>)</span></code></pre></div>
+<p><span><em>«test-parity»=</em></span></p>
+<div class="sourceCode" id="test-parity"><pre class="sourceCode python"><code class="sourceCode python"><span id="test-parity-1"><a href="#test-parity-1" aria-hidden="true"></a><span class="at">@pytest.mark.parametrize</span>(<span class="st">&quot;parity_splitting&quot;</span>, cases)</span>
+<span id="test-parity-2"><a href="#test-parity-2" aria-hidden="true"></a><span class="kw">def</span> test_parity(parity_splitting: ParitySplitting):</span>
+<span id="test-parity-3"><a href="#test-parity-3" aria-hidden="true"></a>    kernel <span class="op">=</span> generate_preprocessor(parity_splitting, <span class="va">False</span>) <span class="op">+</span> generate_parity_function(parity_splitting)</span>
+<span id="test-parity-4"><a href="#test-parity-4" aria-hidden="true"></a>    x <span class="op">=</span> np.arange(parity_splitting.N, dtype<span class="op">=</span>np.int32)</span>
+<span id="test-parity-5"><a href="#test-parity-5" aria-hidden="true"></a>    y <span class="op">=</span> np.zeros_like(x)</span>
+<span id="test-parity-6"><a href="#test-parity-6" aria-hidden="true"></a>    kernel_args <span class="op">=</span> [x, y]</span>
+<span id="test-parity-7"><a href="#test-parity-7" aria-hidden="true"></a></span>
+<span id="test-parity-8"><a href="#test-parity-8" aria-hidden="true"></a>    results <span class="op">=</span> run_kernel(<span class="st">&quot;test_parity_</span><span class="sc">{}</span><span class="st">&quot;</span>.<span class="bu">format</span>(parity_splitting.radix), kernel, parity_splitting.N, kernel_args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
+<span id="test-parity-9"><a href="#test-parity-9" aria-hidden="true"></a>    y_ref <span class="op">=</span> np.array([parity(parity_splitting.radix, i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(parity_splitting.N)])</span>
+<span id="test-parity-10"><a href="#test-parity-10" aria-hidden="true"></a></span>
+<span id="test-parity-11"><a href="#test-parity-11" aria-hidden="true"></a>    <span class="cf">assert</span> np.<span class="bu">all</span>(results[<span class="dv">1</span>] <span class="op">==</span> y_ref)</span></code></pre></div>
+</div>
+<h2 id="fft-kernel">FFT kernel</h2>
+<div class="annotated-code">
+<p><span><em>«generate-fft-functions»=</em></span></p>
+<div class="sourceCode" id="generate-fft-functions"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-fft-functions-1"><a href="#generate-fft-functions-1" aria-hidden="true"></a><span class="kw">def</span> generate_fft_functions(parity_splitting: ParitySplitting, fpga: <span class="bu">bool</span>):</span>
+<span id="generate-fft-functions-2"><a href="#generate-fft-functions-2" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="generate-fft-functions-3"><a href="#generate-fft-functions-3" aria-hidden="true"></a><span class="co">    Generate outer and inner loop for OpenCL FFT.</span></span>
+<span id="generate-fft-functions-4"><a href="#generate-fft-functions-4" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="generate-fft-functions-5"><a href="#generate-fft-functions-5" aria-hidden="true"></a>    template <span class="op">=</span> template_environment.get_template(<span class="st">&quot;fft.cl&quot;</span>)</span>
+<span id="generate-fft-functions-6"><a href="#generate-fft-functions-6" aria-hidden="true"></a>    depth_type <span class="op">=</span> <span class="st">&quot;unsigned int&quot;</span></span>
+<span id="generate-fft-functions-7"><a href="#generate-fft-functions-7" aria-hidden="true"></a>    m_type <span class="op">=</span> <span class="st">&quot;unsigned int&quot;</span></span>
+<span id="generate-fft-functions-8"><a href="#generate-fft-functions-8" aria-hidden="true"></a>    n_type <span class="op">=</span> <span class="st">&quot;unsigned int&quot;</span></span>
+<span id="generate-fft-functions-9"><a href="#generate-fft-functions-9" aria-hidden="true"></a>    <span class="cf">if</span> fpga:</span>
+<span id="generate-fft-functions-10"><a href="#generate-fft-functions-10" aria-hidden="true"></a>        depth_type <span class="op">=</span> <span class="st">&quot;uint</span><span class="sc">{}</span><span class="st">_t&quot;</span>.<span class="bu">format</span>(<span class="bu">int</span>(numpy.ceil(numpy.log2(parity_splitting.depth <span class="op">+</span> <span class="fl">0.5</span>))))</span>
+<span id="generate-fft-functions-11"><a href="#generate-fft-functions-11" aria-hidden="true"></a>        m_type <span class="op">=</span> <span class="st">&quot;uint</span><span class="sc">{}</span><span class="st">_t&quot;</span>.<span class="bu">format</span>(<span class="bu">int</span>(numpy.ceil(numpy.log2(parity_splitting.M <span class="op">+</span> <span class="fl">0.5</span>))))</span>
+<span id="generate-fft-functions-12"><a href="#generate-fft-functions-12" aria-hidden="true"></a>        n_type <span class="op">=</span> <span class="st">&quot;uint</span><span class="sc">{}</span><span class="st">_t&quot;</span>.<span class="bu">format</span>(<span class="bu">int</span>(numpy.ceil(numpy.log2(parity_splitting.N <span class="op">+</span> <span class="fl">0.5</span>))))</span>
+<span id="generate-fft-functions-13"><a href="#generate-fft-functions-13" aria-hidden="true"></a></span>
+<span id="generate-fft-functions-14"><a href="#generate-fft-functions-14" aria-hidden="true"></a>    <span class="cf">return</span> template.render(N<span class="op">=</span>parity_splitting.N,</span>
+<span id="generate-fft-functions-15"><a href="#generate-fft-functions-15" aria-hidden="true"></a>                           depth<span class="op">=</span>parity_splitting.depth,</span>
+<span id="generate-fft-functions-16"><a href="#generate-fft-functions-16" aria-hidden="true"></a>                           radix<span class="op">=</span>parity_splitting.radix,</span>
+<span id="generate-fft-functions-17"><a href="#generate-fft-functions-17" aria-hidden="true"></a>                           M<span class="op">=</span>parity_splitting.M,</span>
+<span id="generate-fft-functions-18"><a href="#generate-fft-functions-18" aria-hidden="true"></a>                           fpga<span class="op">=</span>fpga,</span>
+<span id="generate-fft-functions-19"><a href="#generate-fft-functions-19" aria-hidden="true"></a>                           depth_type<span class="op">=</span>depth_type,</span>
+<span id="generate-fft-functions-20"><a href="#generate-fft-functions-20" aria-hidden="true"></a>                           m_type<span class="op">=</span>m_type,</span>
+<span id="generate-fft-functions-21"><a href="#generate-fft-functions-21" aria-hidden="true"></a>                           n_type<span class="op">=</span>n_type)</span></code></pre></div>
 </div>
 <h3 id="inner-loop">Inner loop</h3>
-<p>Here we have <code>k</code> being the index of the outer loop. We now</p>
+<p>Here we have <code>k</code> being the index of the outer loop. The next bit is only still implemented for radix-4.</p>
 <div class="annotated-code">
-<p><span><em>«fft-inner-loop»=</em></span></p>
-<div class="sourceCode" id="fft-inner-loop"><pre class="sourceCode python"><code class="sourceCode python"><span id="fft-inner-loop-1"><a href="#fft-inner-loop-1" aria-hidden="true"></a><span class="bu">print</span>(<span class="ss">f&quot;int j = (k == 0 ? 0 : ipow(k - 1));&quot;</span>)</span>
-<span id="fft-inner-loop-2"><a href="#fft-inner-loop-2" aria-hidden="true"></a><span class="cf">if</span> fpga:</span>
-<span id="fft-inner-loop-3"><a href="#fft-inner-loop-3" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;#pragma ivdep&quot;</span>)</span>
-<span id="fft-inner-loop-4"><a href="#fft-inner-loop-4" aria-hidden="true"></a><span class="bu">print</span>(<span class="ss">f&quot;for (</span><span class="sc">{</span>m_type<span class="sc">}</span><span class="ss"> i = 0; i != </span><span class="sc">{ps.M}</span><span class="ss">; ++i) </span><span class="ch">{{</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<p><span><em>«fftsynth/templates/fft.cl»=</em></span></p>
+<div class="sourceCode" id="cb21" data-file="fftsynth/templates/fft.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="dt">void</span> fft_{{ N }}_ps({% <span class="kw">for</span> i in range(radix) %} <span class="dt">float2</span> * <span class="dt">restrict</span> s{{ i }}{%- <span class="kw">if</span> not loop.last %},{% endif %}{% endfor %})</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true"></a>{</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true"></a>    <span class="dt">int</span> wp = <span class="dv">0</span>;</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true"></a>    <span class="kw">for</span> ( {{ depth_type }} k = <span class="dv">0</span>; k != {{ depth }}; ++k )</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true"></a>    {</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true"></a>        <span class="dt">int</span> j = (k == <span class="dv">0</span> ? <span class="dv">0</span> : ipow(k - <span class="dv">1</span>));</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true"></a>        {% <span class="kw">if</span> fpga -%}</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true"></a>        <span class="ot">#pragma ivdep</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true"></a>        {% endif -%}</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true"></a>        <span class="kw">for</span> ( {{ m_type }} i = <span class="dv">0</span>; i != {{ M }}; ++i )</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true"></a>        {</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true"></a>            <span class="dt">int</span> a;</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true"></a>            <span class="kw">if</span> ( k != <span class="dv">0</span> )</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true"></a>            {</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true"></a>                a = comp_idx_4(DIVR(i), k<span class="dv">-1</span>);</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true"></a>            }</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true"></a>            <span class="kw">else</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true"></a>            {</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true"></a>                a = comp_perm_4(DIVR(i), MODR(i));</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true"></a>            }</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true"></a>            fft_{{ radix }}({% <span class="kw">for</span> i in range(radix) %} s{{ i }},{% endfor %} MODR(i), {% <span class="kw">for</span> i in range(radix) %} a + {{ i }} * j,{% endfor %} wp);</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true"></a>            <span class="kw">if</span> ( k != <span class="dv">0</span> )</span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true"></a>            {</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true"></a>                ++wp;</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true"></a>            }</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true"></a>        }</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true"></a>    }</span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
-<p>The next bit is only still implemented for radix-4.</p>
+<h3 id="outer-loop">Outer loop</h3>
+<p>The outer kernel reads the data, puts it in the correct parity-channel and then calls the respective <code>fft_{n}_ps</code> kernel.</p>
 <div class="annotated-code">
-<p><span><em>«fft-inner-loop»+</em></span></p>
-<div class="sourceCode" id="fft-inner-loop"><pre class="sourceCode python"><code class="sourceCode python"><span id="fft-inner-loop-1"><a href="#fft-inner-loop-1" aria-hidden="true"></a><span class="bu">print</span>(<span class="st">&quot;int a;&quot;</span>)</span>
-<span id="fft-inner-loop-2"><a href="#fft-inner-loop-2" aria-hidden="true"></a><span class="bu">print</span>(<span class="st">&quot;if (k != 0) {&quot;</span>)</span>
-<span id="fft-inner-loop-3"><a href="#fft-inner-loop-3" aria-hidden="true"></a><span class="bu">print</span>(<span class="ss">f&quot;    a = comp_idx_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(DIVR(i), k-1);&quot;</span>)</span>
-<span id="fft-inner-loop-4"><a href="#fft-inner-loop-4" aria-hidden="true"></a><span class="bu">print</span>(<span class="st">&quot;} else {&quot;</span>)</span>
-<span id="fft-inner-loop-5"><a href="#fft-inner-loop-5" aria-hidden="true"></a><span class="bu">print</span>(<span class="ss">f&quot;    a = comp_perm_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(DIVR(i), MODR(i));&quot;</span>)</span>
-<span id="fft-inner-loop-6"><a href="#fft-inner-loop-6" aria-hidden="true"></a><span class="bu">print</span>(<span class="st">&quot;}&quot;</span>)</span>
-<span id="fft-inner-loop-7"><a href="#fft-inner-loop-7" aria-hidden="true"></a>fft_args <span class="op">=</span> [<span class="ss">f&quot;s</span><span class="sc">{i}</span><span class="ss">&quot;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(ps.radix)] <span class="op">\</span></span>
-<span id="fft-inner-loop-8"><a href="#fft-inner-loop-8" aria-hidden="true"></a>         <span class="op">+</span> [<span class="st">&quot;MODR(i)&quot;</span>] <span class="op">\</span></span>
-<span id="fft-inner-loop-9"><a href="#fft-inner-loop-9" aria-hidden="true"></a>         <span class="op">+</span> [<span class="ss">f&quot;a + </span><span class="sc">{n}</span><span class="ss">*j&quot;</span> <span class="cf">for</span> n <span class="kw">in</span> <span class="bu">range</span>(ps.radix)] <span class="op">\</span></span>
-<span id="fft-inner-loop-10"><a href="#fft-inner-loop-10" aria-hidden="true"></a>         <span class="op">+</span> [<span class="st">&quot;wp&quot;</span>]</span>
-<span id="fft-inner-loop-11"><a href="#fft-inner-loop-11" aria-hidden="true"></a><span class="bu">print</span>(<span class="ss">f&quot;fft_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(</span><span class="sc">{</span><span class="st">&#39;, &#39;</span><span class="sc">.</span>join(fft_args)<span class="sc">}</span><span class="ss">);&quot;</span>)</span>
-<span id="fft-inner-loop-12"><a href="#fft-inner-loop-12" aria-hidden="true"></a><span class="bu">print</span>(<span class="st">&quot;if (k != 0) ++wp;&quot;</span>)</span>
-<span id="fft-inner-loop-13"><a href="#fft-inner-loop-13" aria-hidden="true"></a><span class="bu">print</span>(<span class="st">&quot;}&quot;</span>)</span></code></pre></div>
-</div>
-<h3 id="outer-kernel">Outer kernel</h3>
-<p>The outer kernel reads the data, puts it in the correct parity-channel and then calls the respective <code>fft_{n}_mc</code> kernel.</p>
-<div class="annotated-code">
-<p><span><em>«generate-outer-fft»=</em></span></p>
-<div class="sourceCode" id="generate-outer-fft"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-outer-fft-1"><a href="#generate-outer-fft-1" aria-hidden="true"></a>declare_arrays <span class="op">=</span> <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>.join(</span>
-<span id="generate-outer-fft-2"><a href="#generate-outer-fft-2" aria-hidden="true"></a>    <span class="ss">f&quot;float2 s</span><span class="sc">{i}</span><span class="ss">[</span><span class="sc">{ps.M}</span><span class="ss">];&quot;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(ps.radix))</span>
-<span id="generate-outer-fft-3"><a href="#generate-outer-fft-3" aria-hidden="true"></a>mc_args <span class="op">=</span> <span class="st">&quot;, &quot;</span>.join(</span>
-<span id="generate-outer-fft-4"><a href="#generate-outer-fft-4" aria-hidden="true"></a>    <span class="ss">f&quot;s</span><span class="sc">{i}</span><span class="ss">&quot;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(ps.radix))</span>
-<span id="generate-outer-fft-5"><a href="#generate-outer-fft-5" aria-hidden="true"></a><span class="cf">if</span> fpga:</span>
-<span id="generate-outer-fft-6"><a href="#generate-outer-fft-6" aria-hidden="true"></a>    read_cases <span class="op">=</span> <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>.join(</span>
-<span id="generate-outer-fft-7"><a href="#generate-outer-fft-7" aria-hidden="true"></a>        <span class="ss">f&quot;case </span><span class="sc">{p}</span><span class="ss">: s</span><span class="sc">{p}</span><span class="ss">[DIVR(i)] = x; break;&quot;</span> <span class="cf">for</span> p <span class="kw">in</span> <span class="bu">range</span>(ps.radix))</span>
-<span id="generate-outer-fft-8"><a href="#generate-outer-fft-8" aria-hidden="true"></a><span class="cf">else</span>:</span>
-<span id="generate-outer-fft-9"><a href="#generate-outer-fft-9" aria-hidden="true"></a>    read_cases <span class="op">=</span> <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>.join(</span>
-<span id="generate-outer-fft-10"><a href="#generate-outer-fft-10" aria-hidden="true"></a>        <span class="ss">f&quot;case </span><span class="sc">{p}</span><span class="ss">: s</span><span class="sc">{p}</span><span class="ss">[DIVR(i)] = x[j]; break;&quot;</span> <span class="cf">for</span> p <span class="kw">in</span> <span class="bu">range</span>(ps.radix))</span>
-<span id="generate-outer-fft-11"><a href="#generate-outer-fft-11" aria-hidden="true"></a><span class="cf">if</span> fpga:</span>
-<span id="generate-outer-fft-12"><a href="#generate-outer-fft-12" aria-hidden="true"></a>    write_cases <span class="op">=</span> <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>.join(</span>
-<span id="generate-outer-fft-13"><a href="#generate-outer-fft-13" aria-hidden="true"></a>        <span class="ss">f&quot;case </span><span class="sc">{p}</span><span class="ss">: y = s</span><span class="sc">{p}</span><span class="ss">[DIVR(i)]; break;&quot;</span> <span class="cf">for</span> p <span class="kw">in</span> <span class="bu">range</span>(ps.radix))</span>
-<span id="generate-outer-fft-14"><a href="#generate-outer-fft-14" aria-hidden="true"></a><span class="cf">else</span>:</span>
-<span id="generate-outer-fft-15"><a href="#generate-outer-fft-15" aria-hidden="true"></a>    write_cases <span class="op">=</span> <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>.join(</span>
-<span id="generate-outer-fft-16"><a href="#generate-outer-fft-16" aria-hidden="true"></a>        <span class="ss">f&quot;case </span><span class="sc">{p}</span><span class="ss">: y[i] = s</span><span class="sc">{p}</span><span class="ss">[DIVR(i)]; break;&quot;</span> <span class="cf">for</span> p <span class="kw">in</span> <span class="bu">range</span>(ps.radix))</span>
-<span id="generate-outer-fft-17"><a href="#generate-outer-fft-17" aria-hidden="true"></a><span class="cf">if</span> fpga:</span>
-<span id="generate-outer-fft-18"><a href="#generate-outer-fft-18" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="ss">f&quot;__kernel __attribute__((autorun)) __attribute__((max_global_work_dim(0))) void fft_</span><span class="sc">{ps.N}</span><span class="ss"> ()&quot;</span>)</span>
-<span id="generate-outer-fft-19"><a href="#generate-outer-fft-19" aria-hidden="true"></a><span class="cf">else</span>:</span>
-<span id="generate-outer-fft-20"><a href="#generate-outer-fft-20" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="ss">f&quot;__kernel void fft_</span><span class="sc">{ps.N}</span><span class="ss">(__global const float2 * restrict x, __global float2 * restrict y)&quot;</span>)</span>
-<span id="generate-outer-fft-21"><a href="#generate-outer-fft-21" aria-hidden="true"></a>loop_begin <span class="op">=</span> <span class="st">&quot;&quot;</span></span>
-<span id="generate-outer-fft-22"><a href="#generate-outer-fft-22" aria-hidden="true"></a>loop_end <span class="op">=</span> <span class="st">&quot;&quot;</span></span>
-<span id="generate-outer-fft-23"><a href="#generate-outer-fft-23" aria-hidden="true"></a><span class="cf">if</span> fpga:</span>
-<span id="generate-outer-fft-24"><a href="#generate-outer-fft-24" aria-hidden="true"></a>    loop_begin <span class="op">=</span> <span class="st">&quot;while ( true ) {&quot;</span></span>
-<span id="generate-outer-fft-25"><a href="#generate-outer-fft-25" aria-hidden="true"></a>    loop_end <span class="op">=</span> <span class="st">&quot;}&quot;</span></span>
-<span id="generate-outer-fft-26"><a href="#generate-outer-fft-26" aria-hidden="true"></a>fpga_read <span class="op">=</span> <span class="st">&quot;&quot;</span></span>
-<span id="generate-outer-fft-27"><a href="#generate-outer-fft-27" aria-hidden="true"></a><span class="cf">if</span> fpga:</span>
-<span id="generate-outer-fft-28"><a href="#generate-outer-fft-28" aria-hidden="true"></a>    fpga_read <span class="op">=</span> <span class="st">&quot;float2 x = read_channel_intel(in_channel);&quot;</span></span>
-<span id="generate-outer-fft-29"><a href="#generate-outer-fft-29" aria-hidden="true"></a>fpga_write <span class="op">=</span> <span class="st">&quot;&quot;</span></span>
-<span id="generate-outer-fft-30"><a href="#generate-outer-fft-30" aria-hidden="true"></a><span class="cf">if</span> fpga:</span>
-<span id="generate-outer-fft-31"><a href="#generate-outer-fft-31" aria-hidden="true"></a>    fpga_write <span class="op">=</span> <span class="st">&quot;write_channel_intel(out_channel, y);&quot;</span></span>
-<span id="generate-outer-fft-32"><a href="#generate-outer-fft-32" aria-hidden="true"></a>fpga_y <span class="op">=</span> <span class="st">&quot;&quot;</span></span>
-<span id="generate-outer-fft-33"><a href="#generate-outer-fft-33" aria-hidden="true"></a><span class="cf">if</span> fpga:</span>
-<span id="generate-outer-fft-34"><a href="#generate-outer-fft-34" aria-hidden="true"></a>    fpga_y <span class="op">=</span> <span class="st">&quot;float2 y;&quot;</span></span>
-<span id="generate-outer-fft-35"><a href="#generate-outer-fft-35" aria-hidden="true"></a>n_type <span class="op">=</span> <span class="st">&quot;unsigned int&quot;</span></span>
-<span id="generate-outer-fft-36"><a href="#generate-outer-fft-36" aria-hidden="true"></a><span class="cf">if</span> fpga:</span>
-<span id="generate-outer-fft-37"><a href="#generate-outer-fft-37" aria-hidden="true"></a>    n_type <span class="op">=</span> <span class="st">&quot;uint</span><span class="sc">{}</span><span class="st">_t&quot;</span>.<span class="bu">format</span>(<span class="bu">int</span>(np.ceil(np.log2(ps.N <span class="op">+</span> <span class="fl">0.5</span>))))</span>
-<span id="generate-outer-fft-38"><a href="#generate-outer-fft-38" aria-hidden="true"></a><span class="bu">print</span>(<span class="ss">f&quot;&quot;&quot;</span></span>
-<span id="generate-outer-fft-39"><a href="#generate-outer-fft-39" aria-hidden="true"></a><span class="ch">{{</span></span>
-<span id="generate-outer-fft-40"><a href="#generate-outer-fft-40" aria-hidden="true"></a><span class="ss">    </span><span class="sc">{</span>loop_begin<span class="sc">}</span></span>
-<span id="generate-outer-fft-41"><a href="#generate-outer-fft-41" aria-hidden="true"></a><span class="ss">    </span><span class="sc">{</span>declare_arrays<span class="sc">}</span></span>
-<span id="generate-outer-fft-42"><a href="#generate-outer-fft-42" aria-hidden="true"></a><span class="ss">    for (</span><span class="sc">{</span>n_type<span class="sc">}</span><span class="ss"> j = 0; j != </span><span class="sc">{ps.N}</span><span class="ss">; ++j) </span><span class="ch">{{</span></span>
-<span id="generate-outer-fft-43"><a href="#generate-outer-fft-43" aria-hidden="true"></a><span class="ss">        int i = transpose_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(j);</span></span>
-<span id="generate-outer-fft-44"><a href="#generate-outer-fft-44" aria-hidden="true"></a><span class="ss">        int p = parity_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(i);</span></span>
-<span id="generate-outer-fft-45"><a href="#generate-outer-fft-45" aria-hidden="true"></a><span class="ss">        </span><span class="sc">{</span>fpga_read<span class="sc">}</span></span>
-<span id="generate-outer-fft-46"><a href="#generate-outer-fft-46" aria-hidden="true"></a><span class="ss">        switch (p) </span><span class="ch">{{</span></span>
-<span id="generate-outer-fft-47"><a href="#generate-outer-fft-47" aria-hidden="true"></a><span class="ss">            </span><span class="sc">{</span>read_cases<span class="sc">}</span></span>
-<span id="generate-outer-fft-48"><a href="#generate-outer-fft-48" aria-hidden="true"></a><span class="ss">        }}</span></span>
-<span id="generate-outer-fft-49"><a href="#generate-outer-fft-49" aria-hidden="true"></a><span class="ss">    }}</span></span>
-<span id="generate-outer-fft-50"><a href="#generate-outer-fft-50" aria-hidden="true"></a></span>
-<span id="generate-outer-fft-51"><a href="#generate-outer-fft-51" aria-hidden="true"></a><span class="ss">    fft_</span><span class="sc">{ps.N}</span><span class="ss">_ps(</span><span class="sc">{</span>mc_args<span class="sc">}</span><span class="ss">);</span></span>
-<span id="generate-outer-fft-52"><a href="#generate-outer-fft-52" aria-hidden="true"></a></span>
-<span id="generate-outer-fft-53"><a href="#generate-outer-fft-53" aria-hidden="true"></a><span class="ss">    for (</span><span class="sc">{</span>n_type<span class="sc">}</span><span class="ss"> i = 0; i != </span><span class="sc">{ps.N}</span><span class="ss">; ++i) </span><span class="ch">{{</span></span>
-<span id="generate-outer-fft-54"><a href="#generate-outer-fft-54" aria-hidden="true"></a><span class="ss">        int p = parity_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(i);</span></span>
-<span id="generate-outer-fft-55"><a href="#generate-outer-fft-55" aria-hidden="true"></a><span class="ss">        </span><span class="sc">{</span>fpga_y<span class="sc">}</span></span>
-<span id="generate-outer-fft-56"><a href="#generate-outer-fft-56" aria-hidden="true"></a><span class="ss">        switch (p) </span><span class="ch">{{</span></span>
-<span id="generate-outer-fft-57"><a href="#generate-outer-fft-57" aria-hidden="true"></a><span class="ss">            </span><span class="sc">{</span>write_cases<span class="sc">}</span></span>
-<span id="generate-outer-fft-58"><a href="#generate-outer-fft-58" aria-hidden="true"></a><span class="ss">        }}</span></span>
-<span id="generate-outer-fft-59"><a href="#generate-outer-fft-59" aria-hidden="true"></a><span class="ss">        </span><span class="sc">{</span>fpga_write<span class="sc">}</span></span>
-<span id="generate-outer-fft-60"><a href="#generate-outer-fft-60" aria-hidden="true"></a><span class="ss">    }}</span></span>
-<span id="generate-outer-fft-61"><a href="#generate-outer-fft-61" aria-hidden="true"></a><span class="ss">    </span><span class="sc">{</span>loop_end<span class="sc">}</span></span>
-<span id="generate-outer-fft-62"><a href="#generate-outer-fft-62" aria-hidden="true"></a><span class="ss">}}&quot;&quot;&quot;</span>)</span></code></pre></div>
+<p><span><em>«fftsynth/templates/fft.cl»+</em></span></p>
+<div class="sourceCode" id="cb22" data-file="fftsynth/templates/fft.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a><span class="kw">__kernel</span> {%<span class="kw">if</span> fpga %}__attribute__((autorun)) __attribute__((max_global_work_dim(<span class="dv">0</span>))){% endif %}</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true"></a><span class="dt">void</span> fft_{{ N }}({% <span class="kw">if</span> not fpga %}<span class="kw">__global</span> <span class="dt">const</span> <span class="dt">float2</span> * <span class="dt">restrict</span> x, <span class="kw">__global</span> <span class="dt">float2</span> * <span class="dt">restrict</span> y{% endif %})</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true"></a>{</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga -%}</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true"></a>    <span class="kw">while</span> ( true )</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true"></a>    {</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true"></a>    {% endif -%}</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true"></a>    {%- <span class="kw">for</span> i in range(radix) %}</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true"></a>    <span class="dt">float2</span> s{{ i }}[{{ M }}];</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true"></a>    {%- endfor %}</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true"></a></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true"></a>    <span class="kw">for</span> ( {{ n_type }} j = <span class="dv">0</span>; j != {{ N }}; ++j )</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true"></a>    {</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true"></a>        <span class="dt">int</span> i = transpose_{{ radix }}(j);</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true"></a>        <span class="dt">int</span> p = parity_{{ radix }}(i);</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true"></a></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true"></a>        {% <span class="kw">if</span> fpga -%}</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true"></a>        <span class="dt">float2</span> x = read_channel_intel(in_channel);</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true"></a>        {% endif -%}</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true"></a>        <span class="kw">switch</span> ( p )</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true"></a>        {</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true"></a>            {%- <span class="kw">if</span> fpga %}</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true"></a>            {%- <span class="kw">for</span> p in range(radix) %}</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true"></a>            <span class="kw">case</span> {{ p }}: s{{ p }}[DIVR(i)] = x; <span class="kw">break</span>;</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true"></a>            {%- endfor -%}</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true"></a>            {% <span class="kw">else</span> %}</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true"></a>            {%- <span class="kw">for</span> p in range(radix) %}</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true"></a>            <span class="kw">case</span> {{ p }}: s{{ p }}[DIVR(i)] = x[j]; <span class="kw">break</span>;</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true"></a>            {%- endfor -%}</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true"></a>            {%- endif %}</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true"></a>        }</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true"></a>    }</span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true"></a></span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true"></a>    fft_{{ N }}_ps({% <span class="kw">for</span> i in range(radix) %} s{{ i }}{%- <span class="kw">if</span> not loop.last %},{% endif %}{% endfor %});</span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true"></a></span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true"></a>    <span class="kw">for</span> ( {{ n_type }} i = <span class="dv">0</span>; i != {{ N }}; ++i )</span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true"></a>    {</span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true"></a>        <span class="dt">int</span> p = parity_{{ radix }}(i);</span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true"></a>        {% <span class="kw">if</span> fpga -%}</span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true"></a>        <span class="dt">float2</span> y;</span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true"></a>        {% endif -%}</span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true"></a>        </span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true"></a>        <span class="kw">switch</span> ( p )</span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true"></a>        {</span>
+<span id="cb22-45"><a href="#cb22-45" aria-hidden="true"></a>            {%- <span class="kw">if</span> fpga -%}</span>
+<span id="cb22-46"><a href="#cb22-46" aria-hidden="true"></a>            {%- <span class="kw">for</span> p in range(radix) %}</span>
+<span id="cb22-47"><a href="#cb22-47" aria-hidden="true"></a>            <span class="kw">case</span> {{ p }}: y = s{{ p }}[DIVR(i)]; <span class="kw">break</span>;</span>
+<span id="cb22-48"><a href="#cb22-48" aria-hidden="true"></a>            {%- endfor -%}</span>
+<span id="cb22-49"><a href="#cb22-49" aria-hidden="true"></a>            {% <span class="kw">else</span> %}</span>
+<span id="cb22-50"><a href="#cb22-50" aria-hidden="true"></a>            {%- <span class="kw">for</span> p in range(radix) %}</span>
+<span id="cb22-51"><a href="#cb22-51" aria-hidden="true"></a>            <span class="kw">case</span> {{ p }}: y[i] = s{{ p }}[DIVR(i)]; <span class="kw">break</span>;</span>
+<span id="cb22-52"><a href="#cb22-52" aria-hidden="true"></a>            {%- endfor -%}</span>
+<span id="cb22-53"><a href="#cb22-53" aria-hidden="true"></a>            {%- endif %}</span>
+<span id="cb22-54"><a href="#cb22-54" aria-hidden="true"></a>        }</span>
+<span id="cb22-55"><a href="#cb22-55" aria-hidden="true"></a>        {%- <span class="kw">if</span> fpga %}</span>
+<span id="cb22-56"><a href="#cb22-56" aria-hidden="true"></a>        write_channel_intel(out_channel, y);</span>
+<span id="cb22-57"><a href="#cb22-57" aria-hidden="true"></a>        {%- endif %}</span>
+<span id="cb22-58"><a href="#cb22-58" aria-hidden="true"></a>    }</span>
+<span id="cb22-59"><a href="#cb22-59" aria-hidden="true"></a>    {%- <span class="kw">if</span> fpga %}</span>
+<span id="cb22-60"><a href="#cb22-60" aria-hidden="true"></a>    }</span>
+<span id="cb22-61"><a href="#cb22-61" aria-hidden="true"></a>    {%- endif %}</span>
+<span id="cb22-62"><a href="#cb22-62" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
 <h2 id="twiddles-1">Twiddles</h2>
+<p>This is the parameterized OpenCL code containing the constant array of the twiddle factors.</p>
 <div class="annotated-code">
-<p><span><em>«generate-twiddles»=</em></span></p>
-<div class="sourceCode" id="generate-twiddles"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-twiddles-1"><a href="#generate-twiddles-1" aria-hidden="true"></a><span class="kw">def</span> write_twiddles(ps: ParitySplitting):</span>
-<span id="generate-twiddles-2"><a href="#generate-twiddles-2" aria-hidden="true"></a>    W <span class="op">=</span> np.ones(shape<span class="op">=</span>[ps.radix, ps.radix])</span>
-<span id="generate-twiddles-3"><a href="#generate-twiddles-3" aria-hidden="true"></a>    perm <span class="op">=</span> np.array([comp_perm(ps.radix, i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(ps.M)])</span>
-<span id="generate-twiddles-4"><a href="#generate-twiddles-4" aria-hidden="true"></a></span>
-<span id="generate-twiddles-5"><a href="#generate-twiddles-5" aria-hidden="true"></a>    n <span class="op">=</span> ps.radix</span>
-<span id="generate-twiddles-6"><a href="#generate-twiddles-6" aria-hidden="true"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(ps.depth <span class="op">-</span> <span class="dv">1</span>):</span>
-<span id="generate-twiddles-7"><a href="#generate-twiddles-7" aria-hidden="true"></a>        w <span class="op">=</span> make_twiddle(ps.radix, n).conj()</span>
-<span id="generate-twiddles-8"><a href="#generate-twiddles-8" aria-hidden="true"></a>        w_r_x <span class="op">=</span> (np.ones(shape<span class="op">=</span>[ps.M<span class="op">//</span>n,ps.radix,n]) <span class="op">*</span> w) <span class="op">\</span></span>
-<span id="generate-twiddles-9"><a href="#generate-twiddles-9" aria-hidden="true"></a>                    .transpose([<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">1</span>]) <span class="op">\</span></span>
-<span id="generate-twiddles-10"><a href="#generate-twiddles-10" aria-hidden="true"></a>                    .reshape([<span class="op">-</span><span class="dv">1</span>,ps.radix])[perm]</span>
-<span id="generate-twiddles-11"><a href="#generate-twiddles-11" aria-hidden="true"></a>        W <span class="op">=</span> np.r_[W, w_r_x]</span>
-<span id="generate-twiddles-12"><a href="#generate-twiddles-12" aria-hidden="true"></a>        n <span class="op">*=</span> ps.radix</span>
-<span id="generate-twiddles-13"><a href="#generate-twiddles-13" aria-hidden="true"></a></span>
-<span id="generate-twiddles-14"><a href="#generate-twiddles-14" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="ss">f&quot;__constant float2 W[</span><span class="sc">{W.</span>shape[<span class="dv">0</span>]<span class="op">-</span><span class="sc">ps.</span>radix<span class="sc">}</span><span class="ss">][</span><span class="sc">{ps.</span>radix<span class="op">-</span><span class="dv">1</span><span class="sc">}</span><span class="ss">] = </span><span class="ch">{{</span><span class="ss">&quot;</span>)</span>
-<span id="generate-twiddles-15"><a href="#generate-twiddles-15" aria-hidden="true"></a>    <span class="bu">print</span>( <span class="st">&quot;    {&quot;</span> <span class="op">+</span> <span class="st">&quot;},</span><span class="ch">\n</span><span class="st">    {&quot;</span>.join(<span class="st">&quot;, &quot;</span>.join(</span>
-<span id="generate-twiddles-16"><a href="#generate-twiddles-16" aria-hidden="true"></a>                <span class="ss">f&quot;(float2) (</span><span class="sc">{w.</span>real<span class="sc">: f}</span><span class="ss">f, </span><span class="sc">{w.</span>imag<span class="sc">: f}</span><span class="ss">f)&quot;</span></span>
-<span id="generate-twiddles-17"><a href="#generate-twiddles-17" aria-hidden="true"></a>                <span class="cf">for</span> w <span class="kw">in</span> ws[<span class="dv">1</span>:])</span>
-<span id="generate-twiddles-18"><a href="#generate-twiddles-18" aria-hidden="true"></a>            <span class="cf">for</span> ws <span class="kw">in</span> W[ps.radix:]) <span class="op">+</span> <span class="st">&quot;</span><span class="sc">}}</span><span class="st">;&quot;</span>)</span></code></pre></div>
+<p><span><em>«fftsynth/templates/twiddles.cl»=</em></span></p>
+<div class="sourceCode" id="cb23" data-file="fftsynth/templates/twiddles.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true"></a><span class="kw">__constant</span> <span class="dt">float2</span> W[{{ W.shape[<span class="dv">0</span>] - radix }}][{{ radix - <span class="dv">1</span> }}] = {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true"></a>{% <span class="kw">for</span> ws in W[radix:] %}</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true"></a>{ {% <span class="kw">for</span> w in ws[<span class="dv">1</span>:] -%}</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true"></a>(<span class="dt">float2</span>)({{ <span class="st">&quot;%0.6f&quot;</span> | format(w.real) }}f, {{ <span class="st">&quot;%0.6f&quot;</span> | format(w.imag) }}f) {%- <span class="kw">if</span> not loop.last %}, {% endif %}</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true"></a>{%- endfor %} } {%- <span class="kw">if</span> not loop.last %},{% endif %}</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true"></a>{%- endfor %}</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true"></a>};</span></code></pre></div>
+</div>
+<p>What follows is the Python function used to generate the OpenCL code.</p>
+<div class="annotated-code">
+<p><span><em>«generate-twiddle-array»=</em></span></p>
+<div class="sourceCode" id="generate-twiddle-array"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-twiddle-array-1"><a href="#generate-twiddle-array-1" aria-hidden="true"></a><span class="kw">def</span> generate_twiddle_array(parity_splitting: ParitySplitting):</span>
+<span id="generate-twiddle-array-2"><a href="#generate-twiddle-array-2" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="generate-twiddle-array-3"><a href="#generate-twiddle-array-3" aria-hidden="true"></a><span class="co">    Generate OpenCL constant array for twiddle factors</span></span>
+<span id="generate-twiddle-array-4"><a href="#generate-twiddle-array-4" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="generate-twiddle-array-5"><a href="#generate-twiddle-array-5" aria-hidden="true"></a>    template <span class="op">=</span> template_environment.get_template(<span class="st">&quot;twiddles.cl&quot;</span>)</span>
+<span id="generate-twiddle-array-6"><a href="#generate-twiddle-array-6" aria-hidden="true"></a>    twiddles <span class="op">=</span> numpy.ones(shape<span class="op">=</span>[parity_splitting.radix, parity_splitting.radix])</span>
+<span id="generate-twiddle-array-7"><a href="#generate-twiddle-array-7" aria-hidden="true"></a>    perm <span class="op">=</span> numpy.array([comp_perm(parity_splitting.radix, i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(parity_splitting.M)])</span>
+<span id="generate-twiddle-array-8"><a href="#generate-twiddle-array-8" aria-hidden="true"></a></span>
+<span id="generate-twiddle-array-9"><a href="#generate-twiddle-array-9" aria-hidden="true"></a>    n <span class="op">=</span> parity_splitting.radix</span>
+<span id="generate-twiddle-array-10"><a href="#generate-twiddle-array-10" aria-hidden="true"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(parity_splitting.depth <span class="op">-</span> <span class="dv">1</span>):</span>
+<span id="generate-twiddle-array-11"><a href="#generate-twiddle-array-11" aria-hidden="true"></a>        w <span class="op">=</span> make_twiddle(parity_splitting.radix, n).conj()</span>
+<span id="generate-twiddle-array-12"><a href="#generate-twiddle-array-12" aria-hidden="true"></a>        w_r_x <span class="op">=</span> (numpy.ones(shape<span class="op">=</span>[parity_splitting.M <span class="op">//</span> n, parity_splitting.radix, n]) <span class="op">*</span> w) <span class="op">\</span></span>
+<span id="generate-twiddle-array-13"><a href="#generate-twiddle-array-13" aria-hidden="true"></a>            .transpose([<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">1</span>]) <span class="op">\</span></span>
+<span id="generate-twiddle-array-14"><a href="#generate-twiddle-array-14" aria-hidden="true"></a>            .reshape([<span class="op">-</span><span class="dv">1</span>, parity_splitting.radix])[perm]</span>
+<span id="generate-twiddle-array-15"><a href="#generate-twiddle-array-15" aria-hidden="true"></a>        twiddles <span class="op">=</span> numpy.r_[twiddles, w_r_x]</span>
+<span id="generate-twiddle-array-16"><a href="#generate-twiddle-array-16" aria-hidden="true"></a>        n <span class="op">*=</span> parity_splitting.radix</span>
+<span id="generate-twiddle-array-17"><a href="#generate-twiddle-array-17" aria-hidden="true"></a></span>
+<span id="generate-twiddle-array-18"><a href="#generate-twiddle-array-18" aria-hidden="true"></a>    <span class="cf">return</span> template.render(radix<span class="op">=</span>parity_splitting.radix,</span>
+<span id="generate-twiddle-array-19"><a href="#generate-twiddle-array-19" aria-hidden="true"></a>                           W<span class="op">=</span>twiddles)</span></code></pre></div>
 </div>
 <h2 id="index-functions-1">Index functions</h2>
+<p>This is the parameterized OpenCL code used to compute indices.</p>
 <div class="annotated-code">
-<p><span><em>«generate-index-fn»=</em></span></p>
-<div class="sourceCode" id="generate-index-fn"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-index-fn-1"><a href="#generate-index-fn-1" aria-hidden="true"></a><span class="kw">def</span> write_ipow(ps):</span>
-<span id="generate-index-fn-2"><a href="#generate-index-fn-2" aria-hidden="true"></a>    <span class="cf">if</span> ps.radix <span class="op">==</span> <span class="dv">4</span>:</span>
-<span id="generate-index-fn-3"><a href="#generate-index-fn-3" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="st">&quot;inline int ipow(int b) { return 1 &lt;&lt; (2*b); }&quot;</span>)</span>
-<span id="generate-index-fn-4"><a href="#generate-index-fn-4" aria-hidden="true"></a>    <span class="cf">else</span>:</span>
-<span id="generate-index-fn-5"><a href="#generate-index-fn-5" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="ss">f&quot;&quot;&quot;</span></span>
-<span id="generate-index-fn-6"><a href="#generate-index-fn-6" aria-hidden="true"></a><span class="ss">inline int ipow(int b) </span><span class="ch">{{</span></span>
-<span id="generate-index-fn-7"><a href="#generate-index-fn-7" aria-hidden="true"></a><span class="ss">    int i, j;</span></span>
-<span id="generate-index-fn-8"><a href="#generate-index-fn-8" aria-hidden="true"></a><span class="ss">    int a = </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">;</span></span>
-<span id="generate-index-fn-9"><a href="#generate-index-fn-9" aria-hidden="true"></a><span class="ss">    #pragma unroll 10</span></span>
-<span id="generate-index-fn-10"><a href="#generate-index-fn-10" aria-hidden="true"></a><span class="ss">    for (i = 1, j = a; i &lt; b; ++i, j*=a);</span></span>
-<span id="generate-index-fn-11"><a href="#generate-index-fn-11" aria-hidden="true"></a><span class="ss">    return j;</span></span>
-<span id="generate-index-fn-12"><a href="#generate-index-fn-12" aria-hidden="true"></a><span class="ss">}}</span></span>
-<span id="generate-index-fn-13"><a href="#generate-index-fn-13" aria-hidden="true"></a><span class="ss">&quot;&quot;&quot;</span>)</span></code></pre></div>
+<p><span><em>«fftsynth/templates/indices.cl»=</em></span></p>
+<div class="sourceCode" id="cb24" data-file="fftsynth/templates/indices.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> comp_idx_{{ radix }}(<span class="dt">int</span> i, <span class="dt">int</span> k)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true"></a>{</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true"></a>    <span class="dt">int</span> rem = i % ipow(k);</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true"></a>    <span class="dt">int</span> base = i - rem;</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true"></a>    <span class="kw">return</span> MULR(base) + rem;</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true"></a>}</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> comp_perm_{{ radix }}(<span class="dt">int</span> i, <span class="dt">int</span> rem)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true"></a>{</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true"></a>    <span class="dt">int</span> p = parity_{{ radix }}(i);</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true"></a>    <span class="kw">return</span> MULR(i) + MODR(rem + {{ radix }} - p);</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
+<p>What follows is the Python function used to generate the OpenCL code.</p>
 <div class="annotated-code">
-<p><span><em>«generate-index-fn»+</em></span></p>
-<div class="sourceCode" id="generate-index-fn"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-index-fn-1"><a href="#generate-index-fn-1" aria-hidden="true"></a><span class="kw">def</span> write_comp_idx(ps: ParitySplitting):</span>
-<span id="generate-index-fn-2"><a href="#generate-index-fn-2" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="ss">f&quot;&quot;&quot;</span></span>
-<span id="generate-index-fn-3"><a href="#generate-index-fn-3" aria-hidden="true"></a><span class="ss">inline int comp_idx_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(int i, int k) </span><span class="ch">{{</span></span>
-<span id="generate-index-fn-4"><a href="#generate-index-fn-4" aria-hidden="true"></a><span class="ss">    int rem = i % ipow(k);</span></span>
-<span id="generate-index-fn-5"><a href="#generate-index-fn-5" aria-hidden="true"></a><span class="ss">    int base = i - rem;</span></span>
-<span id="generate-index-fn-6"><a href="#generate-index-fn-6" aria-hidden="true"></a><span class="ss">    return MULR(base) + rem;</span></span>
-<span id="generate-index-fn-7"><a href="#generate-index-fn-7" aria-hidden="true"></a><span class="ss">}}</span></span>
-<span id="generate-index-fn-8"><a href="#generate-index-fn-8" aria-hidden="true"></a><span class="ss">&quot;&quot;&quot;</span>)</span></code></pre></div>
+<p><span><em>«generate-index-functions»=</em></span></p>
+<div class="sourceCode" id="generate-index-functions"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-index-functions-1"><a href="#generate-index-functions-1" aria-hidden="true"></a><span class="kw">def</span> generate_index_functions(parity_splitting: ParitySplitting):</span>
+<span id="generate-index-functions-2"><a href="#generate-index-functions-2" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="generate-index-functions-3"><a href="#generate-index-functions-3" aria-hidden="true"></a><span class="co">    Generate inline OpenCL function to compute indices and permutations of the indices.</span></span>
+<span id="generate-index-functions-4"><a href="#generate-index-functions-4" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="generate-index-functions-5"><a href="#generate-index-functions-5" aria-hidden="true"></a>    template <span class="op">=</span> template_environment.get_template(<span class="st">&quot;indices.cl&quot;</span>)</span>
+<span id="generate-index-functions-6"><a href="#generate-index-functions-6" aria-hidden="true"></a></span>
+<span id="generate-index-functions-7"><a href="#generate-index-functions-7" aria-hidden="true"></a>    <span class="cf">return</span> template.render(radix<span class="op">=</span>parity_splitting.radix)</span></code></pre></div>
 </div>
+<h2 id="utilities">Utilities</h2>
+<p>This is the parameterized OpenCL code used to compute the integer power of a radix.</p>
 <div class="annotated-code">
-<p><span><em>«generate-index-fn»+</em></span></p>
-<div class="sourceCode" id="generate-index-fn"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-index-fn-1"><a href="#generate-index-fn-1" aria-hidden="true"></a><span class="kw">def</span> write_comp_perm(ps: ParitySplitting):</span>
-<span id="generate-index-fn-2"><a href="#generate-index-fn-2" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="ss">f&quot;&quot;&quot;</span></span>
-<span id="generate-index-fn-3"><a href="#generate-index-fn-3" aria-hidden="true"></a><span class="ss">inline int comp_perm_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(int i, int rem) </span><span class="ch">{{</span></span>
-<span id="generate-index-fn-4"><a href="#generate-index-fn-4" aria-hidden="true"></a><span class="ss">    int p = parity_</span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss">(i);</span></span>
-<span id="generate-index-fn-5"><a href="#generate-index-fn-5" aria-hidden="true"></a><span class="ss">    return MULR(i) + MODR(rem + </span><span class="sc">{ps.</span>radix<span class="sc">}</span><span class="ss"> - p);</span></span>
-<span id="generate-index-fn-6"><a href="#generate-index-fn-6" aria-hidden="true"></a><span class="ss">}}</span></span>
-<span id="generate-index-fn-7"><a href="#generate-index-fn-7" aria-hidden="true"></a><span class="ss">&quot;&quot;&quot;</span>)</span></code></pre></div>
+<p><span><em>«fftsynth/templates/ipow.cl»=</em></span></p>
+<div class="sourceCode" id="cb25" data-file="fftsynth/templates/ipow.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">4</span> %}</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> ipow(<span class="dt">int</span> b)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true"></a>{</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true"></a>    <span class="kw">return</span> <span class="dv">1</span> &lt;&lt; (<span class="dv">2</span>*b);</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true"></a>}</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true"></a>{% <span class="kw">else</span> %}</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> ipow(<span class="dt">int</span> b)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true"></a>{</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true"></a>    <span class="dt">int</span> i, j;</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true"></a>    <span class="dt">int</span> a = {{ radix }};</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true"></a>    <span class="ot">#pragma unroll 10</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true"></a>    <span class="kw">for</span> (i = <span class="dv">1</span>, j = a; i &lt; b; ++i, j*=a);</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true"></a>    <span class="kw">return</span> j;</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true"></a>}</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
 </div>
-<h2 id="utility">Utility</h2>
+<p>What follows is the Python function used to generate the OpenCL code.</p>
 <div class="annotated-code">
-<p><span><em>«fftsynth/indent.py»=</em></span></p>
-<div class="sourceCode" id="cb14" data-file="fftsynth/indent.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="im">from</span> contextlib <span class="im">import</span> (contextmanager, redirect_stdout)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a><span class="im">import</span> io</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a><span class="im">import</span> textwrap</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true"></a><span class="at">@contextmanager</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true"></a><span class="kw">def</span> indent(prefix: <span class="bu">str</span>):</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true"></a>    f <span class="op">=</span> io.StringIO()</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true"></a>    <span class="cf">with</span> redirect_stdout(f):</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true"></a>        <span class="cf">yield</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true"></a>    output <span class="op">=</span> f.getvalue()</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true"></a>    <span class="bu">print</span>(textwrap.indent(output, prefix), end<span class="op">=</span><span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<p><span><em>«generate-ipow-function»=</em></span></p>
+<div class="sourceCode" id="generate-ipow-function"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-ipow-function-1"><a href="#generate-ipow-function-1" aria-hidden="true"></a><span class="kw">def</span> generate_ipow_function(parity_splitting: ParitySplitting):</span>
+<span id="generate-ipow-function-2"><a href="#generate-ipow-function-2" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="generate-ipow-function-3"><a href="#generate-ipow-function-3" aria-hidden="true"></a><span class="co">    Generate inline OpenCL function to compute the integer power of a radix.</span></span>
+<span id="generate-ipow-function-4"><a href="#generate-ipow-function-4" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="generate-ipow-function-5"><a href="#generate-ipow-function-5" aria-hidden="true"></a>    template <span class="op">=</span> template_environment.get_template(<span class="st">&quot;ipow.cl&quot;</span>)</span>
+<span id="generate-ipow-function-6"><a href="#generate-ipow-function-6" aria-hidden="true"></a></span>
+<span id="generate-ipow-function-7"><a href="#generate-ipow-function-7" aria-hidden="true"></a>    <span class="cf">return</span> template.render(radix<span class="op">=</span>parity_splitting.radix)</span></code></pre></div>
 </div>
 </div></main>
 
 <footer class="py-4 bg-dark text-white-50 footer"><div class="container">
 Generated from the Entangled Bootstrap template.<br />
-2021-03-01 — version: 0.1.0
+2021-03-08 — version: 0.1.0
 </div></footer>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

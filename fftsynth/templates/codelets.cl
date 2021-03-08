@@ -1,3 +1,5 @@
+/* ~\~ language=OpenCL filename=fftsynth/templates/codelets.cl */
+/* ~\~ begin <<lit/code-generator.md|fftsynth/templates/codelets.cl>>[0] */
 void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, float2 * restrict s3,int cycle, int i0, int i1, int i2, int i3, int iw)
 {
     float2 t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;
@@ -57,3 +59,4 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
     }
     {% endif %}
 }
+/* ~\~ end */

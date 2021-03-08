@@ -1,3 +1,5 @@
+/* ~\~ language=OpenCL filename=fftsynth/templates/preprocessor.cl */
+/* ~\~ begin <<lit/code-generator.md|fftsynth/templates/preprocessor.cl>>[0] */
 {% if fpga -%}
 #pragma OPENCL EXTENSION cl_intel_channels : enable
 #include <ihc_apint.h>
@@ -13,3 +15,4 @@ channel float2 in_channel, out_channel;
 #define MODR(x) ((x) % {{ radix }})
 #define MULR(x) ((x) * {{ radix }})
 {% endif %}
+/* ~\~ end */

@@ -1,6 +1,6 @@
 /* ~\~ language=OpenCL filename=fftsynth/templates/fft.cl */
 /* ~\~ begin <<lit/code-generator.md|fftsynth/templates/fft.cl>>[0] */
-void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %})
+void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %}{% if fpga %},{% for i in range(radix) %} float2 * restrict s{{ i }}_in,{% endfor %}{% for i in range(radix) %} float2 * restrict s{{ i }}_out{%- if not loop.last %},{% endif %}{% endfor %}{% endif %})
 {
     int wp = 0;
 
@@ -22,7 +22,11 @@ void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if
             {
                 a = comp_perm_4(DIVR(i), MODR(i));
             }
+            {% if fpga %}
+            fft_{{ radix }}({% for i in range(radix) %} s{{ i }},{% endfor %}{% for i in range(radix) %} s{{ i }}_in,{% endfor %}{% for i in range(radix) %} s{{ i }}_out,{% endfor %} k == 0, k == {{ depth - 1 }}, MODR(i), {% for i in range(radix) %} a + {{ i }} * j,{% endfor %} wp);
+            {% else %}
             fft_{{ radix }}({% for i in range(radix) %} s{{ i }},{% endfor %} MODR(i), {% for i in range(radix) %} a + {{ i }} * j,{% endfor %} wp);
+            {% endif %}
             if ( k != 0 )
             {
                 ++wp;
@@ -41,6 +45,9 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
     {% endif -%}
     {%- for i in range(radix) %}
     float2 s{{ i }}[{{ M }}];
+    {% if fpga -%}
+    float2 s{{ i }}_in[{{ M }}], s{{ i }}_out[{{ M }}];
+    {%- endif -%}
     {%- endfor %}
 
     for ( {{ n_type }} j = 0; j != {{ N }}; ++j )
@@ -55,7 +62,7 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
         {
             {%- if fpga %}
             {%- for p in range(radix) %}
-            case {{ p }}: s{{ p }}[DIVR(i)] = x; break;
+            case {{ p }}: s{{ p }}_in[DIVR(i)] = x; break;
             {%- endfor -%}
             {% else %}
             {%- for p in range(radix) %}
@@ -65,7 +72,11 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
         }
     }
 
-    fft_{{ N }}_ps({% for i in range(radix) %} s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %});
+    {% if fpga %}
+    fft_{{ N }}_ps({%- for i in range(radix) %} s{{ i }},{% endfor %} {%- for i in range(radix) %} s{{ i }}_in,{% endfor %} {%- for i in range(radix) %} s{{ i }}_out{%- if not loop.last %},{% endif %}{% endfor %});
+    {% else %}
+    fft_{{ N }}_ps({%- for i in range(radix) %} s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %});
+    {% endif %}
 
     for ( {{ n_type }} i = 0; i != {{ N }}; ++i )
     {
@@ -73,12 +84,12 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
         {% if fpga -%}
         float2 y;
         {% endif -%}
-        
+
         switch ( p )
         {
             {%- if fpga -%}
             {%- for p in range(radix) %}
-            case {{ p }}: y = s{{ p }}[DIVR(i)]; break;
+            case {{ p }}: y = s{{ p }}_out[DIVR(i)]; break;
             {%- endfor -%}
             {% else %}
             {%- for p in range(radix) %}

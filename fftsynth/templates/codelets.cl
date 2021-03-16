@@ -1,6 +1,6 @@
 /* ~\~ language=OpenCL filename=fftsynth/templates/codelets.cl */
 /* ~\~ begin <<lit/code-generator.md|fftsynth/templates/codelets.cl>>[0] */
-void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, float2 * restrict s3,int cycle, int i0, int i1, int i2, int i3, int iw)
+void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, float2 * restrict s3,{% if fpga %}{% for i in range(radix) %} float2 * restrict s{{ i }}_in,{% endfor %}{% for i in range(radix) %} float2 * restrict s{{ i }}_out,{% endfor %} bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int i2, int i3, int iw)
 {
     float2 t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;
     __constant float2 *w = W[iw];
@@ -11,7 +11,14 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
         case 2: SWAP(int, i0, i2); SWAP(int, i1, i3); break;
         case 3: SWAP(int, i0, i1); SWAP(int, i1, i3); SWAP(int, i1, i2); break;
     }
-    t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3];
+    if ( first_iteration )
+    {
+        t0 = s0_in[i0]; t1 = s1_in[i1]; t2 = s2_in[i2]; t3 = s3_in[i3];
+    }
+    else
+    {
+        t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3];
+    }
     switch (cycle) {
         case 1: SWAP(float2, t0, t1); SWAP(float2, t1, t2); SWAP(float2, t2, t3); break;
         case 2: SWAP(float2, t0, t2); SWAP(float2, t1, t3); break;
@@ -49,7 +56,14 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
         case 2: SWAP(float2, t1, t3); SWAP(float2, t0, t2); break;
         case 3: SWAP(float2, t0, t2); SWAP(float2, t0, t1); SWAP(float2, t2, t3); break;
     }
-    s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;
+    if ( last_iteration )
+    {
+        s0_out[i0] = t0; s1_out[i1] = t1; s2_out[i2] = t2; s3_out[i3] = t3;
+    }
+    else
+    {
+        s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;
+    }
     {% else %}
     switch (cycle) {
         case 0: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; break;

@@ -58,7 +58,7 @@ def generate_fft(parity_splitting: ParitySplitting, fpga: bool):
     print("\n")
     print(generate_index_functions(parity_splitting))
     print("\n")
-    print(generate_codelets(fpga))
+    print(generate_codelets(parity_splitting, fpga))
     print("\n")
     print(generate_fft_functions(parity_splitting, fpga))
 
@@ -84,7 +84,7 @@ if __name__ == "__main__":
 This is the parameterized OpenCL code used to compute an FFT-4.
 
 ```{.opencl file=fftsynth/templates/codelets.cl}
-void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, float2 * restrict s3,int cycle, int i0, int i1, int i2, int i3, int iw)
+void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, float2 * restrict s3,{% if fpga %}{% for i in range(radix) %} float2 * restrict s{{ i }}_in,{% endfor %}{% for i in range(radix) %} float2 * restrict s{{ i }}_out,{% endfor %} bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int i2, int i3, int iw)
 {
     float2 t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;
     __constant float2 *w = W[iw];
@@ -95,7 +95,14 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
         case 2: SWAP(int, i0, i2); SWAP(int, i1, i3); break;
         case 3: SWAP(int, i0, i1); SWAP(int, i1, i3); SWAP(int, i1, i2); break;
     }
-    t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3];
+    if ( first_iteration )
+    {
+        t0 = s0_in[i0]; t1 = s1_in[i1]; t2 = s2_in[i2]; t3 = s3_in[i3];
+    }
+    else
+    {
+        t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3];
+    }
     switch (cycle) {
         case 1: SWAP(float2, t0, t1); SWAP(float2, t1, t2); SWAP(float2, t2, t3); break;
         case 2: SWAP(float2, t0, t2); SWAP(float2, t1, t3); break;
@@ -133,7 +140,14 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
         case 2: SWAP(float2, t1, t3); SWAP(float2, t0, t2); break;
         case 3: SWAP(float2, t0, t2); SWAP(float2, t0, t1); SWAP(float2, t2, t3); break;
     }
-    s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;
+    if ( last_iteration )
+    {
+        s0_out[i0] = t0; s1_out[i1] = t1; s2_out[i2] = t2; s3_out[i3] = t3;
+    }
+    else
+    {
+        s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;
+    }
     {% else %}
     switch (cycle) {
         case 0: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; break;
@@ -148,13 +162,13 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
 What follows is the Python function used to generate the OpenCL code.
 
 ```{.python #generate-codelets}
-def generate_codelets(fpga: bool):
+def generate_codelets(parity_splitting: ParitySplitting, fpga: bool):
     """
     Generate OpenCL codelets for FFT.
     """
     template = template_environment.get_template("codelets.cl")
 
-    return template.render(fpga=fpga)
+    return template.render(radix=parity_splitting.radix, fpga=fpga)
 ```
 
 ### Preprocessor
@@ -395,7 +409,7 @@ Here we have `k` being the index of the outer loop.
 The next bit is only still implemented for radix-4.
 
 ```{.opencl file=fftsynth/templates/fft.cl}
-void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %})
+void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %}{% if fpga %},{% for i in range(radix) %} float2 * restrict s{{ i }}_in,{% endfor %}{% for i in range(radix) %} float2 * restrict s{{ i }}_out{%- if not loop.last %},{% endif %}{% endfor %}{% endif %})
 {
     int wp = 0;
 
@@ -417,7 +431,11 @@ void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if
             {
                 a = comp_perm_4(DIVR(i), MODR(i));
             }
+            {% if fpga %}
+            fft_{{ radix }}({% for i in range(radix) %} s{{ i }},{% endfor %}{% for i in range(radix) %} s{{ i }}_in,{% endfor %}{% for i in range(radix) %} s{{ i }}_out,{% endfor %} k == 0, k == {{ depth - 1 }}, MODR(i), {% for i in range(radix) %} a + {{ i }} * j,{% endfor %} wp);
+            {% else %}
             fft_{{ radix }}({% for i in range(radix) %} s{{ i }},{% endfor %} MODR(i), {% for i in range(radix) %} a + {{ i }} * j,{% endfor %} wp);
+            {% endif %}
             if ( k != 0 )
             {
                 ++wp;
@@ -442,6 +460,9 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
     {% endif -%}
     {%- for i in range(radix) %}
     float2 s{{ i }}[{{ M }}];
+    {% if fpga -%}
+    float2 s{{ i }}_in[{{ M }}], s{{ i }}_out[{{ M }}];
+    {%- endif -%}
     {%- endfor %}
 
     for ( {{ n_type }} j = 0; j != {{ N }}; ++j )
@@ -456,7 +477,7 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
         {
             {%- if fpga %}
             {%- for p in range(radix) %}
-            case {{ p }}: s{{ p }}[DIVR(i)] = x; break;
+            case {{ p }}: s{{ p }}_in[DIVR(i)] = x; break;
             {%- endfor -%}
             {% else %}
             {%- for p in range(radix) %}
@@ -466,7 +487,11 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
         }
     }
 
-    fft_{{ N }}_ps({% for i in range(radix) %} s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %});
+    {% if fpga %}
+    fft_{{ N }}_ps({%- for i in range(radix) %} s{{ i }},{% endfor %} {%- for i in range(radix) %} s{{ i }}_in,{% endfor %} {%- for i in range(radix) %} s{{ i }}_out{%- if not loop.last %},{% endif %}{% endfor %});
+    {% else %}
+    fft_{{ N }}_ps({%- for i in range(radix) %} s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %});
+    {% endif %}
 
     for ( {{ n_type }} i = 0; i != {{ N }}; ++i )
     {
@@ -474,12 +499,12 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
         {% if fpga -%}
         float2 y;
         {% endif -%}
-        
+
         switch ( p )
         {
             {%- if fpga -%}
             {%- for p in range(radix) %}
-            case {{ p }}: y = s{{ p }}[DIVR(i)]; break;
+            case {{ p }}: y = s{{ p }}_out[DIVR(i)]; break;
             {%- endfor -%}
             {% else %}
             {%- for p in range(radix) %}

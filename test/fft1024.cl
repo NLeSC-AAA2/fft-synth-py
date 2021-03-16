@@ -1140,7 +1140,7 @@ inline int comp_perm_4(int i, int rem)
 
 /* ~\~ language=OpenCL filename=fftsynth/templates/codelets.cl */
 /* ~\~ begin <<lit/code-generator.md|fftsynth/templates/codelets.cl>>[0] */
-void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, float2 * restrict s3,int cycle, int i0, int i1, int i2, int i3, int iw)
+void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, float2 * restrict s3, int cycle, int i0, int i1, int i2, int i3, int iw)
 {
     float2 t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;
     __constant float2 *w = W[iw];
@@ -1204,7 +1204,9 @@ void fft_1024_ps( float2 * restrict s0, float2 * restrict s1, float2 * restrict 
             {
                 a = comp_perm_4(DIVR(i), MODR(i));
             }
+            
             fft_4( s0, s1, s2, s3, MODR(i),  a + 0 * j, a + 1 * j, a + 2 * j, a + 3 * j, wp);
+            
             if ( k != 0 )
             {
                 ++wp;
@@ -1219,9 +1221,13 @@ void fft_1024(__global const float2 * restrict x, __global float2 * restrict y)
 {
     
     float2 s0[256];
+    
     float2 s1[256];
+    
     float2 s2[256];
+    
     float2 s3[256];
+    
 
     for ( unsigned int j = 0; j != 1024; ++j )
     {
@@ -1237,7 +1243,9 @@ void fft_1024(__global const float2 * restrict x, __global float2 * restrict y)
         }
     }
 
+    
     fft_1024_ps( s0, s1, s2, s3);
+    
 
     for ( unsigned int i = 0; i != 1024; ++i )
     {

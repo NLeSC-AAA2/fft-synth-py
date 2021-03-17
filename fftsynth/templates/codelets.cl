@@ -1,6 +1,6 @@
 /* ~\~ language=OpenCL filename=fftsynth/templates/codelets.cl */
 /* ~\~ begin <<lit/code-generator.md|fftsynth/templates/codelets.cl>>[0] */
-void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, float2 * restrict s3,{% if fpga %}{% for i in range(radix) %} float2 * restrict s{{ i }}_in,{% endfor %}{% for i in range(radix) %} float2 * restrict s{{ i }}_out,{% endfor %} bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int i2, int i3, int iw)
+void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, float2 * restrict s3,{% if fpga %} float2 * restrict s0_in, float2 * restrict s1_in, float2 * restrict s2_in, float2 * restrict s3_in, float2 * restrict s0_out, float2 * restrict s1_out, float2 * restrict s2_out, float2 * restrict s3_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int i2, int i3, int iw)
 {
     float2 t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;
     __constant float2 *w = W[iw];

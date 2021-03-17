@@ -854,7 +854,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb12-55"><a href="#cb12-55" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
 <span id="cb12-56"><a href="#cb12-56" aria-hidden="true"></a>    <span class="bu">print</span>(generate_index_functions(parity_splitting))</span>
 <span id="cb12-57"><a href="#cb12-57" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb12-58"><a href="#cb12-58" aria-hidden="true"></a>    <span class="bu">print</span>(generate_codelets(parity_splitting, fpga))</span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true"></a>    <span class="bu">print</span>(generate_codelets(fpga))</span>
 <span id="cb12-59"><a href="#cb12-59" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
 <span id="cb12-60"><a href="#cb12-60" aria-hidden="true"></a>    <span class="bu">print</span>(generate_fft_functions(parity_splitting, fpga))</span>
 <span id="cb12-61"><a href="#cb12-61" aria-hidden="true"></a></span>
@@ -878,7 +878,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>This is the parameterized OpenCL code used to compute an FFT-4.</p>
 <div class="annotated-code">
 <p><span><em>«fftsynth/templates/codelets.cl»=</em></span></p>
-<div class="sourceCode" id="cb13" data-file="fftsynth/templates/codelets.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="dt">void</span> fft_4(<span class="dt">float2</span> * <span class="dt">restrict</span> s0, <span class="dt">float2</span> * <span class="dt">restrict</span> s1, <span class="dt">float2</span> * <span class="dt">restrict</span> s2, <span class="dt">float2</span> * <span class="dt">restrict</span> s3,{% <span class="kw">if</span> fpga %}{% <span class="kw">for</span> i in range(radix) %} <span class="dt">float2</span> * <span class="dt">restrict</span> s{{ i }}_in,{% endfor %}{% <span class="kw">for</span> i in range(radix) %} <span class="dt">float2</span> * <span class="dt">restrict</span> s{{ i }}_out,{% endfor %} <span class="dt">bool</span> first_iteration, <span class="dt">bool</span> last_iteration,{% endif %} <span class="dt">int</span> cycle, <span class="dt">int</span> i0, <span class="dt">int</span> i1, <span class="dt">int</span> i2, <span class="dt">int</span> i3, <span class="dt">int</span> iw)</span>
+<div class="sourceCode" id="cb13" data-file="fftsynth/templates/codelets.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="dt">void</span> fft_4(<span class="dt">float2</span> * <span class="dt">restrict</span> s0, <span class="dt">float2</span> * <span class="dt">restrict</span> s1, <span class="dt">float2</span> * <span class="dt">restrict</span> s2, <span class="dt">float2</span> * <span class="dt">restrict</span> s3,{% <span class="kw">if</span> fpga %} <span class="dt">float2</span> * <span class="dt">restrict</span> s0_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s1_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s2_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s3_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s0_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s1_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s2_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s3_out, <span class="dt">bool</span> first_iteration, <span class="dt">bool</span> last_iteration,{% endif %} <span class="dt">int</span> cycle, <span class="dt">int</span> i0, <span class="dt">int</span> i1, <span class="dt">int</span> i2, <span class="dt">int</span> i3, <span class="dt">int</span> iw)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true"></a>{</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true"></a>    <span class="dt">float2</span> t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true"></a>    <span class="kw">__constant</span> <span class="dt">float2</span> *w = W[iw];</span>
@@ -955,13 +955,13 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>What follows is the Python function used to generate the OpenCL code.</p>
 <div class="annotated-code">
 <p><span><em>«generate-codelets»=</em></span></p>
-<div class="sourceCode" id="generate-codelets"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-codelets-1"><a href="#generate-codelets-1" aria-hidden="true"></a><span class="kw">def</span> generate_codelets(parity_splitting: ParitySplitting, fpga: <span class="bu">bool</span>):</span>
+<div class="sourceCode" id="generate-codelets"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-codelets-1"><a href="#generate-codelets-1" aria-hidden="true"></a><span class="kw">def</span> generate_codelets(fpga: <span class="bu">bool</span>):</span>
 <span id="generate-codelets-2"><a href="#generate-codelets-2" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
 <span id="generate-codelets-3"><a href="#generate-codelets-3" aria-hidden="true"></a><span class="co">    Generate OpenCL codelets for FFT.</span></span>
 <span id="generate-codelets-4"><a href="#generate-codelets-4" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
 <span id="generate-codelets-5"><a href="#generate-codelets-5" aria-hidden="true"></a>    template <span class="op">=</span> template_environment.get_template(<span class="st">&quot;codelets.cl&quot;</span>)</span>
 <span id="generate-codelets-6"><a href="#generate-codelets-6" aria-hidden="true"></a></span>
-<span id="generate-codelets-7"><a href="#generate-codelets-7" aria-hidden="true"></a>    <span class="cf">return</span> template.render(radix<span class="op">=</span>parity_splitting.radix, fpga<span class="op">=</span>fpga)</span></code></pre></div>
+<span id="generate-codelets-7"><a href="#generate-codelets-7" aria-hidden="true"></a>    <span class="cf">return</span> template.render(fpga<span class="op">=</span>fpga)</span></code></pre></div>
 </div>
 <h3 id="preprocessor">Preprocessor</h3>
 <p>This is the parameterized OpenCL code used to write the preprocessor directives.</p>
@@ -1393,7 +1393,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 
 <footer class="py-4 bg-dark text-white-50 footer"><div class="container">
 Generated from the Entangled Bootstrap template.<br />
-2021-03-16 — version: 0.1.0
+2021-03-17 — version: 0.1.0
 </div></footer>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

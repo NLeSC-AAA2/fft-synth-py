@@ -1201,11 +1201,11 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb21-14"><a href="#cb21-14" aria-hidden="true"></a>            <span class="dt">int</span> a;</span>
 <span id="cb21-15"><a href="#cb21-15" aria-hidden="true"></a>            <span class="kw">if</span> ( k != <span class="dv">0</span> )</span>
 <span id="cb21-16"><a href="#cb21-16" aria-hidden="true"></a>            {</span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true"></a>                a = comp_idx_4(DIVR(i), k<span class="dv">-1</span>);</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true"></a>                a = comp_idx_{{ radix }}(DIVR(i), k<span class="dv">-1</span>);</span>
 <span id="cb21-18"><a href="#cb21-18" aria-hidden="true"></a>            }</span>
 <span id="cb21-19"><a href="#cb21-19" aria-hidden="true"></a>            <span class="kw">else</span></span>
 <span id="cb21-20"><a href="#cb21-20" aria-hidden="true"></a>            {</span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true"></a>                a = comp_perm_4(DIVR(i), MODR(i));</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true"></a>                a = comp_perm_{{ radix }}(DIVR(i), MODR(i));</span>
 <span id="cb21-22"><a href="#cb21-22" aria-hidden="true"></a>            }</span>
 <span id="cb21-23"><a href="#cb21-23" aria-hidden="true"></a>            {% <span class="kw">if</span> fpga %}</span>
 <span id="cb21-24"><a href="#cb21-24" aria-hidden="true"></a>            fft_{{ radix }}({% <span class="kw">for</span> i in range(radix) %} s{{ i }},{% endfor %}{% <span class="kw">for</span> i in range(radix) %} s{{ i }}_in,{% endfor %}{% <span class="kw">for</span> i in range(radix) %} s{{ i }}_out,{% endfor %} k == <span class="dv">0</span>, k == {{ depth - <span class="dv">1</span> }}, MODR(i), {% <span class="kw">for</span> i in range(radix) %} a + {{ i }} * j,{% endfor %} wp);</span>

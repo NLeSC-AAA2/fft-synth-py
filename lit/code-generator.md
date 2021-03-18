@@ -425,11 +425,11 @@ void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if
             int a;
             if ( k != 0 )
             {
-                a = comp_idx_4(DIVR(i), k-1);
+                a = comp_idx_{{ radix }}(DIVR(i), k-1);
             }
             else
             {
-                a = comp_perm_4(DIVR(i), MODR(i));
+                a = comp_perm_{{ radix }}(DIVR(i), MODR(i));
             }
             {% if fpga %}
             fft_{{ radix }}({% for i in range(radix) %} s{{ i }},{% endfor %}{% for i in range(radix) %} s{{ i }}_in,{% endfor %}{% for i in range(radix) %} s{{ i }}_out,{% endfor %} k == 0, k == {{ depth - 1 }}, MODR(i), {% for i in range(radix) %} a + {{ i }} * j,{% endfor %} wp);

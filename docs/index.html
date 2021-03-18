@@ -488,11 +488,11 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>This contains one complex multiplication and two complex additions, totaling four floating point multiplications and six additions.</p>
 <div class="annotated-code">
 <p><span><em>«fma-radix2»=</em></span></p>
-<div class="sourceCode" id="fma-radix2"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="fma-radix2-1"><a href="#fma-radix2-1" aria-hidden="true"></a><span class="dt">void</span> radix2_fma(<span class="dt">float2</span> e, <span class="dt">float2</span> o, <span class="dt">float2</span> w, <span class="dt">float2</span>* xa, <span class="dt">float2</span>* xb)</span>
+<div class="sourceCode" id="fma-radix2"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="fma-radix2-1"><a href="#fma-radix2-1" aria-hidden="true"></a><span class="dt">void</span> radix2_fma(<span class="dt">float2</span> t0, <span class="dt">float2</span> t1, <span class="dt">float2</span> w0, <span class="dt">float2</span>* xa, <span class="dt">float2</span>* xb)</span>
 <span id="fma-radix2-2"><a href="#fma-radix2-2" aria-hidden="true"></a>{</span>
-<span id="fma-radix2-3"><a href="#fma-radix2-3" aria-hidden="true"></a>    <span class="dt">float2</span> a = (<span class="dt">float2</span>) (-w.y * o.y + e.x, w.y * o.x + e.y);</span>
-<span id="fma-radix2-4"><a href="#fma-radix2-4" aria-hidden="true"></a>    a += (<span class="dt">float2</span>) (w.x * o.x, w.x * o.y);</span>
-<span id="fma-radix2-5"><a href="#fma-radix2-5" aria-hidden="true"></a>    <span class="dt">float2</span> b = <span class="dv">2</span> * e - a;</span>
+<span id="fma-radix2-3"><a href="#fma-radix2-3" aria-hidden="true"></a>    <span class="dt">float2</span> a = (<span class="dt">float2</span>) (-w0.y * t1.y + t0.x, w0.y * t1.x + t0.y);</span>
+<span id="fma-radix2-4"><a href="#fma-radix2-4" aria-hidden="true"></a>    a += (<span class="dt">float2</span>) (w0.x * t1.x, w0.x * t1.y);</span>
+<span id="fma-radix2-5"><a href="#fma-radix2-5" aria-hidden="true"></a>    <span class="dt">float2</span> b = <span class="dv">2</span> * t0 - a;</span>
 <span id="fma-radix2-6"><a href="#fma-radix2-6" aria-hidden="true"></a></span>
 <span id="fma-radix2-7"><a href="#fma-radix2-7" aria-hidden="true"></a>    *xa = a;</span>
 <span id="fma-radix2-8"><a href="#fma-radix2-8" aria-hidden="true"></a>    *xb = b;</span>
@@ -550,7 +550,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-45"><a href="#cb10-45" aria-hidden="true"></a><span class="dt">float</span> radix4_fma(<span class="dt">float2</span> t0, <span class="dt">float2</span> t1, <span class="dt">float2</span> t2, <span class="dt">float2</span> t3,</span>
 <span id="cb10-46"><a href="#cb10-46" aria-hidden="true"></a>                <span class="dt">float2</span> w0, <span class="dt">float2</span> w1,</span>
 <span id="cb10-47"><a href="#cb10-47" aria-hidden="true"></a>                <span class="dt">float2</span>* x0, <span class="dt">float2</span>* x1, <span class="dt">float2</span> *x2, <span class="dt">float2</span>* x3) {</span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true"></a>   </span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true"></a></span>
 <span id="cb10-49"><a href="#cb10-49" aria-hidden="true"></a>   <span class="co">//adapted from pedram2013transforming, however</span></span>
 <span id="cb10-50"><a href="#cb10-50" aria-hidden="true"></a>   <span class="co">//some versions of the pedram2013transforming paper, including the one hosted by IEEE and the one hosted here:</span></span>
 <span id="cb10-51"><a href="#cb10-51" aria-hidden="true"></a>   <span class="co">//https://www.cs.utexas.edu/users/flame/pubs/LAC_fft.pdf</span></span>
@@ -1393,7 +1393,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 
 <footer class="py-4 bg-dark text-white-50 footer"><div class="container">
 Generated from the Entangled Bootstrap template.<br />
-2021-03-17 — version: 0.1.0
+2021-03-18 — version: 0.1.0
 </div></footer>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

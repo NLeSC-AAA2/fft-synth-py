@@ -1,4 +1,4 @@
-void fft_4(
+void fft_4_fma(
     float2 * restrict s0, float2 * restrict s1,
     float2 * restrict s2, float2 * restrict s3,
     int cycle, int i0, int i1, int i2, int i3, int iw)

@@ -1,16 +1,20 @@
-void fft_4_fma(
-    float2 * restrict s0, float2 * restrict s1,
-    float2 * restrict s2, float2 * restrict s3,
-    int cycle, int i0, int i1, int i2, int i3, int iw)
+void fft_{{ radix }}_fma(
+    {% for i in range(radix) %} float2 * restrict s{{ i }},{% endfor %}
+    int cycle, 
+    {% for i in range(radix) %} int i{{ i }},{% endfor %}
+    // int i0, int i1, int i2, int i3,
+    int iw)
 {
-    float2 t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;
     __constant float2 *w = W[iw];
 
     switch (cycle) {
-        case 0: radix4_fma(s0[i0], s1[i1], s2[i2], s3[i3], w[0], w[1], s0+i0, s1+i1, s2+i2, s3+i3); break;
-        case 1: radix4_fma(s1[i0], s2[i1], s3[i2], s0[i3], w[0], w[1], s1+i0, s2+i1, s3+i2, s0+i3); break;
-        case 2: radix4_fma(s2[i0], s3[i1], s0[i2], s1[i3], w[0], w[1], s2+i0, s3+i1, s0+i2, s1+i3); break;
-        case 3: radix4_fma(s3[i0], s0[i1], s1[i2], s2[i3], w[0], w[1], s3+i0, s0+i1, s1+i2, s2+i3); break;
+        {% for i in range(radix) %}
+        case {{ i }}: radix{{ radix }}_fma(
+            {% for j in range(radix) %}s{{(i + j) % radix}}[i{{ j }}],{% endfor %}
+            {% for j in range(n_twiddles) %}w[{{ j }}],{% endfor %}
+            {% for j in range(radix) %}s{{(i + j) % radix}}+i{{ j }}{%- if not loop.last %},{% endif %}{% endfor %});
+            break;
+        {% endfor %}
     }
 }
 
@@ -32,11 +36,11 @@ void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if
             int a;
             if ( k != 0 )
             {
-                a = comp_idx_4(DIVR(i), k-1);
+                a = comp_idx_{{ radix }}(DIVR(i), k-1);
             }
             else
             {
-                a = comp_perm_4(DIVR(i), MODR(i));
+                a = comp_perm_{{ radix }}(DIVR(i), MODR(i));
             }
             fft_{{ radix }}_fma({% for i in range(radix) %} s{{ i }},{% endfor %} MODR(i), {% for i in range(radix) %} a + {{ i }} * j,{% endfor %} wp);
             if ( k != 0 )

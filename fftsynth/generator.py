@@ -3,12 +3,18 @@
 from jinja2 import Environment, FileSystemLoader
 import numpy
 from pkg_resources import resource_filename
+from math import ceil
 
 from .parity import ParitySplitting, comp_perm
 from .twiddle import make_twiddle
 
 template_loader = FileSystemLoader(resource_filename("fftsynth", "templates"))
 template_environment = Environment(loader=template_loader)
+
+
+def get_n_twiddles(radix):
+    """Gives the width of the twiddle array as a function of radix."""
+    return [0, 1, 1, 2, 2, 4][radix]
 
 
 # ~\~ begin <<lit/code-generator.md|generate-preprocessor>>[0]
@@ -180,6 +186,7 @@ def generate_fma_twiddle_array(parity_splitting: ParitySplitting):
         n *= parity_splitting.radix
 
     return template.render(radix=parity_splitting.radix,
+                           n_twiddles=get_n_twiddles(parity_splitting.radix),
                            W=twiddles)
 
 
@@ -208,6 +215,7 @@ def generate_fma_fft_functions(parity_splitting: ParitySplitting, fpga: bool):
     return template.render(N=parity_splitting.N,
                            depth=parity_splitting.depth,
                            radix=parity_splitting.radix,
+                           n_twiddles=get_n_twiddles(parity_splitting.radix),
                            M=parity_splitting.M,
                            fpga=fpga,
                            depth_type=depth_type,

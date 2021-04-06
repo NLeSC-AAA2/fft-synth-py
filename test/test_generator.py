@@ -3,16 +3,24 @@
 import pytest
 import numpy as np
 from kernel_tuner import run_kernel  # type: ignore
+from contextlib import redirect_stdout
+import io
 
 from fftsynth.parity import ParitySplitting, parity
-from fftsynth.generator import generate_preprocessor, generate_transpose_function, generate_parity_function
+from fftsynth.generator import (
+    generate_preprocessor, generate_transpose_function, generate_parity_function,
+    generate_fft, generate_fma_fft )
 
 cases = [
+    ParitySplitting(64, 2),
     ParitySplitting(64, 4),
     ParitySplitting(81, 3),
     ParitySplitting(125, 5)
 ]
 
+limited_cases = [
+    ParitySplitting(64, 4)
+]
 
 # ~\~ begin <<lit/code-generator.md|test-parity>>[0]
 @pytest.mark.parametrize("parity_splitting", cases)
@@ -41,4 +49,39 @@ def test_transpose(parity_splitting: ParitySplitting):
 
     assert np.all(results[1] == y_ref)
 # ~\~ end
+
+@pytest.mark.parametrize('ps', limited_cases)
+def test_fft(ps: ParitySplitting):
+    f = io.StringIO()
+    with redirect_stdout(f):
+        generate_fft(ps, False)
+    kernel = f.getvalue()
+
+    x = np.random.normal(size=(ps.N, 2)).astype(np.float32)
+    y = np.zeros_like(x)
+
+    results = run_kernel(
+        f"fft_{ps.N}", kernel, ps.N, [x, y], {},
+        compiler_options=["-DTESTING"])
+    y_ref = np.fft.fft(x[:,0] + 1j * x[:,1])
+    y = results[1][:,0] + 1j * results[1][:,1]
+    np.testing.assert_almost_equal(y, y_ref, decimal=4, verbose=True)
+
+
+@pytest.mark.parametrize('ps', cases)
+def test_fft_fma(ps: ParitySplitting):
+    f = io.StringIO()
+    with redirect_stdout(f):
+        generate_fma_fft(ps, False)
+    kernel = f.getvalue()
+
+    x = np.random.normal(size=(ps.N, 2)).astype(np.float32)
+    y = np.zeros_like(x)
+
+    results = run_kernel(
+        f"fft_{ps.N}", kernel, ps.N, [x, y], {},
+        compiler_options=["-DTESTING"])
+    y_ref = np.fft.fft(x[:,0] + 1j * x[:,1])
+    y = results[1][:,0] + 1j * results[1][:,1]
+    np.testing.assert_almost_equal(y, y_ref, decimal=4, verbose=True)
 # ~\~ end

@@ -1,6 +1,6 @@
 /* ~\~ language=OpenCL filename=fftsynth/templates/codelets.cl */
 /* ~\~ begin <<lit/code-generator.md|fftsynth/templates/codelets.cl>>[0] */
-void fft_2(float2 * restrict s0, float2 * restrict s1,{% if fpga %} float2 * restrict s0_in, float2 * restrict s1_in, float2 * restrict s0_out, float2 * restrict s1_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int iw)
+void fft_2(__global float2 * restrict s0, __global float2 * restrict s1,{% if fpga %} float2 * restrict s0_in, float2 * restrict s1_in, float2 * restrict s0_out, float2 * restrict s1_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int iw)
 {
     float2 t0, t1, ws0, ws1;
     __constant float2 *w = W[iw];
@@ -53,6 +53,22 @@ void fft_2(float2 * restrict s0, float2 * restrict s1,{% if fpga %} float2 * res
     }
     {% endif %}
 }
+
+#ifdef TESTING
+__kernel void test_radix_2(__global float2 *x, __global float2 *y, int n) {
+
+    float2 w = (float2) (1.0, 0.0);
+    int i = get_global_id(0)*2;
+
+    //n is the number of radix2 ffts to perform
+    if (i<2*n) {
+        float2 y0, y1;
+        fft_2(x, x, 0, i, i + 1, 0);
+
+        y[i] = x[i]; y[i+1] = x[i+1];
+    }
+}
+#endif // TESTING
 
 void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, float2 * restrict s3,{% if fpga %} float2 * restrict s0_in, float2 * restrict s1_in, float2 * restrict s2_in, float2 * restrict s3_in, float2 * restrict s0_out, float2 * restrict s1_out, float2 * restrict s2_out, float2 * restrict s3_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int i2, int i3, int iw)
 {

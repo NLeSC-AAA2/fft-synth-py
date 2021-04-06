@@ -47,6 +47,7 @@ def test_fft_1024():
     y_Z = results[1][..., 0]+1j*results[1][..., 1]
     y_ref = np.fft.fft(x[..., 0]+1j*x[..., 1])
 
+    print("kernel output:", results[1])
     print("result:", y_Z)
     print("should be:", y_ref)
 

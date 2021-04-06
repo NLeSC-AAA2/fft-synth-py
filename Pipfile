@@ -13,6 +13,7 @@ pandoc-eqnos = "*"
 pandoc-fignos = "*"
 jupyterlab = "*"
 jupyter-client = "*"
+entangled-filters = "==0.8.3"
 
 [dev-packages]
 

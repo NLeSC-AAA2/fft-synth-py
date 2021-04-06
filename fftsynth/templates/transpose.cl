@@ -1,3 +1,5 @@
+/* ~\~ language=OpenCL filename=fftsynth/templates/transpose.cl */
+/* ~\~ begin <<lit/code-generator.md|fftsynth/templates/transpose.cl>>[0] */
 inline int transpose_{{ radix }}(int j)
 {
     int x = 0;
@@ -9,7 +11,8 @@ inline int transpose_{{ radix }}(int j)
 
     return x;
 }
-
+/* ~\~ end */
+/* ~\~ begin <<lit/code-generator.md|fftsynth/templates/transpose.cl>>[1] */
 #ifdef TESTING
 __kernel void test_transpose_{{ radix }}(__global const int * x, __global int * y)
 {
@@ -18,3 +21,4 @@ __kernel void test_transpose_{{ radix }}(__global const int * x, __global int * 
     y[i] = transpose_{{ radix }}(x[i]);
 }
 #endif // TESTING
+/* ~\~ end */

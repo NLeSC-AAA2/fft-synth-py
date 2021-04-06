@@ -1,3 +1,5 @@
+/* ~\~ language=OpenCL filename=fftsynth/templates/twiddles.cl */
+/* ~\~ begin <<lit/code-generator.md|fftsynth/templates/twiddles.cl>>[0] */
 __constant float2 W[{{ W.shape[0] - radix }}][{{ radix - 1 }}] = {
 {% for ws in W[radix:] %}
 { {% for w in ws[1:] -%}
@@ -5,3 +7,4 @@ __constant float2 W[{{ W.shape[0] - radix }}][{{ radix - 1 }}] = {
 {%- endfor %} } {%- if not loop.last %},{% endif %}
 {%- endfor %}
 };
+/* ~\~ end */

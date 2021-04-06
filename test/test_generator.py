@@ -5,7 +5,7 @@ import numpy as np
 from kernel_tuner import run_kernel  # type: ignore
 
 from fftsynth.parity import ParitySplitting, parity
-from fftsynth.generator import gen_parity_fn, gen_transpose_fn
+from fftsynth.generator import generate_preprocessor, generate_transpose_function, generate_parity_function
 
 cases = [
     ParitySplitting(64, 4),
@@ -13,52 +13,31 @@ cases = [
     ParitySplitting(125, 5)
 ]
 
-# ~\~ begin <<lit/code-generator.md|test-parity>>[0]
-@pytest.mark.parametrize('ps', cases)
-def test_parity_4(ps: ParitySplitting):
-    source = gen_parity_fn(ps)
-    kernel = f"""
-    #define DIVR(x) ((x) / {ps.radix})
-    #define MODR(x) ((x) % {ps.radix})
-    #define MULR(x) ((x) * {ps.radix})
-    {source}
 
-    __kernel void test_parity(__global const int *x, __global int *y) {{
-        int i = get_global_id(0);
-        y[i] = parity_{ps.radix}(x[i]);
-    }}
-    """
-    x = np.arange(ps.N, dtype=np.int32)
+# ~\~ begin <<lit/code-generator.md|test-parity>>[0]
+@pytest.mark.parametrize("parity_splitting", cases)
+def test_parity(parity_splitting: ParitySplitting):
+    kernel = generate_preprocessor(parity_splitting, False) + generate_parity_function(parity_splitting)
+    x = np.arange(parity_splitting.N, dtype=np.int32)
     y = np.zeros_like(x)
     kernel_args = [x, y]
 
-    results = run_kernel("test_parity", kernel, ps.N, kernel_args, {}, compiler_options=["-DTESTING"])
-    y_ref = np.array([parity(ps.radix, i) for i in range(ps.N)]) 
+    results = run_kernel("test_parity_{}".format(parity_splitting.radix), kernel, parity_splitting.N, kernel_args, {}, compiler_options=["-DTESTING"])
+    y_ref = np.array([parity(parity_splitting.radix, i) for i in range(parity_splitting.N)])
 
     assert np.all(results[1] == y_ref)
 # ~\~ end
 
 # ~\~ begin <<lit/code-generator.md|test-transpose>>[0]
-@pytest.mark.parametrize('ps', cases)
-def test_transpose_4(ps: ParitySplitting):
-    source = gen_transpose_fn(ps)
-    kernel = f"""
-    #define DIVR(x) ((x) / {ps.radix})
-    #define MODR(x) ((x) % {ps.radix})
-    #define MULR(x) ((x) * {ps.radix})
-    {source}
-
-    __kernel void test_transpose(__global const int *x, __global int *y) {{
-        int i = get_global_id(0);
-        y[i] = transpose_{ps.radix}(x[i]);
-    }}
-    """
-    x = np.arange(ps.N, dtype=np.int32)
+@pytest.mark.parametrize('parity_splitting', cases)
+def test_transpose(parity_splitting: ParitySplitting):
+    kernel = generate_preprocessor(parity_splitting, False) + generate_transpose_function(parity_splitting)
+    x = np.arange(parity_splitting.N, dtype=np.int32)
     y = np.zeros_like(x)
     kernel_args = [x, y]
 
-    results = run_kernel("test_transpose", kernel, ps.N, kernel_args, {}, compiler_options=["-DTESTING"])
-    y_ref = x.reshape(ps.factors).T.flatten()
+    results = run_kernel("test_transpose_{}".format(parity_splitting.radix), kernel, parity_splitting.N, kernel_args, {}, compiler_options=["-DTESTING"])
+    y_ref = x.reshape(parity_splitting.factors).T.flatten()
 
     assert np.all(results[1] == y_ref)
 # ~\~ end

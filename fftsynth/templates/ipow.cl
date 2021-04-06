@@ -1,3 +1,5 @@
+/* ~\~ language=OpenCL filename=fftsynth/templates/ipow.cl */
+/* ~\~ begin <<lit/code-generator.md|fftsynth/templates/ipow.cl>>[0] */
 {% if radix == 4 %}
 inline int ipow(int b)
 {
@@ -13,3 +15,4 @@ inline int ipow(int b)
     return j;
 }
 {% endif %}
+/* ~\~ end */

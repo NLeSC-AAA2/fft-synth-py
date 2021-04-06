@@ -1,11 +1,11 @@
 /* ~\~ language=OpenCL filename=fftsynth/templates/fma-codelets.cl */
 /* ~\~ begin <<lit/fma-codelets.md|fftsynth/templates/fma-codelets.cl>>[0] */
 /* ~\~ begin <<lit/fma-codelets.md|fma-radix2>>[0] */
-void radix2_fma(float2 e, float2 o, float2 w, float2* xa, float2* xb)
+void radix2_fma(float2 t0, float2 t1, float2 w0, float2* xa, float2* xb)
 {
-    float2 a = (float2) (-w.y * o.y + e.x, w.y * o.x + e.y);
-    a += (float2) (w.x * o.x, w.x * o.y);
-    float2 b = 2 * e - a;
+    float2 a = (float2) (-w0.y * t1.y + t0.x, w0.y * t1.x + t0.y);
+    a += (float2) (w0.x * t1.x, w0.x * t1.y);
+    float2 b = 2 * t0 - a;
 
     *xa = a;
     *xb = b;
@@ -57,7 +57,7 @@ void radix3_fma(float2 t0, float2 t1, float2 t2, float2 w0, float2 w1, float2* x
 float radix4_fma(float2 t0, float2 t1, float2 t2, float2 t3,
                 float2 w0, float2 w1,
                 float2* x0, float2* x1, float2 *x2, float2* x3) {
-   
+
    //adapted from pedram2013transforming, however
    //some versions of the pedram2013transforming paper, including the one hosted by IEEE and the one hosted here:
    //https://www.cs.utexas.edu/users/flame/pubs/LAC_fft.pdf

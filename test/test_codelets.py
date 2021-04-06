@@ -7,9 +7,9 @@ from kernel_tuner import run_kernel     # type: ignore
 
 @pytest.mark.parametrize('radix', [2, 4])
 def test_radix(radix):
-    #this test runs 256 instances of the radix n function
-    #it does not use twiddle factors, so as a test
-    #it's not to be relied upon fully
+    # this test runs 256 instances of the radix n function
+    # it does not use twiddle factors, so as a test
+    # it's not to be relied upon fully
     n = np.int32(256)
     x = np.random.normal(size=(n, radix, 2)).astype(np.float32)
     y = np.zeros_like(x)

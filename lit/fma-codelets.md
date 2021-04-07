@@ -22,7 +22,8 @@ void radix2(float2 e, float2 o, float2 w, float2* xa, float2* xb)
 This contains one complex multiplication and two complex additions, totaling four floating point multiplications and six additions.
 
 ``` {.opencl #fma-radix2}
-void radix2_fma(float2 t0, float2 t1, float2 w0, float2* xa, float2* xb)
+{% if radix == 2 %}
+void fft_2(float2 t0, float2 t1, float2 w0, float2* xa, float2* xb)
 {
     float2 a = (float2) (-w0.y * t1.y + t0.x, w0.y * t1.x + t0.y);
     a += (float2) (w0.x * t1.x, w0.x * t1.y);
@@ -31,6 +32,7 @@ void radix2_fma(float2 t0, float2 t1, float2 w0, float2* xa, float2* xb)
     *xa = a;
     *xb = b;
 }
+{% endif %}
 ```
 
 Now we have six multiplications and six additions, but they are completely contained in six FMA operations.
@@ -40,8 +42,8 @@ Now we have six multiplications and six additions, but they are completely conta
 ``` {.opencl .bootstrap-fold file=fftsynth/templates/fma-codelets.cl}
 <<fma-radix2>>
 
-
-void radix3_fma(float2 t0, float2 t1, float2 t2, float2 w0, float2 w1, float2* xa, float2* xb, float2* xc) {
+{% if radix == 3 %}
+void fft_3(float2 t0, float2 t1, float2 t2, float2 w0, float2 w1, float2* xa, float2* xb, float2* xc) {
 
     float2 z1, s1, s2, s3, s4, s5, s6;
     const float c1 = -0.5;
@@ -79,10 +81,10 @@ void radix3_fma(float2 t0, float2 t1, float2 t2, float2 w0, float2 w1, float2* x
     *xb = s5; //pseudo code in karner2001multiply paper says s6
     *xc = s6; //pseudo code in karner2001multiply paper says s5
 }
+{% endif %}
 
-
-
-float radix4_fma(float2 t0, float2 t1, float2 t2, float2 t3,
+{% if radix == 4 %}
+float fft_4(float2 t0, float2 t1, float2 t2, float2 t3,
                 float2 w0, float2 w1,
                 float2* x0, float2* x1, float2 *x2, float2* x3) {
 
@@ -120,10 +122,11 @@ float radix4_fma(float2 t0, float2 t1, float2 t2, float2 t3,
 
     return 0.0;
 }
+{% endif %}
 
 
-
-float radix5_fma(float2 t0, float2 t1, float2 t2, float2 t3, float2 t4,
+{% if radix == 5 %}
+float fft_5(float2 t0, float2 t1, float2 t2, float2 t3, float2 t4,
                  float2 w0, float2 w1, float2 w2, float2 w3,
                  float2* x0, float2* x1, float2 *x2, float2* x3, float2 *x4) {
 
@@ -219,6 +222,7 @@ float radix5_fma(float2 t0, float2 t1, float2 t2, float2 t3, float2 t4,
 
     return 0.0;
 }
+{% endif %}
 
 <<fma-codelet-tests>>
 ```
@@ -226,7 +230,8 @@ float radix5_fma(float2 t0, float2 t1, float2 t2, float2 t3, float2 t4,
 ## Testing
 
 ``` {.opencl .bootstrap-fold #fma-codelet-tests}
-__kernel void test_radix2(__global float2 *x, __global float2 *y, int n) {
+{% if radix == 2 %}
+__kernel void test_radix_2(__global float2 *x, __global float2 *y, int n) {
 
     float2 w = (float2) (1.0, 0.0);
     int i = get_global_id(0)*2;
@@ -234,14 +239,15 @@ __kernel void test_radix2(__global float2 *x, __global float2 *y, int n) {
     //n is the number of radix2 ffts to perform
     if (i<2*n) {
         float2 y0, y1;
-        radix2_fma(x[i], x[i+1], w, &y0, &y1);
+        fft_2(x[i], x[i+1], w, &y0, &y1);
 
         y[i] = y0; y[i+1] = y1;
     }
 }
+{% endif %}
 
-
-__kernel void test_radix3(__global float2 *x, __global float2 *y, int n) {
+{% if radix == 3 %}
+__kernel void test_radix_3(__global float2 *x, __global float2 *y, int n) {
 
     float2 w0 = (float2) (1.0, 0.0);
     float2 w1 = (float2) (1.0, 0.0);
@@ -251,14 +257,15 @@ __kernel void test_radix3(__global float2 *x, __global float2 *y, int n) {
     if (i<3*n) {
         float2 y0, y1, y2;
 
-        radix3_fma(x[i], x[i+1], x[i+2], w0, w1, &y0, &y1, &y2);
+        fft_3(x[i], x[i+1], x[i+2], w0, w1, &y0, &y1, &y2);
 
         y[i] = y0;    y[i+1] = y1;    y[i+2] = y2;
     }
 }
+{% endif %}
 
-
-__kernel void test_radix4(__global float2 *x, __global float2 *y, int n) {
+{% if radix == 4 %}
+__kernel void test_radix_4(__global float2 *x, __global float2 *y, int n) {
 
     float2 w0 = (float2) (1.0, 0.0);
     float2 w1 = (float2) (1.0, 0.0);
@@ -268,14 +275,15 @@ __kernel void test_radix4(__global float2 *x, __global float2 *y, int n) {
     if (i<4*n) {
         float2 y0, y1, y2, y3;
 
-        radix4_fma(x[i], x[i+1], x[i+2], x[i+3], w0, w1, &y0, &y1, &y2, &y3);
+        fft_4(x[i], x[i+1], x[i+2], x[i+3], w0, w1, &y0, &y1, &y2, &y3);
 
         y[i] = y0;    y[i+1] = y1;    y[i+2] = y2;    y[i+3] = y3;
     }
 }
+{% endif %}
 
-
-__kernel void test_radix5(__global float2 *x, __global float2 *y, int n) {
+{% if radix == 5 %}
+__kernel void test_radix_5(__global float2 *x, __global float2 *y, int n) {
 
     float2 w0 = (float2) (1.0, 0.0);
     float2 w1 = (float2) (1.0, 0.0);
@@ -287,22 +295,20 @@ __kernel void test_radix5(__global float2 *x, __global float2 *y, int n) {
     if (i<5*n) {
         float2 y0, y1, y2, y3, y4;
 
-        radix5_fma(x[i], x[i+1], x[i+2], x[i+3], x[i+4], w0, w1, w2, w3, &y0, &y1, &y2, &y3, &y4);
+        fft_5(x[i], x[i+1], x[i+2], x[i+3], x[i+4], w0, w1, w2, w3, &y0, &y1, &y2, &y3, &y4);
 
         y[i] = y0;    y[i+1] = y1;    y[i+2] = y2;    y[i+3] = y3;    y[i+4] = y4;
     }
 }
+{% endif %}
 ```
 
 ``` {.python file=test/test_fma_codelets.py}
-import numpy as np
+import numpy
 
 import pytest
+from fftsynth import generator, parity
 from kernel_tuner import run_kernel     # type: ignore
-
-from pkg_resources import resource_filename
-
-filename = resource_filename("fftsynth", "templates/fma-codelets.cl")
 
 
 @pytest.mark.parametrize('radix', [2, 3, 4, 5])
@@ -310,20 +316,20 @@ def test_radix(radix):
     #this test runs 256 instances of the radix n function
     #it does not use twiddle factors, so as a test
     #it's not to be relied upon fully
-    n = np.int32(256)
-    x = np.random.normal(size=(n, radix, 2)).astype(np.float32)
-    y = np.zeros_like(x)
+    n = numpy.int32(256)
+    x = numpy.random.normal(size=(n, radix, 2)).astype(numpy.float32)
+    y = numpy.zeros_like(x)
 
-    y_ref = np.fft.fft(x[...,0]+1j*x[...,1])
+    y_ref = numpy.fft.fft(x[..., 0]+1j*x[..., 1])
 
+    parity_splitting = parity.ParitySplitting(1, radix)
+    codelets = "{}\n{}".format(generator.generate_preprocessor(parity_splitting, False),
+                               generator.generate_fma_codelets(parity_splitting, False))
     args = [x, y, n]
-    answer = run_kernel("test_radix" + str(radix), filename, 1, args, {})
+    answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {})
 
-    print(answer)
     y = answer[1]
-    y = y[...,0]+1j*y[...,1]
-    print(y)
-    print(y_ref)
+    y = y[..., 0] + 1j * y[..., 1]
 
-    assert abs(y - y_ref).max() < 1e-4
+    numpy.testing.assert_almost_equal(y, y_ref, decimal=5)
 ```

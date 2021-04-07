@@ -973,199 +973,235 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>These are the codelets for specific radix FFT.</p>
 <div class="annotated-code">
 <p><span><em>«fftsynth/templates/codelets.cl»=</em></span></p>
-<div class="sourceCode" id="cb13" data-file="fftsynth/templates/codelets.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="dt">void</span> fft_2(<span class="kw">__global</span> <span class="dt">float2</span> * <span class="dt">restrict</span> s0, <span class="kw">__global</span> <span class="dt">float2</span> * <span class="dt">restrict</span> s1,{% <span class="kw">if</span> fpga %} <span class="dt">float2</span> * <span class="dt">restrict</span> s0_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s1_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s0_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s1_out, <span class="dt">bool</span> first_iteration, <span class="dt">bool</span> last_iteration,{% endif %} <span class="dt">int</span> cycle, <span class="dt">int</span> i0, <span class="dt">int</span> i1, <span class="dt">int</span> iw)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true"></a>{</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true"></a>    <span class="dt">float2</span> t0, t1, ws0, ws1;</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true"></a>    <span class="kw">__constant</span> <span class="dt">float2</span> *w = W[iw];</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">int</span>, i0, i1); <span class="kw">break</span>;</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true"></a>    }</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true"></a>    <span class="kw">if</span> ( first_iteration )</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true"></a>    {</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true"></a>        t0 = s0_in[i0]; t1 = s1_in[i1];</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true"></a>    }</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true"></a>    <span class="kw">else</span></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true"></a>    {</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true"></a>        t0 = s0[i0]; t1 = s1[i1];</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true"></a>    }</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t0, t1); <span class="kw">break</span>;</span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true"></a>    }</span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: t0 = s0[i0]; t1 = s1[i1]; <span class="kw">break</span>;</span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: t0 = s1[i0]; t1 = s0[i1]; <span class="kw">break</span>;</span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true"></a>    }</span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true"></a>    {% endif %}</span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true"></a></span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true"></a>    ws0 = t0;</span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true"></a>    ws1 = (<span class="dt">float2</span>) (w[<span class="dv">0</span>].x * t1.x - w[<span class="dv">0</span>].y * t1.y,</span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true"></a>                    w[<span class="dv">0</span>].x * t1.y + w[<span class="dv">0</span>].y * t1.x);</span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true"></a></span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true"></a>    t0 = ws0 + ws1;</span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true"></a>    t1 = ws0 - ws1;</span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true"></a></span>
-<span id="cb13-35"><a href="#cb13-35" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
-<span id="cb13-36"><a href="#cb13-36" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb13-37"><a href="#cb13-37" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t0, t1); <span class="kw">break</span>;</span>
-<span id="cb13-38"><a href="#cb13-38" aria-hidden="true"></a>    }</span>
-<span id="cb13-39"><a href="#cb13-39" aria-hidden="true"></a>    <span class="kw">if</span> ( last_iteration )</span>
-<span id="cb13-40"><a href="#cb13-40" aria-hidden="true"></a>    {</span>
-<span id="cb13-41"><a href="#cb13-41" aria-hidden="true"></a>        s0_out[i0] = t0; s1_out[i1] = t1;</span>
-<span id="cb13-42"><a href="#cb13-42" aria-hidden="true"></a>    }</span>
-<span id="cb13-43"><a href="#cb13-43" aria-hidden="true"></a>    <span class="kw">else</span></span>
-<span id="cb13-44"><a href="#cb13-44" aria-hidden="true"></a>    {</span>
-<span id="cb13-45"><a href="#cb13-45" aria-hidden="true"></a>        s0[i0] = t0; s1[i1] = t1;</span>
-<span id="cb13-46"><a href="#cb13-46" aria-hidden="true"></a>    }</span>
-<span id="cb13-47"><a href="#cb13-47" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
-<span id="cb13-48"><a href="#cb13-48" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb13-49"><a href="#cb13-49" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: s0[i0] = t0; s1[i1] = t1; <span class="kw">break</span>;</span>
-<span id="cb13-50"><a href="#cb13-50" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: s1[i0] = t0; s0[i1] = t1; <span class="kw">break</span>;</span>
-<span id="cb13-51"><a href="#cb13-51" aria-hidden="true"></a>    }</span>
-<span id="cb13-52"><a href="#cb13-52" aria-hidden="true"></a>    {% endif %}</span>
-<span id="cb13-53"><a href="#cb13-53" aria-hidden="true"></a>}</span>
-<span id="cb13-54"><a href="#cb13-54" aria-hidden="true"></a></span>
-<span id="cb13-55"><a href="#cb13-55" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
-<span id="cb13-56"><a href="#cb13-56" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_2(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
-<span id="cb13-57"><a href="#cb13-57" aria-hidden="true"></a></span>
-<span id="cb13-58"><a href="#cb13-58" aria-hidden="true"></a>    <span class="dt">float2</span> w = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="cb13-59"><a href="#cb13-59" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>) * <span class="dv">2</span>;</span>
-<span id="cb13-60"><a href="#cb13-60" aria-hidden="true"></a></span>
-<span id="cb13-61"><a href="#cb13-61" aria-hidden="true"></a>    <span class="co">//n is the number of radix2 ffts to perform</span></span>
-<span id="cb13-62"><a href="#cb13-62" aria-hidden="true"></a>    <span class="kw">if</span> (i &lt; <span class="dv">2</span> * n) {</span>
-<span id="cb13-63"><a href="#cb13-63" aria-hidden="true"></a>        fft_2(x, x, <span class="dv">0</span>, i, i + <span class="dv">1</span>, <span class="dv">0</span>);</span>
+<div class="sourceCode" id="cb13" data-file="fftsynth/templates/codelets.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">2</span>%}</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true"></a><span class="dt">void</span> fft_2(<span class="dt">float2</span> * <span class="dt">restrict</span> s0, <span class="dt">float2</span> * <span class="dt">restrict</span> s1,{% <span class="kw">if</span> fpga %} <span class="dt">float2</span> * <span class="dt">restrict</span> s0_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s1_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s0_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s1_out, <span class="dt">bool</span> first_iteration, <span class="dt">bool</span> last_iteration,{% endif %} <span class="dt">int</span> cycle, <span class="dt">int</span> i0, <span class="dt">int</span> i1, <span class="dt">int</span> iw)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true"></a>{</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true"></a>    <span class="dt">float2</span> t0, t1, ws0, ws1;</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true"></a>    <span class="kw">__constant</span> <span class="dt">float2</span> *w = W[iw];</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">int</span>, i0, i1); <span class="kw">break</span>;</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true"></a>    }</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true"></a>    <span class="kw">if</span> ( first_iteration )</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true"></a>    {</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true"></a>        t0 = s0_in[i0]; t1 = s1_in[i1];</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true"></a>    }</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true"></a>    <span class="kw">else</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true"></a>    {</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true"></a>        t0 = s0[i0]; t1 = s1[i1];</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true"></a>    }</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t0, t1); <span class="kw">break</span>;</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true"></a>    }</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: t0 = s0[i0]; t1 = s1[i1]; <span class="kw">break</span>;</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: t0 = s1[i0]; t1 = s0[i1]; <span class="kw">break</span>;</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true"></a>    }</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true"></a>    {% endif %}</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true"></a></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true"></a>    ws0 = t0;</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true"></a>    ws1 = (<span class="dt">float2</span>) (w[<span class="dv">0</span>].x * t1.x - w[<span class="dv">0</span>].y * t1.y,</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true"></a>                    w[<span class="dv">0</span>].x * t1.y + w[<span class="dv">0</span>].y * t1.x);</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true"></a></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true"></a>    t0 = ws0 + ws1;</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true"></a>    t1 = ws0 - ws1;</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true"></a></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t0, t1); <span class="kw">break</span>;</span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true"></a>    }</span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true"></a>    <span class="kw">if</span> ( last_iteration )</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true"></a>    {</span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true"></a>        s0_out[i0] = t0; s1_out[i1] = t1;</span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true"></a>    }</span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true"></a>    <span class="kw">else</span></span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true"></a>    {</span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true"></a>        s0[i0] = t0; s1[i1] = t1;</span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true"></a>    }</span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: s0[i0] = t0; s1[i1] = t1; <span class="kw">break</span>;</span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: s1[i0] = t0; s0[i1] = t1; <span class="kw">break</span>;</span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true"></a>    }</span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true"></a>    {% endif %}</span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true"></a>}</span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true"></a></span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_2(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>) * <span class="dv">2</span>;</span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true"></a></span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true"></a>    <span class="co">//n is the number of radix2 ffts to perform</span></span>
+<span id="cb13-61"><a href="#cb13-61" aria-hidden="true"></a>    <span class="kw">if</span> (i &lt; <span class="dv">2</span> * n) {</span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true"></a>        <span class="dt">float2</span> s0 = x[i];</span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true"></a>        <span class="dt">float2</span> s1 = x[i + <span class="dv">1</span>];</span>
 <span id="cb13-64"><a href="#cb13-64" aria-hidden="true"></a></span>
-<span id="cb13-65"><a href="#cb13-65" aria-hidden="true"></a>        y[i] = x[i]; y[i + <span class="dv">1</span>] = x[i + <span class="dv">1</span>];</span>
-<span id="cb13-66"><a href="#cb13-66" aria-hidden="true"></a>    }</span>
-<span id="cb13-67"><a href="#cb13-67" aria-hidden="true"></a>}</span>
-<span id="cb13-68"><a href="#cb13-68" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span>
-<span id="cb13-69"><a href="#cb13-69" aria-hidden="true"></a></span>
-<span id="cb13-70"><a href="#cb13-70" aria-hidden="true"></a><span class="dt">void</span> fft_4(<span class="kw">__global</span> <span class="dt">float2</span> * <span class="dt">restrict</span> s0, <span class="kw">__global</span> <span class="dt">float2</span> * <span class="dt">restrict</span> s1, <span class="kw">__global</span> <span class="dt">float2</span> * <span class="dt">restrict</span> s2, <span class="kw">__global</span> <span class="dt">float2</span> * <span class="dt">restrict</span> s3,{% <span class="kw">if</span> fpga %} <span class="dt">float2</span> * <span class="dt">restrict</span> s0_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s1_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s2_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s3_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s0_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s1_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s2_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s3_out, <span class="dt">bool</span> first_iteration, <span class="dt">bool</span> last_iteration,{% endif %} <span class="dt">int</span> cycle, <span class="dt">int</span> i0, <span class="dt">int</span> i1, <span class="dt">int</span> i2, <span class="dt">int</span> i3, <span class="dt">int</span> iw)</span>
-<span id="cb13-71"><a href="#cb13-71" aria-hidden="true"></a>{</span>
-<span id="cb13-72"><a href="#cb13-72" aria-hidden="true"></a>    <span class="dt">float2</span> t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;</span>
-<span id="cb13-73"><a href="#cb13-73" aria-hidden="true"></a>    <span class="kw">__constant</span> <span class="dt">float2</span> *w = W[iw];</span>
-<span id="cb13-74"><a href="#cb13-74" aria-hidden="true"></a></span>
-<span id="cb13-75"><a href="#cb13-75" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
-<span id="cb13-76"><a href="#cb13-76" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb13-77"><a href="#cb13-77" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">int</span>, i0, i1); SWAP(<span class="dt">int</span>, i2, i3); SWAP(<span class="dt">int</span>, i0, i2); <span class="kw">break</span>;</span>
-<span id="cb13-78"><a href="#cb13-78" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP(<span class="dt">int</span>, i0, i2); SWAP(<span class="dt">int</span>, i1, i3); <span class="kw">break</span>;</span>
-<span id="cb13-79"><a href="#cb13-79" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP(<span class="dt">int</span>, i0, i1); SWAP(<span class="dt">int</span>, i1, i3); SWAP(<span class="dt">int</span>, i1, i2); <span class="kw">break</span>;</span>
-<span id="cb13-80"><a href="#cb13-80" aria-hidden="true"></a>    }</span>
-<span id="cb13-81"><a href="#cb13-81" aria-hidden="true"></a>    <span class="kw">if</span> ( first_iteration )</span>
-<span id="cb13-82"><a href="#cb13-82" aria-hidden="true"></a>    {</span>
-<span id="cb13-83"><a href="#cb13-83" aria-hidden="true"></a>        t0 = s0_in[i0]; t1 = s1_in[i1]; t2 = s2_in[i2]; t3 = s3_in[i3];</span>
-<span id="cb13-84"><a href="#cb13-84" aria-hidden="true"></a>    }</span>
-<span id="cb13-85"><a href="#cb13-85" aria-hidden="true"></a>    <span class="kw">else</span></span>
-<span id="cb13-86"><a href="#cb13-86" aria-hidden="true"></a>    {</span>
-<span id="cb13-87"><a href="#cb13-87" aria-hidden="true"></a>        t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3];</span>
-<span id="cb13-88"><a href="#cb13-88" aria-hidden="true"></a>    }</span>
-<span id="cb13-89"><a href="#cb13-89" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb13-90"><a href="#cb13-90" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t0, t1); SWAP(<span class="dt">float2</span>, t1, t2); SWAP(<span class="dt">float2</span>, t2, t3); <span class="kw">break</span>;</span>
-<span id="cb13-91"><a href="#cb13-91" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP(<span class="dt">float2</span>, t0, t2); SWAP(<span class="dt">float2</span>, t1, t3); <span class="kw">break</span>;</span>
-<span id="cb13-92"><a href="#cb13-92" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP(<span class="dt">float2</span>, t2, t3); SWAP(<span class="dt">float2</span>, t0, t1); SWAP(<span class="dt">float2</span>, t0, t2); <span class="kw">break</span>;</span>
-<span id="cb13-93"><a href="#cb13-93" aria-hidden="true"></a>    }</span>
-<span id="cb13-94"><a href="#cb13-94" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
-<span id="cb13-95"><a href="#cb13-95" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb13-96"><a href="#cb13-96" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3]; <span class="kw">break</span>;</span>
-<span id="cb13-97"><a href="#cb13-97" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: t0 = s1[i0]; t1 = s2[i1]; t2 = s3[i2]; t3 = s0[i3]; <span class="kw">break</span>;</span>
-<span id="cb13-98"><a href="#cb13-98" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: t0 = s2[i0]; t1 = s3[i1]; t2 = s0[i2]; t3 = s1[i3]; <span class="kw">break</span>;</span>
-<span id="cb13-99"><a href="#cb13-99" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: t0 = s3[i0]; t1 = s0[i1]; t2 = s1[i2]; t3 = s2[i3]; <span class="kw">break</span>;</span>
-<span id="cb13-100"><a href="#cb13-100" aria-hidden="true"></a>    }</span>
-<span id="cb13-101"><a href="#cb13-101" aria-hidden="true"></a>    {% endif %}</span>
-<span id="cb13-102"><a href="#cb13-102" aria-hidden="true"></a></span>
-<span id="cb13-103"><a href="#cb13-103" aria-hidden="true"></a>    ws0 = t0;</span>
-<span id="cb13-104"><a href="#cb13-104" aria-hidden="true"></a>    ws1 = (<span class="dt">float2</span>) (w[<span class="dv">0</span>].x * t1.x - w[<span class="dv">0</span>].y * t1.y,</span>
-<span id="cb13-105"><a href="#cb13-105" aria-hidden="true"></a>                    w[<span class="dv">0</span>].x * t1.y + w[<span class="dv">0</span>].y * t1.x);</span>
-<span id="cb13-106"><a href="#cb13-106" aria-hidden="true"></a>    ws2 = (<span class="dt">float2</span>) (w[<span class="dv">1</span>].x * t2.x - w[<span class="dv">1</span>].y * t2.y,</span>
-<span id="cb13-107"><a href="#cb13-107" aria-hidden="true"></a>                    w[<span class="dv">1</span>].x * t2.y + w[<span class="dv">1</span>].y * t2.x);</span>
-<span id="cb13-108"><a href="#cb13-108" aria-hidden="true"></a>    ws3 = (<span class="dt">float2</span>) (w[<span class="dv">2</span>].x * t3.x - w[<span class="dv">2</span>].y * t3.y,</span>
-<span id="cb13-109"><a href="#cb13-109" aria-hidden="true"></a>                    w[<span class="dv">2</span>].x * t3.y + w[<span class="dv">2</span>].y * t3.x);</span>
-<span id="cb13-110"><a href="#cb13-110" aria-hidden="true"></a></span>
-<span id="cb13-111"><a href="#cb13-111" aria-hidden="true"></a>    a = ws0 + ws2;</span>
-<span id="cb13-112"><a href="#cb13-112" aria-hidden="true"></a>    b = ws1 + ws3;</span>
-<span id="cb13-113"><a href="#cb13-113" aria-hidden="true"></a>    c = ws0 - ws2;</span>
-<span id="cb13-114"><a href="#cb13-114" aria-hidden="true"></a>    d = ws1 - ws3;</span>
-<span id="cb13-115"><a href="#cb13-115" aria-hidden="true"></a>    t0 = a + b;</span>
-<span id="cb13-116"><a href="#cb13-116" aria-hidden="true"></a>    t1 = (<span class="dt">float2</span>) (c.x + d.y, c.y - d.x);</span>
-<span id="cb13-117"><a href="#cb13-117" aria-hidden="true"></a>    t2 = a - b;</span>
-<span id="cb13-118"><a href="#cb13-118" aria-hidden="true"></a>    t3 = (<span class="dt">float2</span>) (c.x - d.y, c.y + d.x);</span>
-<span id="cb13-119"><a href="#cb13-119" aria-hidden="true"></a></span>
-<span id="cb13-120"><a href="#cb13-120" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
-<span id="cb13-121"><a href="#cb13-121" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb13-122"><a href="#cb13-122" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t2, t3); SWAP(<span class="dt">float2</span>, t1, t2); SWAP(<span class="dt">float2</span>, t0, t1); <span class="kw">break</span>;</span>
-<span id="cb13-123"><a href="#cb13-123" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP(<span class="dt">float2</span>, t1, t3); SWAP(<span class="dt">float2</span>, t0, t2); <span class="kw">break</span>;</span>
-<span id="cb13-124"><a href="#cb13-124" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP(<span class="dt">float2</span>, t0, t2); SWAP(<span class="dt">float2</span>, t0, t1); SWAP(<span class="dt">float2</span>, t2, t3); <span class="kw">break</span>;</span>
-<span id="cb13-125"><a href="#cb13-125" aria-hidden="true"></a>    }</span>
-<span id="cb13-126"><a href="#cb13-126" aria-hidden="true"></a>    <span class="kw">if</span> ( last_iteration )</span>
-<span id="cb13-127"><a href="#cb13-127" aria-hidden="true"></a>    {</span>
-<span id="cb13-128"><a href="#cb13-128" aria-hidden="true"></a>        s0_out[i0] = t0; s1_out[i1] = t1; s2_out[i2] = t2; s3_out[i3] = t3;</span>
-<span id="cb13-129"><a href="#cb13-129" aria-hidden="true"></a>    }</span>
-<span id="cb13-130"><a href="#cb13-130" aria-hidden="true"></a>    <span class="kw">else</span></span>
-<span id="cb13-131"><a href="#cb13-131" aria-hidden="true"></a>    {</span>
-<span id="cb13-132"><a href="#cb13-132" aria-hidden="true"></a>        s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;</span>
-<span id="cb13-133"><a href="#cb13-133" aria-hidden="true"></a>    }</span>
-<span id="cb13-134"><a href="#cb13-134" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
-<span id="cb13-135"><a href="#cb13-135" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb13-136"><a href="#cb13-136" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; <span class="kw">break</span>;</span>
-<span id="cb13-137"><a href="#cb13-137" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: s1[i0] = t0; s2[i1] = t1; s3[i2] = t2; s0[i3] = t3; <span class="kw">break</span>;</span>
-<span id="cb13-138"><a href="#cb13-138" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: s2[i0] = t0; s3[i1] = t1; s0[i2] = t2; s1[i3] = t3; <span class="kw">break</span>;</span>
-<span id="cb13-139"><a href="#cb13-139" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: s3[i0] = t0; s0[i1] = t1; s1[i2] = t2; s2[i3] = t3; <span class="kw">break</span>;</span>
-<span id="cb13-140"><a href="#cb13-140" aria-hidden="true"></a>    }</span>
-<span id="cb13-141"><a href="#cb13-141" aria-hidden="true"></a>    {% endif %}</span>
-<span id="cb13-142"><a href="#cb13-142" aria-hidden="true"></a>}</span>
-<span id="cb13-143"><a href="#cb13-143" aria-hidden="true"></a></span>
-<span id="cb13-144"><a href="#cb13-144" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
-<span id="cb13-145"><a href="#cb13-145" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_4(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
+<span id="cb13-65"><a href="#cb13-65" aria-hidden="true"></a>        fft_2(&amp;s0, &amp;s1, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>);</span>
+<span id="cb13-66"><a href="#cb13-66" aria-hidden="true"></a></span>
+<span id="cb13-67"><a href="#cb13-67" aria-hidden="true"></a>        y[i] = s0; y[i + <span class="dv">1</span>] = s1;</span>
+<span id="cb13-68"><a href="#cb13-68" aria-hidden="true"></a>    }</span>
+<span id="cb13-69"><a href="#cb13-69" aria-hidden="true"></a>}</span>
+<span id="cb13-70"><a href="#cb13-70" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span>
+<span id="cb13-71"><a href="#cb13-71" aria-hidden="true"></a></span>
+<span id="cb13-72"><a href="#cb13-72" aria-hidden="true"></a>{% elif radix == <span class="dv">4</span> %}</span>
+<span id="cb13-73"><a href="#cb13-73" aria-hidden="true"></a><span class="dt">void</span> fft_4(<span class="dt">float2</span> * <span class="dt">restrict</span> s0, <span class="dt">float2</span> * <span class="dt">restrict</span> s1, <span class="dt">float2</span> * <span class="dt">restrict</span> s2, <span class="dt">float2</span> * <span class="dt">restrict</span> s3,{% <span class="kw">if</span> fpga %} <span class="dt">float2</span> * <span class="dt">restrict</span> s0_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s1_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s2_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s3_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s0_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s1_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s2_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s3_out, <span class="dt">bool</span> first_iteration, <span class="dt">bool</span> last_iteration,{% endif %} <span class="dt">int</span> cycle, <span class="dt">int</span> i0, <span class="dt">int</span> i1, <span class="dt">int</span> i2, <span class="dt">int</span> i3, <span class="dt">int</span> iw)</span>
+<span id="cb13-74"><a href="#cb13-74" aria-hidden="true"></a>{</span>
+<span id="cb13-75"><a href="#cb13-75" aria-hidden="true"></a>    <span class="dt">float2</span> t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;</span>
+<span id="cb13-76"><a href="#cb13-76" aria-hidden="true"></a>    <span class="kw">__constant</span> <span class="dt">float2</span> *w = W[iw];</span>
+<span id="cb13-77"><a href="#cb13-77" aria-hidden="true"></a></span>
+<span id="cb13-78"><a href="#cb13-78" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
+<span id="cb13-79"><a href="#cb13-79" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-80"><a href="#cb13-80" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">int</span>, i0, i1); SWAP(<span class="dt">int</span>, i2, i3); SWAP(<span class="dt">int</span>, i0, i2); <span class="kw">break</span>;</span>
+<span id="cb13-81"><a href="#cb13-81" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP(<span class="dt">int</span>, i0, i2); SWAP(<span class="dt">int</span>, i1, i3); <span class="kw">break</span>;</span>
+<span id="cb13-82"><a href="#cb13-82" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP(<span class="dt">int</span>, i0, i1); SWAP(<span class="dt">int</span>, i1, i3); SWAP(<span class="dt">int</span>, i1, i2); <span class="kw">break</span>;</span>
+<span id="cb13-83"><a href="#cb13-83" aria-hidden="true"></a>    }</span>
+<span id="cb13-84"><a href="#cb13-84" aria-hidden="true"></a>    <span class="kw">if</span> ( first_iteration )</span>
+<span id="cb13-85"><a href="#cb13-85" aria-hidden="true"></a>    {</span>
+<span id="cb13-86"><a href="#cb13-86" aria-hidden="true"></a>        t0 = s0_in[i0]; t1 = s1_in[i1]; t2 = s2_in[i2]; t3 = s3_in[i3];</span>
+<span id="cb13-87"><a href="#cb13-87" aria-hidden="true"></a>    }</span>
+<span id="cb13-88"><a href="#cb13-88" aria-hidden="true"></a>    <span class="kw">else</span></span>
+<span id="cb13-89"><a href="#cb13-89" aria-hidden="true"></a>    {</span>
+<span id="cb13-90"><a href="#cb13-90" aria-hidden="true"></a>        t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3];</span>
+<span id="cb13-91"><a href="#cb13-91" aria-hidden="true"></a>    }</span>
+<span id="cb13-92"><a href="#cb13-92" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-93"><a href="#cb13-93" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t0, t1); SWAP(<span class="dt">float2</span>, t1, t2); SWAP(<span class="dt">float2</span>, t2, t3); <span class="kw">break</span>;</span>
+<span id="cb13-94"><a href="#cb13-94" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP(<span class="dt">float2</span>, t0, t2); SWAP(<span class="dt">float2</span>, t1, t3); <span class="kw">break</span>;</span>
+<span id="cb13-95"><a href="#cb13-95" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP(<span class="dt">float2</span>, t2, t3); SWAP(<span class="dt">float2</span>, t0, t1); SWAP(<span class="dt">float2</span>, t0, t2); <span class="kw">break</span>;</span>
+<span id="cb13-96"><a href="#cb13-96" aria-hidden="true"></a>    }</span>
+<span id="cb13-97"><a href="#cb13-97" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
+<span id="cb13-98"><a href="#cb13-98" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-99"><a href="#cb13-99" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3]; <span class="kw">break</span>;</span>
+<span id="cb13-100"><a href="#cb13-100" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: t0 = s1[i0]; t1 = s2[i1]; t2 = s3[i2]; t3 = s0[i3]; <span class="kw">break</span>;</span>
+<span id="cb13-101"><a href="#cb13-101" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: t0 = s2[i0]; t1 = s3[i1]; t2 = s0[i2]; t3 = s1[i3]; <span class="kw">break</span>;</span>
+<span id="cb13-102"><a href="#cb13-102" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: t0 = s3[i0]; t1 = s0[i1]; t2 = s1[i2]; t3 = s2[i3]; <span class="kw">break</span>;</span>
+<span id="cb13-103"><a href="#cb13-103" aria-hidden="true"></a>    }</span>
+<span id="cb13-104"><a href="#cb13-104" aria-hidden="true"></a>    {% endif %}</span>
+<span id="cb13-105"><a href="#cb13-105" aria-hidden="true"></a></span>
+<span id="cb13-106"><a href="#cb13-106" aria-hidden="true"></a>    ws0 = t0;</span>
+<span id="cb13-107"><a href="#cb13-107" aria-hidden="true"></a>    ws1 = (<span class="dt">float2</span>) (w[<span class="dv">0</span>].x * t1.x - w[<span class="dv">0</span>].y * t1.y,</span>
+<span id="cb13-108"><a href="#cb13-108" aria-hidden="true"></a>                    w[<span class="dv">0</span>].x * t1.y + w[<span class="dv">0</span>].y * t1.x);</span>
+<span id="cb13-109"><a href="#cb13-109" aria-hidden="true"></a>    ws2 = (<span class="dt">float2</span>) (w[<span class="dv">1</span>].x * t2.x - w[<span class="dv">1</span>].y * t2.y,</span>
+<span id="cb13-110"><a href="#cb13-110" aria-hidden="true"></a>                    w[<span class="dv">1</span>].x * t2.y + w[<span class="dv">1</span>].y * t2.x);</span>
+<span id="cb13-111"><a href="#cb13-111" aria-hidden="true"></a>    ws3 = (<span class="dt">float2</span>) (w[<span class="dv">2</span>].x * t3.x - w[<span class="dv">2</span>].y * t3.y,</span>
+<span id="cb13-112"><a href="#cb13-112" aria-hidden="true"></a>                    w[<span class="dv">2</span>].x * t3.y + w[<span class="dv">2</span>].y * t3.x);</span>
+<span id="cb13-113"><a href="#cb13-113" aria-hidden="true"></a></span>
+<span id="cb13-114"><a href="#cb13-114" aria-hidden="true"></a>    a = ws0 + ws2;</span>
+<span id="cb13-115"><a href="#cb13-115" aria-hidden="true"></a>    b = ws1 + ws3;</span>
+<span id="cb13-116"><a href="#cb13-116" aria-hidden="true"></a>    c = ws0 - ws2;</span>
+<span id="cb13-117"><a href="#cb13-117" aria-hidden="true"></a>    d = ws1 - ws3;</span>
+<span id="cb13-118"><a href="#cb13-118" aria-hidden="true"></a>    t0 = a + b;</span>
+<span id="cb13-119"><a href="#cb13-119" aria-hidden="true"></a>    t1 = (<span class="dt">float2</span>) (c.x + d.y, c.y - d.x);</span>
+<span id="cb13-120"><a href="#cb13-120" aria-hidden="true"></a>    t2 = a - b;</span>
+<span id="cb13-121"><a href="#cb13-121" aria-hidden="true"></a>    t3 = (<span class="dt">float2</span>) (c.x - d.y, c.y + d.x);</span>
+<span id="cb13-122"><a href="#cb13-122" aria-hidden="true"></a></span>
+<span id="cb13-123"><a href="#cb13-123" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
+<span id="cb13-124"><a href="#cb13-124" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-125"><a href="#cb13-125" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t2, t3); SWAP(<span class="dt">float2</span>, t1, t2); SWAP(<span class="dt">float2</span>, t0, t1); <span class="kw">break</span>;</span>
+<span id="cb13-126"><a href="#cb13-126" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP(<span class="dt">float2</span>, t1, t3); SWAP(<span class="dt">float2</span>, t0, t2); <span class="kw">break</span>;</span>
+<span id="cb13-127"><a href="#cb13-127" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP(<span class="dt">float2</span>, t0, t2); SWAP(<span class="dt">float2</span>, t0, t1); SWAP(<span class="dt">float2</span>, t2, t3); <span class="kw">break</span>;</span>
+<span id="cb13-128"><a href="#cb13-128" aria-hidden="true"></a>    }</span>
+<span id="cb13-129"><a href="#cb13-129" aria-hidden="true"></a>    <span class="kw">if</span> ( last_iteration )</span>
+<span id="cb13-130"><a href="#cb13-130" aria-hidden="true"></a>    {</span>
+<span id="cb13-131"><a href="#cb13-131" aria-hidden="true"></a>        s0_out[i0] = t0; s1_out[i1] = t1; s2_out[i2] = t2; s3_out[i3] = t3;</span>
+<span id="cb13-132"><a href="#cb13-132" aria-hidden="true"></a>    }</span>
+<span id="cb13-133"><a href="#cb13-133" aria-hidden="true"></a>    <span class="kw">else</span></span>
+<span id="cb13-134"><a href="#cb13-134" aria-hidden="true"></a>    {</span>
+<span id="cb13-135"><a href="#cb13-135" aria-hidden="true"></a>        s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;</span>
+<span id="cb13-136"><a href="#cb13-136" aria-hidden="true"></a>    }</span>
+<span id="cb13-137"><a href="#cb13-137" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
+<span id="cb13-138"><a href="#cb13-138" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-139"><a href="#cb13-139" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb13-140"><a href="#cb13-140" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: s1[i0] = t0; s2[i1] = t1; s3[i2] = t2; s0[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb13-141"><a href="#cb13-141" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: s2[i0] = t0; s3[i1] = t1; s0[i2] = t2; s1[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb13-142"><a href="#cb13-142" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: s3[i0] = t0; s0[i1] = t1; s1[i2] = t2; s2[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb13-143"><a href="#cb13-143" aria-hidden="true"></a>    }</span>
+<span id="cb13-144"><a href="#cb13-144" aria-hidden="true"></a>    {% endif %}</span>
+<span id="cb13-145"><a href="#cb13-145" aria-hidden="true"></a>}</span>
 <span id="cb13-146"><a href="#cb13-146" aria-hidden="true"></a></span>
-<span id="cb13-147"><a href="#cb13-147" aria-hidden="true"></a>    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="cb13-148"><a href="#cb13-148" aria-hidden="true"></a>    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="cb13-147"><a href="#cb13-147" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
+<span id="cb13-148"><a href="#cb13-148" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_4(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
 <span id="cb13-149"><a href="#cb13-149" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>) * <span class="dv">4</span>;</span>
 <span id="cb13-150"><a href="#cb13-150" aria-hidden="true"></a></span>
 <span id="cb13-151"><a href="#cb13-151" aria-hidden="true"></a>    <span class="co">//n is the number of radix4 ffts to perform</span></span>
 <span id="cb13-152"><a href="#cb13-152" aria-hidden="true"></a>    <span class="kw">if</span> (i &lt; <span class="dv">4</span> * n) {</span>
-<span id="cb13-153"><a href="#cb13-153" aria-hidden="true"></a>        fft_4(x, x, x, x, <span class="dv">0</span>, i, i + <span class="dv">1</span>, i + <span class="dv">2</span>, i + <span class="dv">3</span>, <span class="dv">0</span>);</span>
-<span id="cb13-154"><a href="#cb13-154" aria-hidden="true"></a></span>
-<span id="cb13-155"><a href="#cb13-155" aria-hidden="true"></a>        y[i] = x[i];    y[i + <span class="dv">1</span>] = x[i + <span class="dv">1</span>];    y[i + <span class="dv">2</span>] = x[i + <span class="dv">2</span>];    y[i + <span class="dv">3</span>] = x[i + <span class="dv">3</span>];</span>
-<span id="cb13-156"><a href="#cb13-156" aria-hidden="true"></a>    }</span>
-<span id="cb13-157"><a href="#cb13-157" aria-hidden="true"></a>}</span>
-<span id="cb13-158"><a href="#cb13-158" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span></code></pre></div>
+<span id="cb13-153"><a href="#cb13-153" aria-hidden="true"></a>        <span class="dt">float2</span> s0 = x[i];</span>
+<span id="cb13-154"><a href="#cb13-154" aria-hidden="true"></a>        <span class="dt">float2</span> s1 = x[i + <span class="dv">1</span>];</span>
+<span id="cb13-155"><a href="#cb13-155" aria-hidden="true"></a>        <span class="dt">float2</span> s2 = x[i + <span class="dv">2</span>];</span>
+<span id="cb13-156"><a href="#cb13-156" aria-hidden="true"></a>        <span class="dt">float2</span> s3 = x[i + <span class="dv">3</span>];</span>
+<span id="cb13-157"><a href="#cb13-157" aria-hidden="true"></a>        fft_4(&amp;s0, &amp;s1, &amp;s2, &amp;s3, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>);</span>
+<span id="cb13-158"><a href="#cb13-158" aria-hidden="true"></a></span>
+<span id="cb13-159"><a href="#cb13-159" aria-hidden="true"></a>        y[i] = s0;    y[i + <span class="dv">1</span>] = s1;    y[i + <span class="dv">2</span>] = s2;    y[i + <span class="dv">3</span>] = s3;</span>
+<span id="cb13-160"><a href="#cb13-160" aria-hidden="true"></a>    }</span>
+<span id="cb13-161"><a href="#cb13-161" aria-hidden="true"></a>}</span>
+<span id="cb13-162"><a href="#cb13-162" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span>
+<span id="cb13-163"><a href="#cb13-163" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
 </div>
 <p>What follows is the Python function used to generate the OpenCL code.</p>
 <div class="annotated-code">
 <p><span><em>«generate-codelets»=</em></span></p>
-<div class="sourceCode" id="generate-codelets"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-codelets-1"><a href="#generate-codelets-1" aria-hidden="true"></a><span class="kw">def</span> generate_codelets(fpga: <span class="bu">bool</span>):</span>
+<div class="sourceCode" id="generate-codelets"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-codelets-1"><a href="#generate-codelets-1" aria-hidden="true"></a><span class="kw">def</span> generate_codelets(parity_splitting: ParitySplitting, fpga: <span class="bu">bool</span>):</span>
 <span id="generate-codelets-2"><a href="#generate-codelets-2" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
 <span id="generate-codelets-3"><a href="#generate-codelets-3" aria-hidden="true"></a><span class="co">    Generate OpenCL codelets for FFT.</span></span>
 <span id="generate-codelets-4"><a href="#generate-codelets-4" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
 <span id="generate-codelets-5"><a href="#generate-codelets-5" aria-hidden="true"></a>    template <span class="op">=</span> template_environment.get_template(<span class="st">&quot;codelets.cl&quot;</span>)</span>
 <span id="generate-codelets-6"><a href="#generate-codelets-6" aria-hidden="true"></a></span>
-<span id="generate-codelets-7"><a href="#generate-codelets-7" aria-hidden="true"></a>    <span class="cf">return</span> template.render(fpga<span class="op">=</span>fpga)</span></code></pre></div>
+<span id="generate-codelets-7"><a href="#generate-codelets-7" aria-hidden="true"></a>    <span class="cf">return</span> template.render(radix<span class="op">=</span>parity_splitting.radix, fpga<span class="op">=</span>fpga)</span></code></pre></div>
+</div>
+<p>Here we also have a test for the codelets.</p>
+<div class="annotated-code">
+<p><span><em>«test/test_codelets.py»=</em></span></p>
+<div class="sourceCode" id="cb14" data-file="test/test_codelets.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="im">import</span> numpy</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a><span class="im">import</span> pytest</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a><span class="im">from</span> fftsynth <span class="im">import</span> generator, parity</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a><span class="im">from</span> kernel_tuner <span class="im">import</span> run_kernel     <span class="co"># type: ignore</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true"></a><span class="at">@pytest.mark.parametrize</span>(<span class="st">&#39;radix&#39;</span>, [<span class="dv">2</span>, <span class="dv">4</span>])</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true"></a><span class="kw">def</span> test_radix(radix):</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true"></a>    <span class="co"># this test runs 256 instances of the radix n function</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true"></a>    <span class="co"># it does not use twiddle factors, so as a test</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true"></a>    <span class="co"># it&#39;s not to be relied upon fully</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true"></a>    n <span class="op">=</span> numpy.int32(<span class="dv">256</span>)</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true"></a>    x <span class="op">=</span> numpy.random.normal(size<span class="op">=</span>(n, radix, <span class="dv">2</span>)).astype(numpy.float32)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true"></a>    y <span class="op">=</span> numpy.zeros_like(x)</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true"></a></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true"></a>    y_ref <span class="op">=</span> numpy.fft.fft(x[..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[..., <span class="dv">1</span>])</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true"></a></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true"></a>    parity_splitting <span class="op">=</span> parity.ParitySplitting(radix <span class="op">*</span> n, radix)</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true"></a>    codelets <span class="op">=</span> <span class="st">&quot;</span><span class="sc">{}</span><span class="st"> </span><span class="sc">{}</span><span class="st"> </span><span class="sc">{}</span><span class="st">&quot;</span>.<span class="bu">format</span>(generator.generate_preprocessor(parity_splitting, <span class="va">False</span>), generator.generate_twiddle_array(parity_splitting), generator.generate_codelets(parity_splitting, <span class="va">False</span>))</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true"></a>    args <span class="op">=</span> [x, y, n]</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true"></a>    answer <span class="op">=</span> run_kernel(<span class="st">&quot;test_radix_&quot;</span> <span class="op">+</span> <span class="bu">str</span>(radix), codelets, <span class="dv">1</span>, args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true"></a></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true"></a>    y <span class="op">=</span> answer[<span class="dv">1</span>]</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true"></a>    y <span class="op">=</span> y[..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>y[..., <span class="dv">1</span>]</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true"></a></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true"></a>    numpy.testing.assert_almost_equal(y, y_ref, decimal<span class="op">=</span><span class="dv">5</span>, verbose<span class="op">=</span><span class="va">False</span>)</span></code></pre></div>
 </div>
 <h3 id="preprocessor">Preprocessor</h3>
 <p>This is the parameterized OpenCL code used to write the preprocessor directives.</p>
 <div class="annotated-code">
 <p><span><em>«fftsynth/templates/preprocessor.cl»=</em></span></p>
-<div class="sourceCode" id="cb14" data-file="fftsynth/templates/preprocessor.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a>{% <span class="kw">if</span> fpga -%}</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true"></a><span class="ot">#pragma OPENCL EXTENSION cl_intel_channels : enable</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true"></a><span class="ot">#include &lt;ihc_apint.h&gt;</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true"></a>channel <span class="dt">float2</span> in_channel, out_channel;</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true"></a><span class="ot">#define SWAP(type, x, y) do { type temp = x; x = y, y = temp; } while ( false );</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true"></a>{% endif -%}</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true"></a>{%<span class="kw">if</span> radix == <span class="dv">2</span> %}</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true"></a><span class="ot">#define DIVR(x) ((x) &gt;&gt; 1)</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true"></a><span class="ot">#define MODR(x) ((x) &amp; 1)</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true"></a><span class="ot">#define MULR(x) ((x) &lt;&lt; 1)</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true"></a>{% elif radix == <span class="dv">4</span> %}</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true"></a><span class="ot">#define DIVR(x) ((x) &gt;&gt; 2)</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true"></a><span class="ot">#define MODR(x) ((x) &amp; 3)</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true"></a><span class="ot">#define MULR(x) ((x) &lt;&lt; 2)</span></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true"></a>{% <span class="kw">else</span> %}</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true"></a><span class="ot">#define DIVR(x) ((x) / {{ radix }})</span></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true"></a><span class="ot">#define MODR(x) ((x) % {{ radix }})</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true"></a><span class="ot">#define MULR(x) ((x) * {{ radix }})</span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
+<div class="sourceCode" id="cb15" data-file="fftsynth/templates/preprocessor.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a>{% <span class="kw">if</span> fpga -%}</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true"></a><span class="ot">#pragma OPENCL EXTENSION cl_intel_channels : enable</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true"></a><span class="ot">#include &lt;ihc_apint.h&gt;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true"></a>channel <span class="dt">float2</span> in_channel, out_channel;</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true"></a><span class="ot">#define SWAP(type, x, y) do { type temp = x; x = y, y = temp; } while ( false );</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true"></a>{% endif -%}</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true"></a>{%<span class="kw">if</span> radix == <span class="dv">2</span> %}</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true"></a><span class="ot">#define DIVR(x) ((x) &gt;&gt; 1)</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true"></a><span class="ot">#define MODR(x) ((x) &amp; 1)</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true"></a><span class="ot">#define MULR(x) ((x) &lt;&lt; 1)</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true"></a>{% elif radix == <span class="dv">4</span> %}</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true"></a><span class="ot">#define DIVR(x) ((x) &gt;&gt; 2)</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true"></a><span class="ot">#define MODR(x) ((x) &amp; 3)</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true"></a><span class="ot">#define MULR(x) ((x) &lt;&lt; 2)</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true"></a>{% <span class="kw">else</span> %}</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true"></a><span class="ot">#define DIVR(x) ((x) / {{ radix }})</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true"></a><span class="ot">#define MODR(x) ((x) % {{ radix }})</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true"></a><span class="ot">#define MULR(x) ((x) * {{ radix }})</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
 </div>
 <p>What follows is the Python function used to generate the OpenCL code.</p>
 <div class="annotated-code">
@@ -1182,25 +1218,25 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>This is the parameterized OpenCL code used to write the FPGA specific functions.</p>
 <div class="annotated-code">
 <p><span><em>«fftsynth/templates/fpga.cl»=</em></span></p>
-<div class="sourceCode" id="cb15" data-file="fftsynth/templates/fpga.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="kw">__kernel</span> __attribute__((max_global_work_dim(<span class="dv">0</span>)))</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true"></a><span class="dt">void</span> source(<span class="kw">__global</span> <span class="dt">const</span> <span class="dt">volatile</span> <span class="dt">float2</span> * in, <span class="dt">unsigned</span> count)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true"></a>{</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true"></a>    <span class="ot">#pragma ii 1</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true"></a>    <span class="kw">for</span> ( <span class="dt">unsigned</span> i = <span class="dv">0</span>; i &lt; count; i++ )</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true"></a>    {</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true"></a>        write_channel_intel(in_channel, in[i]);</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true"></a>    }</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true"></a>}</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true"></a></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true"></a><span class="kw">__kernel</span> __attribute__((max_global_work_dim(<span class="dv">0</span>)))</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true"></a><span class="dt">void</span> sink(<span class="kw">__global</span> <span class="dt">float2</span> *out, <span class="dt">unsigned</span> count)</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true"></a>{</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true"></a>    <span class="ot">#pragma ii 1</span></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true"></a>    <span class="kw">for</span> ( <span class="dt">unsigned</span> i = <span class="dv">0</span>; i &lt; count; i++ )</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true"></a>    {</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true"></a>        out[i] = read_channel_intel(out_channel);</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true"></a>    }</span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb16" data-file="fftsynth/templates/fpga.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="kw">__kernel</span> __attribute__((max_global_work_dim(<span class="dv">0</span>)))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="dt">void</span> source(<span class="kw">__global</span> <span class="dt">const</span> <span class="dt">volatile</span> <span class="dt">float2</span> * in, <span class="dt">unsigned</span> count)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true"></a>{</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true"></a>    <span class="ot">#pragma ii 1</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true"></a>    <span class="kw">for</span> ( <span class="dt">unsigned</span> i = <span class="dv">0</span>; i &lt; count; i++ )</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true"></a>    {</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true"></a>        write_channel_intel(in_channel, in[i]);</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true"></a>    }</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true"></a>}</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true"></a><span class="kw">__kernel</span> __attribute__((max_global_work_dim(<span class="dv">0</span>)))</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true"></a><span class="dt">void</span> sink(<span class="kw">__global</span> <span class="dt">float2</span> *out, <span class="dt">unsigned</span> count)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true"></a>{</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true"></a>    <span class="ot">#pragma ii 1</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true"></a>    <span class="kw">for</span> ( <span class="dt">unsigned</span> i = <span class="dv">0</span>; i &lt; count; i++ )</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true"></a>    {</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true"></a>        out[i] = read_channel_intel(out_channel);</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true"></a>    }</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
 <p>What follows is the Python function used to generate the OpenCL code.</p>
 <div class="annotated-code">
@@ -1217,39 +1253,38 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>To test we need to define small <code>__kernel</code> functions.</p>
 <div class="annotated-code">
 <p><span><em>«test/test_generator.py»=</em></span></p>
-<div class="sourceCode" id="cb16" data-file="test/test_generator.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="im">import</span> pytest</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true"></a><span class="im">from</span> kernel_tuner <span class="im">import</span> run_kernel  <span class="co"># type: ignore</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true"></a><span class="im">from</span> fftsynth.parity <span class="im">import</span> ParitySplitting, parity</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true"></a><span class="im">from</span> fftsynth.generator <span class="im">import</span> generate_preprocessor, generate_transpose_function, generate_parity_function</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true"></a>cases <span class="op">=</span> [</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true"></a>    ParitySplitting(<span class="dv">64</span>, <span class="dv">4</span>),</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true"></a>    ParitySplitting(<span class="dv">81</span>, <span class="dv">3</span>),</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true"></a>    ParitySplitting(<span class="dv">125</span>, <span class="dv">5</span>)</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true"></a>]</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true"></a></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true"></a></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true"></a><span class="op">&lt;&lt;</span>test<span class="op">-</span>parity<span class="op">&gt;&gt;</span></span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true"></a></span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true"></a><span class="op">&lt;&lt;</span>test<span class="op">-</span>transpose<span class="op">&gt;&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb17" data-file="test/test_generator.py"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a><span class="im">import</span> pytest</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true"></a><span class="im">from</span> kernel_tuner <span class="im">import</span> run_kernel  <span class="co"># type: ignore</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true"></a><span class="im">from</span> fftsynth.parity <span class="im">import</span> ParitySplitting, parity</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true"></a><span class="im">from</span> fftsynth.generator <span class="im">import</span> generate_preprocessor, generate_transpose_function, generate_parity_function</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true"></a>cases <span class="op">=</span> [</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true"></a>    ParitySplitting(<span class="dv">128</span>, <span class="dv">2</span>),</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true"></a>    ParitySplitting(<span class="dv">64</span>, <span class="dv">4</span>),</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true"></a>]</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true"></a><span class="op">&lt;&lt;</span>test<span class="op">-</span>parity<span class="op">&gt;&gt;</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true"></a><span class="op">&lt;&lt;</span>test<span class="op">-</span>transpose<span class="op">&gt;&gt;</span></span></code></pre></div>
 </div>
 <h2 id="bit-math">Bit math</h2>
 <p>The <code>transpose_{r}</code> function should reverse the digits in a base-n representation of the integer.</p>
 <div class="annotated-code">
 <p><span><em>«fftsynth/templates/transpose.cl»=</em></span></p>
-<div class="sourceCode" id="cb17" data-file="fftsynth/templates/transpose.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> transpose_{{ radix }}(<span class="dt">int</span> j)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true"></a>{</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true"></a>    <span class="dt">int</span> x = <span class="dv">0</span>;</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true"></a></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true"></a>    {% <span class="kw">for</span> item in range(depth) %}</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true"></a>    x = MULR(x) + MODR(j);</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true"></a>    j = DIVR(j);</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true"></a>    {%- endfor %}</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true"></a></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true"></a>    <span class="kw">return</span> x;</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb18" data-file="fftsynth/templates/transpose.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> transpose_{{ radix }}(<span class="dt">int</span> j)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true"></a>{</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true"></a>    <span class="dt">int</span> x = <span class="dv">0</span>;</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true"></a>    {% <span class="kw">for</span> item in range(depth) %}</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true"></a>    x = MULR(x) + MODR(j);</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true"></a>    j = DIVR(j);</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true"></a>    {%- endfor %}</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true"></a>    <span class="kw">return</span> x;</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
 <div class="annotated-code">
 <p><span><em>«generate-transpose-function»=</em></span></p>
@@ -1265,17 +1300,17 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>The <code>parity_{r}</code> function should compute the parity of the index.</p>
 <div class="annotated-code">
 <p><span><em>«fftsynth/templates/parity.cl»=</em></span></p>
-<div class="sourceCode" id="cb18" data-file="fftsynth/templates/parity.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> parity_{{ radix }}(<span class="dt">int</span> i)</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true"></a>{</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true"></a>    <span class="dt">int</span> x = MODR(i);</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true"></a></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true"></a>    {% <span class="kw">for</span> item in range(depth) %}</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true"></a>    i = DIVR(i);</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true"></a>    x += MODR(i);</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true"></a>    {%- endfor %}</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true"></a></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true"></a>    <span class="kw">return</span> MODR(x);</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb19" data-file="fftsynth/templates/parity.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> parity_{{ radix }}(<span class="dt">int</span> i)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true"></a>{</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true"></a>    <span class="dt">int</span> x = MODR(i);</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true"></a>    {% <span class="kw">for</span> item in range(depth) %}</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true"></a>    i = DIVR(i);</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true"></a>    x += MODR(i);</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true"></a>    {%- endfor %}</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true"></a></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true"></a>    <span class="kw">return</span> MODR(x);</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
 <div class="annotated-code">
 <p><span><em>«generate-parity-function»=</em></span></p>
@@ -1291,14 +1326,14 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h3 id="testing-3">Testing</h3>
 <div class="annotated-code">
 <p><span><em>«fftsynth/templates/transpose.cl»+</em></span></p>
-<div class="sourceCode" id="cb19" data-file="fftsynth/templates/transpose.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_transpose_{{ radix }}(<span class="kw">__global</span> <span class="dt">const</span> <span class="dt">int</span> * x, <span class="kw">__global</span> <span class="dt">int</span> * y)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true"></a>{</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>);</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true"></a>    </span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true"></a>    y[i] = transpose_{{ radix }}(x[i]);</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true"></a>}</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span></code></pre></div>
+<div class="sourceCode" id="cb20" data-file="fftsynth/templates/transpose.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_transpose_{{ radix }}(<span class="kw">__global</span> <span class="dt">const</span> <span class="dt">int</span> * x, <span class="kw">__global</span> <span class="dt">int</span> * y)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true"></a>{</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>);</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true"></a>    </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true"></a>    y[i] = transpose_{{ radix }}(x[i]);</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true"></a>}</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span></code></pre></div>
 </div>
 <div class="annotated-code">
 <p><span><em>«test-transpose»=</em></span></p>
@@ -1317,14 +1352,14 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <h4 id="parity-2">Parity</h4>
 <div class="annotated-code">
 <p><span><em>«fftsynth/templates/parity.cl»+</em></span></p>
-<div class="sourceCode" id="cb20" data-file="fftsynth/templates/parity.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_parity_{{ radix }}(<span class="kw">__global</span> <span class="dt">const</span> <span class="dt">int</span> * x, <span class="kw">__global</span> <span class="dt">int</span> * y)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true"></a>{</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>);</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true"></a>    </span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true"></a>    y[i] = parity_{{ radix }}(x[i]);</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true"></a>}</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span></code></pre></div>
+<div class="sourceCode" id="cb21" data-file="fftsynth/templates/parity.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_parity_{{ radix }}(<span class="kw">__global</span> <span class="dt">const</span> <span class="dt">int</span> * x, <span class="kw">__global</span> <span class="dt">int</span> * y)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true"></a>{</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>);</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true"></a>    </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true"></a>    y[i] = parity_{{ radix }}(x[i]);</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true"></a>}</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span></code></pre></div>
 </div>
 <div class="annotated-code">
 <p><span><em>«test-parity»=</em></span></p>
@@ -1369,126 +1404,126 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>Here we have <code>k</code> being the index of the outer loop. The next bit is only still implemented for radix-4.</p>
 <div class="annotated-code">
 <p><span><em>«fftsynth/templates/fft.cl»=</em></span></p>
-<div class="sourceCode" id="cb21" data-file="fftsynth/templates/fft.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="dt">void</span> fft_{{ N }}_ps({% <span class="kw">for</span> i in range(radix) %} <span class="dt">float2</span> * <span class="dt">restrict</span> s{{ i }}{%- <span class="kw">if</span> not loop.last %},{% endif %}{% endfor %}{% <span class="kw">if</span> fpga %},{% <span class="kw">for</span> i in range(radix) %} <span class="dt">float2</span> * <span class="dt">restrict</span> s{{ i }}_in,{% endfor %}{% <span class="kw">for</span> i in range(radix) %} <span class="dt">float2</span> * <span class="dt">restrict</span> s{{ i }}_out{%- <span class="kw">if</span> not loop.last %},{% endif %}{% endfor %}{% endif %})</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true"></a>{</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true"></a>    <span class="dt">int</span> wp = <span class="dv">0</span>;</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true"></a></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true"></a>    <span class="kw">for</span> ( {{ depth_type }} k = <span class="dv">0</span>; k != {{ depth }}; ++k )</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true"></a>    {</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true"></a>        <span class="dt">int</span> j = (k == <span class="dv">0</span> ? <span class="dv">0</span> : ipow(k - <span class="dv">1</span>));</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true"></a></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true"></a>        {% <span class="kw">if</span> fpga -%}</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true"></a>        <span class="ot">#pragma ivdep</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true"></a>        {% endif -%}</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true"></a>        <span class="kw">for</span> ( {{ m_type }} i = <span class="dv">0</span>; i != {{ M }}; ++i )</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true"></a>        {</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true"></a>            <span class="dt">int</span> a;</span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true"></a>            <span class="kw">if</span> ( k != <span class="dv">0</span> )</span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true"></a>            {</span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true"></a>                a = comp_idx_{{ radix }}(DIVR(i), k<span class="dv">-1</span>);</span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true"></a>            }</span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true"></a>            <span class="kw">else</span></span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true"></a>            {</span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true"></a>                a = comp_perm_{{ radix }}(DIVR(i), MODR(i));</span>
-<span id="cb21-22"><a href="#cb21-22" aria-hidden="true"></a>            }</span>
-<span id="cb21-23"><a href="#cb21-23" aria-hidden="true"></a>            {% <span class="kw">if</span> fpga %}</span>
-<span id="cb21-24"><a href="#cb21-24" aria-hidden="true"></a>            fft_{{ radix }}({% <span class="kw">for</span> i in range(radix) %} s{{ i }},{% endfor %}{% <span class="kw">for</span> i in range(radix) %} s{{ i }}_in,{% endfor %}{% <span class="kw">for</span> i in range(radix) %} s{{ i }}_out,{% endfor %} k == <span class="dv">0</span>, k == {{ depth - <span class="dv">1</span> }}, MODR(i), {% <span class="kw">for</span> i in range(radix) %} a + {{ i }} * j,{% endfor %} wp);</span>
-<span id="cb21-25"><a href="#cb21-25" aria-hidden="true"></a>            {% <span class="kw">else</span> %}</span>
-<span id="cb21-26"><a href="#cb21-26" aria-hidden="true"></a>            fft_{{ radix }}({% <span class="kw">for</span> i in range(radix) %} s{{ i }},{% endfor %} MODR(i), {% <span class="kw">for</span> i in range(radix) %} a + {{ i }} * j,{% endfor %} wp);</span>
-<span id="cb21-27"><a href="#cb21-27" aria-hidden="true"></a>            {% endif %}</span>
-<span id="cb21-28"><a href="#cb21-28" aria-hidden="true"></a>            <span class="kw">if</span> ( k != <span class="dv">0</span> )</span>
-<span id="cb21-29"><a href="#cb21-29" aria-hidden="true"></a>            {</span>
-<span id="cb21-30"><a href="#cb21-30" aria-hidden="true"></a>                ++wp;</span>
-<span id="cb21-31"><a href="#cb21-31" aria-hidden="true"></a>            }</span>
-<span id="cb21-32"><a href="#cb21-32" aria-hidden="true"></a>        }</span>
-<span id="cb21-33"><a href="#cb21-33" aria-hidden="true"></a>    }</span>
-<span id="cb21-34"><a href="#cb21-34" aria-hidden="true"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb22" data-file="fftsynth/templates/fft.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a><span class="dt">void</span> fft_{{ N }}_ps({% <span class="kw">for</span> i in range(radix) %} <span class="dt">float2</span> * <span class="dt">restrict</span> s{{ i }}{%- <span class="kw">if</span> not loop.last %},{% endif %}{% endfor %}{% <span class="kw">if</span> fpga %},{% <span class="kw">for</span> i in range(radix) %} <span class="dt">float2</span> * <span class="dt">restrict</span> s{{ i }}_in,{% endfor %}{% <span class="kw">for</span> i in range(radix) %} <span class="dt">float2</span> * <span class="dt">restrict</span> s{{ i }}_out{%- <span class="kw">if</span> not loop.last %},{% endif %}{% endfor %}{% endif %})</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true"></a>{</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true"></a>    <span class="dt">int</span> wp = <span class="dv">0</span>;</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true"></a>    <span class="kw">for</span> ( {{ depth_type }} k = <span class="dv">0</span>; k != {{ depth }}; ++k )</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true"></a>    {</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true"></a>        <span class="dt">int</span> j = (k == <span class="dv">0</span> ? <span class="dv">0</span> : ipow(k - <span class="dv">1</span>));</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true"></a>        {% <span class="kw">if</span> fpga -%}</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true"></a>        <span class="ot">#pragma ivdep</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true"></a>        {% endif -%}</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true"></a>        <span class="kw">for</span> ( {{ m_type }} i = <span class="dv">0</span>; i != {{ M }}; ++i )</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true"></a>        {</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true"></a>            <span class="dt">int</span> a;</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true"></a>            <span class="kw">if</span> ( k != <span class="dv">0</span> )</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true"></a>            {</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true"></a>                a = comp_idx_{{ radix }}(DIVR(i), k<span class="dv">-1</span>);</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true"></a>            }</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true"></a>            <span class="kw">else</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true"></a>            {</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true"></a>                a = comp_perm_{{ radix }}(DIVR(i), MODR(i));</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true"></a>            }</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true"></a>            {% <span class="kw">if</span> fpga %}</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true"></a>            fft_{{ radix }}({% <span class="kw">for</span> i in range(radix) %} s{{ i }},{% endfor %}{% <span class="kw">for</span> i in range(radix) %} s{{ i }}_in,{% endfor %}{% <span class="kw">for</span> i in range(radix) %} s{{ i }}_out,{% endfor %} k == <span class="dv">0</span>, k == {{ depth - <span class="dv">1</span> }}, MODR(i), {% <span class="kw">for</span> i in range(radix) %} a + {{ i }} * j,{% endfor %} wp);</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true"></a>            {% <span class="kw">else</span> %}</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true"></a>            fft_{{ radix }}({% <span class="kw">for</span> i in range(radix) %} s{{ i }},{% endfor %} MODR(i), {% <span class="kw">for</span> i in range(radix) %} a + {{ i }} * j,{% endfor %} wp);</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true"></a>            {% endif %}</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true"></a>            <span class="kw">if</span> ( k != <span class="dv">0</span> )</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true"></a>            {</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true"></a>                ++wp;</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true"></a>            }</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true"></a>        }</span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true"></a>    }</span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
 <h3 id="outer-loop">Outer loop</h3>
 <p>The outer kernel reads the data, puts it in the correct parity-channel and then calls the respective <code>fft_{n}_ps</code> kernel.</p>
 <div class="annotated-code">
 <p><span><em>«fftsynth/templates/fft.cl»+</em></span></p>
-<div class="sourceCode" id="cb22" data-file="fftsynth/templates/fft.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a><span class="kw">__kernel</span> {%<span class="kw">if</span> fpga %}__attribute__((autorun)) __attribute__((max_global_work_dim(<span class="dv">0</span>))){% endif %}</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true"></a><span class="dt">void</span> fft_{{ N }}({% <span class="kw">if</span> not fpga %}<span class="kw">__global</span> <span class="dt">const</span> <span class="dt">float2</span> * <span class="dt">restrict</span> x, <span class="kw">__global</span> <span class="dt">float2</span> * <span class="dt">restrict</span> y{% endif %})</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true"></a>{</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga -%}</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true"></a>    <span class="kw">while</span> ( true )</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true"></a>    {</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true"></a>    {% endif -%}</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true"></a>    {%- <span class="kw">for</span> i in range(radix) %}</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true"></a>    <span class="dt">float2</span> s{{ i }}[{{ M }}];</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga -%}</span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true"></a>    <span class="dt">float2</span> s{{ i }}_in[{{ M }}], s{{ i }}_out[{{ M }}];</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true"></a>    {%- endif -%}</span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true"></a>    {%- endfor %}</span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true"></a></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true"></a>    <span class="kw">for</span> ( {{ n_type }} j = <span class="dv">0</span>; j != {{ N }}; ++j )</span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true"></a>    {</span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true"></a>        <span class="dt">int</span> i = transpose_{{ radix }}(j);</span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true"></a>        <span class="dt">int</span> p = parity_{{ radix }}(i);</span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true"></a></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true"></a>        {% <span class="kw">if</span> fpga -%}</span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true"></a>        <span class="dt">float2</span> x = read_channel_intel(in_channel);</span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true"></a>        {% endif -%}</span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true"></a>        <span class="kw">switch</span> ( p )</span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true"></a>        {</span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true"></a>            {%- <span class="kw">if</span> fpga %}</span>
-<span id="cb22-26"><a href="#cb22-26" aria-hidden="true"></a>            {%- <span class="kw">for</span> p in range(radix) %}</span>
-<span id="cb22-27"><a href="#cb22-27" aria-hidden="true"></a>            <span class="kw">case</span> {{ p }}: s{{ p }}_in[DIVR(i)] = x; <span class="kw">break</span>;</span>
-<span id="cb22-28"><a href="#cb22-28" aria-hidden="true"></a>            {%- endfor -%}</span>
-<span id="cb22-29"><a href="#cb22-29" aria-hidden="true"></a>            {% <span class="kw">else</span> %}</span>
-<span id="cb22-30"><a href="#cb22-30" aria-hidden="true"></a>            {%- <span class="kw">for</span> p in range(radix) %}</span>
-<span id="cb22-31"><a href="#cb22-31" aria-hidden="true"></a>            <span class="kw">case</span> {{ p }}: s{{ p }}[DIVR(i)] = x[j]; <span class="kw">break</span>;</span>
-<span id="cb22-32"><a href="#cb22-32" aria-hidden="true"></a>            {%- endfor -%}</span>
-<span id="cb22-33"><a href="#cb22-33" aria-hidden="true"></a>            {%- endif %}</span>
-<span id="cb22-34"><a href="#cb22-34" aria-hidden="true"></a>        }</span>
-<span id="cb22-35"><a href="#cb22-35" aria-hidden="true"></a>    }</span>
-<span id="cb22-36"><a href="#cb22-36" aria-hidden="true"></a></span>
-<span id="cb22-37"><a href="#cb22-37" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
-<span id="cb22-38"><a href="#cb22-38" aria-hidden="true"></a>    fft_{{ N }}_ps({%- <span class="kw">for</span> i in range(radix) %} s{{ i }},{% endfor %} {%- <span class="kw">for</span> i in range(radix) %} s{{ i }}_in,{% endfor %} {%- <span class="kw">for</span> i in range(radix) %} s{{ i }}_out{%- <span class="kw">if</span> not loop.last %},{% endif %}{% endfor %});</span>
-<span id="cb22-39"><a href="#cb22-39" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
-<span id="cb22-40"><a href="#cb22-40" aria-hidden="true"></a>    fft_{{ N }}_ps({%- <span class="kw">for</span> i in range(radix) %} s{{ i }}{%- <span class="kw">if</span> not loop.last %},{% endif %}{% endfor %});</span>
-<span id="cb22-41"><a href="#cb22-41" aria-hidden="true"></a>    {% endif %}</span>
-<span id="cb22-42"><a href="#cb22-42" aria-hidden="true"></a></span>
-<span id="cb22-43"><a href="#cb22-43" aria-hidden="true"></a>    <span class="kw">for</span> ( {{ n_type }} i = <span class="dv">0</span>; i != {{ N }}; ++i )</span>
-<span id="cb22-44"><a href="#cb22-44" aria-hidden="true"></a>    {</span>
-<span id="cb22-45"><a href="#cb22-45" aria-hidden="true"></a>        <span class="dt">int</span> p = parity_{{ radix }}(i);</span>
-<span id="cb22-46"><a href="#cb22-46" aria-hidden="true"></a>        {% <span class="kw">if</span> fpga -%}</span>
-<span id="cb22-47"><a href="#cb22-47" aria-hidden="true"></a>        <span class="dt">float2</span> y;</span>
-<span id="cb22-48"><a href="#cb22-48" aria-hidden="true"></a>        {% endif -%}</span>
-<span id="cb22-49"><a href="#cb22-49" aria-hidden="true"></a></span>
-<span id="cb22-50"><a href="#cb22-50" aria-hidden="true"></a>        <span class="kw">switch</span> ( p )</span>
-<span id="cb22-51"><a href="#cb22-51" aria-hidden="true"></a>        {</span>
-<span id="cb22-52"><a href="#cb22-52" aria-hidden="true"></a>            {%- <span class="kw">if</span> fpga -%}</span>
-<span id="cb22-53"><a href="#cb22-53" aria-hidden="true"></a>            {%- <span class="kw">for</span> p in range(radix) %}</span>
-<span id="cb22-54"><a href="#cb22-54" aria-hidden="true"></a>            <span class="kw">case</span> {{ p }}: y = s{{ p }}_out[DIVR(i)]; <span class="kw">break</span>;</span>
-<span id="cb22-55"><a href="#cb22-55" aria-hidden="true"></a>            {%- endfor -%}</span>
-<span id="cb22-56"><a href="#cb22-56" aria-hidden="true"></a>            {% <span class="kw">else</span> %}</span>
-<span id="cb22-57"><a href="#cb22-57" aria-hidden="true"></a>            {%- <span class="kw">for</span> p in range(radix) %}</span>
-<span id="cb22-58"><a href="#cb22-58" aria-hidden="true"></a>            <span class="kw">case</span> {{ p }}: y[i] = s{{ p }}[DIVR(i)]; <span class="kw">break</span>;</span>
-<span id="cb22-59"><a href="#cb22-59" aria-hidden="true"></a>            {%- endfor -%}</span>
-<span id="cb22-60"><a href="#cb22-60" aria-hidden="true"></a>            {%- endif %}</span>
-<span id="cb22-61"><a href="#cb22-61" aria-hidden="true"></a>        }</span>
-<span id="cb22-62"><a href="#cb22-62" aria-hidden="true"></a>        {%- <span class="kw">if</span> fpga %}</span>
-<span id="cb22-63"><a href="#cb22-63" aria-hidden="true"></a>        write_channel_intel(out_channel, y);</span>
-<span id="cb22-64"><a href="#cb22-64" aria-hidden="true"></a>        {%- endif %}</span>
-<span id="cb22-65"><a href="#cb22-65" aria-hidden="true"></a>    }</span>
-<span id="cb22-66"><a href="#cb22-66" aria-hidden="true"></a>    {%- <span class="kw">if</span> fpga %}</span>
-<span id="cb22-67"><a href="#cb22-67" aria-hidden="true"></a>    }</span>
-<span id="cb22-68"><a href="#cb22-68" aria-hidden="true"></a>    {%- endif %}</span>
-<span id="cb22-69"><a href="#cb22-69" aria-hidden="true"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb23" data-file="fftsynth/templates/fft.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true"></a><span class="kw">__kernel</span> {%<span class="kw">if</span> fpga %}__attribute__((autorun)) __attribute__((max_global_work_dim(<span class="dv">0</span>))){% endif %}</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true"></a><span class="dt">void</span> fft_{{ N }}({% <span class="kw">if</span> not fpga %}<span class="kw">__global</span> <span class="dt">const</span> <span class="dt">float2</span> * <span class="dt">restrict</span> x, <span class="kw">__global</span> <span class="dt">float2</span> * <span class="dt">restrict</span> y{% endif %})</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true"></a>{</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga -%}</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true"></a>    <span class="kw">while</span> ( true )</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true"></a>    {</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true"></a>    {% endif -%}</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true"></a>    {%- <span class="kw">for</span> i in range(radix) %}</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true"></a>    <span class="dt">float2</span> s{{ i }}[{{ M }}];</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga -%}</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true"></a>    <span class="dt">float2</span> s{{ i }}_in[{{ M }}], s{{ i }}_out[{{ M }}];</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true"></a>    {%- endif -%}</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true"></a>    {%- endfor %}</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true"></a></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true"></a>    <span class="kw">for</span> ( {{ n_type }} j = <span class="dv">0</span>; j != {{ N }}; ++j )</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true"></a>    {</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true"></a>        <span class="dt">int</span> i = transpose_{{ radix }}(j);</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true"></a>        <span class="dt">int</span> p = parity_{{ radix }}(i);</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true"></a></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true"></a>        {% <span class="kw">if</span> fpga -%}</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true"></a>        <span class="dt">float2</span> x = read_channel_intel(in_channel);</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true"></a>        {% endif -%}</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true"></a>        <span class="kw">switch</span> ( p )</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true"></a>        {</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true"></a>            {%- <span class="kw">if</span> fpga %}</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true"></a>            {%- <span class="kw">for</span> p in range(radix) %}</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true"></a>            <span class="kw">case</span> {{ p }}: s{{ p }}_in[DIVR(i)] = x; <span class="kw">break</span>;</span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true"></a>            {%- endfor -%}</span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true"></a>            {% <span class="kw">else</span> %}</span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true"></a>            {%- <span class="kw">for</span> p in range(radix) %}</span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true"></a>            <span class="kw">case</span> {{ p }}: s{{ p }}[DIVR(i)] = x[j]; <span class="kw">break</span>;</span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true"></a>            {%- endfor -%}</span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true"></a>            {%- endif %}</span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true"></a>        }</span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true"></a>    }</span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true"></a></span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true"></a>    fft_{{ N }}_ps({%- <span class="kw">for</span> i in range(radix) %} s{{ i }},{% endfor %} {%- <span class="kw">for</span> i in range(radix) %} s{{ i }}_in,{% endfor %} {%- <span class="kw">for</span> i in range(radix) %} s{{ i }}_out{%- <span class="kw">if</span> not loop.last %},{% endif %}{% endfor %});</span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true"></a>    fft_{{ N }}_ps({%- <span class="kw">for</span> i in range(radix) %} s{{ i }}{%- <span class="kw">if</span> not loop.last %},{% endif %}{% endfor %});</span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true"></a>    {% endif %}</span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true"></a></span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true"></a>    <span class="kw">for</span> ( {{ n_type }} i = <span class="dv">0</span>; i != {{ N }}; ++i )</span>
+<span id="cb23-44"><a href="#cb23-44" aria-hidden="true"></a>    {</span>
+<span id="cb23-45"><a href="#cb23-45" aria-hidden="true"></a>        <span class="dt">int</span> p = parity_{{ radix }}(i);</span>
+<span id="cb23-46"><a href="#cb23-46" aria-hidden="true"></a>        {% <span class="kw">if</span> fpga -%}</span>
+<span id="cb23-47"><a href="#cb23-47" aria-hidden="true"></a>        <span class="dt">float2</span> y;</span>
+<span id="cb23-48"><a href="#cb23-48" aria-hidden="true"></a>        {% endif -%}</span>
+<span id="cb23-49"><a href="#cb23-49" aria-hidden="true"></a></span>
+<span id="cb23-50"><a href="#cb23-50" aria-hidden="true"></a>        <span class="kw">switch</span> ( p )</span>
+<span id="cb23-51"><a href="#cb23-51" aria-hidden="true"></a>        {</span>
+<span id="cb23-52"><a href="#cb23-52" aria-hidden="true"></a>            {%- <span class="kw">if</span> fpga -%}</span>
+<span id="cb23-53"><a href="#cb23-53" aria-hidden="true"></a>            {%- <span class="kw">for</span> p in range(radix) %}</span>
+<span id="cb23-54"><a href="#cb23-54" aria-hidden="true"></a>            <span class="kw">case</span> {{ p }}: y = s{{ p }}_out[DIVR(i)]; <span class="kw">break</span>;</span>
+<span id="cb23-55"><a href="#cb23-55" aria-hidden="true"></a>            {%- endfor -%}</span>
+<span id="cb23-56"><a href="#cb23-56" aria-hidden="true"></a>            {% <span class="kw">else</span> %}</span>
+<span id="cb23-57"><a href="#cb23-57" aria-hidden="true"></a>            {%- <span class="kw">for</span> p in range(radix) %}</span>
+<span id="cb23-58"><a href="#cb23-58" aria-hidden="true"></a>            <span class="kw">case</span> {{ p }}: y[i] = s{{ p }}[DIVR(i)]; <span class="kw">break</span>;</span>
+<span id="cb23-59"><a href="#cb23-59" aria-hidden="true"></a>            {%- endfor -%}</span>
+<span id="cb23-60"><a href="#cb23-60" aria-hidden="true"></a>            {%- endif %}</span>
+<span id="cb23-61"><a href="#cb23-61" aria-hidden="true"></a>        }</span>
+<span id="cb23-62"><a href="#cb23-62" aria-hidden="true"></a>        {%- <span class="kw">if</span> fpga %}</span>
+<span id="cb23-63"><a href="#cb23-63" aria-hidden="true"></a>        write_channel_intel(out_channel, y);</span>
+<span id="cb23-64"><a href="#cb23-64" aria-hidden="true"></a>        {%- endif %}</span>
+<span id="cb23-65"><a href="#cb23-65" aria-hidden="true"></a>    }</span>
+<span id="cb23-66"><a href="#cb23-66" aria-hidden="true"></a>    {%- <span class="kw">if</span> fpga %}</span>
+<span id="cb23-67"><a href="#cb23-67" aria-hidden="true"></a>    }</span>
+<span id="cb23-68"><a href="#cb23-68" aria-hidden="true"></a>    {%- endif %}</span>
+<span id="cb23-69"><a href="#cb23-69" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
 <h2 id="twiddles-1">Twiddles</h2>
 <p>This is the parameterized OpenCL code containing the constant array of the twiddle factors.</p>
 <div class="annotated-code">
 <p><span><em>«fftsynth/templates/twiddles.cl»=</em></span></p>
-<div class="sourceCode" id="cb23" data-file="fftsynth/templates/twiddles.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true"></a><span class="kw">__constant</span> <span class="dt">float2</span> W[{{ W.shape[<span class="dv">0</span>] - radix }}][{{ radix - <span class="dv">1</span> }}] = {</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true"></a>{% <span class="kw">for</span> ws in W[radix:] %}</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true"></a>{ {% <span class="kw">for</span> w in ws[<span class="dv">1</span>:] -%}</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true"></a>(<span class="dt">float2</span>)({{ <span class="st">&quot;%0.6f&quot;</span> | format(w.real) }}f, {{ <span class="st">&quot;%0.6f&quot;</span> | format(w.imag) }}f) {%- <span class="kw">if</span> not loop.last %}, {% endif %}</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true"></a>{%- endfor %} } {%- <span class="kw">if</span> not loop.last %},{% endif %}</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true"></a>{%- endfor %}</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true"></a>};</span></code></pre></div>
+<div class="sourceCode" id="cb24" data-file="fftsynth/templates/twiddles.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true"></a><span class="kw">__constant</span> <span class="dt">float2</span> W[{{ W.shape[<span class="dv">0</span>] - radix }}][{{ radix - <span class="dv">1</span> }}] = {</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true"></a>{% <span class="kw">for</span> ws in W[radix:] %}</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true"></a>{ {% <span class="kw">for</span> w in ws[<span class="dv">1</span>:] -%}</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true"></a>(<span class="dt">float2</span>)({{ <span class="st">&quot;%0.6f&quot;</span> | format(w.real) }}f, {{ <span class="st">&quot;%0.6f&quot;</span> | format(w.imag) }}f) {%- <span class="kw">if</span> not loop.last %}, {% endif %}</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true"></a>{%- endfor %} } {%- <span class="kw">if</span> not loop.last %},{% endif %}</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true"></a>{%- endfor %}</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true"></a>};</span></code></pre></div>
 </div>
 <p>What follows is the Python function used to generate the OpenCL code.</p>
 <div class="annotated-code">
@@ -1517,19 +1552,19 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>This is the parameterized OpenCL code used to compute indices.</p>
 <div class="annotated-code">
 <p><span><em>«fftsynth/templates/indices.cl»=</em></span></p>
-<div class="sourceCode" id="cb24" data-file="fftsynth/templates/indices.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> comp_idx_{{ radix }}(<span class="dt">int</span> i, <span class="dt">int</span> k)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true"></a>{</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true"></a>    <span class="dt">int</span> rem = i % ipow(k);</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true"></a>    <span class="dt">int</span> base = i - rem;</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true"></a>    <span class="kw">return</span> MULR(base) + rem;</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true"></a>}</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true"></a></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true"></a></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> comp_perm_{{ radix }}(<span class="dt">int</span> i, <span class="dt">int</span> rem)</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true"></a>{</span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true"></a>    <span class="dt">int</span> p = parity_{{ radix }}(i);</span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true"></a>    <span class="kw">return</span> MULR(i) + MODR(rem + {{ radix }} - p);</span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb25" data-file="fftsynth/templates/indices.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> comp_idx_{{ radix }}(<span class="dt">int</span> i, <span class="dt">int</span> k)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true"></a>{</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true"></a>    <span class="dt">int</span> rem = i % ipow(k);</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true"></a>    <span class="dt">int</span> base = i - rem;</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true"></a>    <span class="kw">return</span> MULR(base) + rem;</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true"></a>}</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> comp_perm_{{ radix }}(<span class="dt">int</span> i, <span class="dt">int</span> rem)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true"></a>{</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true"></a>    <span class="dt">int</span> p = parity_{{ radix }}(i);</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true"></a>    <span class="kw">return</span> MULR(i) + MODR(rem + {{ radix }} - p);</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true"></a>}</span></code></pre></div>
 </div>
 <p>What follows is the Python function used to generate the OpenCL code.</p>
 <div class="annotated-code">
@@ -1546,26 +1581,26 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>This is the parameterized OpenCL code used to compute the integer power of a radix.</p>
 <div class="annotated-code">
 <p><span><em>«fftsynth/templates/ipow.cl»=</em></span></p>
-<div class="sourceCode" id="cb25" data-file="fftsynth/templates/ipow.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">2</span> %}</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> ipow(<span class="dt">int</span> b)</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true"></a>{</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true"></a>    <span class="kw">return</span> <span class="dv">1</span> &lt;&lt; b;</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true"></a>}</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true"></a>{% elif radix == <span class="dv">4</span> %}</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> ipow(<span class="dt">int</span> b)</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true"></a>{</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true"></a>    <span class="kw">return</span> <span class="dv">1</span> &lt;&lt; (<span class="dv">2</span>*b);</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true"></a>}</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true"></a>{% <span class="kw">else</span> %}</span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> ipow(<span class="dt">int</span> b)</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true"></a>{</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true"></a>    <span class="dt">int</span> i, j;</span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true"></a>    <span class="dt">int</span> a = {{ radix }};</span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true"></a>    <span class="ot">#pragma unroll</span></span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true"></a>    <span class="kw">for</span> (i = <span class="dv">0</span>, j = <span class="dv">1</span>; i &lt; b; ++i, j*=a);</span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true"></a>    <span class="kw">return</span> j;</span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true"></a>}</span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
+<div class="sourceCode" id="cb26" data-file="fftsynth/templates/ipow.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">2</span> %}</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> ipow(<span class="dt">int</span> b)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true"></a>{</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true"></a>    <span class="kw">return</span> <span class="dv">1</span> &lt;&lt; b;</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true"></a>}</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true"></a>{% elif radix == <span class="dv">4</span> %}</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> ipow(<span class="dt">int</span> b)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true"></a>{</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true"></a>    <span class="kw">return</span> <span class="dv">1</span> &lt;&lt; (<span class="dv">2</span>*b);</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true"></a>}</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true"></a>{% <span class="kw">else</span> %}</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true"></a><span class="kw">inline</span> <span class="dt">int</span> ipow(<span class="dt">int</span> b)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true"></a>{</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true"></a>    <span class="dt">int</span> i, j;</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true"></a>    <span class="dt">int</span> a = {{ radix }};</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true"></a>    <span class="ot">#pragma unroll</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true"></a>    <span class="kw">for</span> (i = <span class="dv">0</span>, j = <span class="dv">1</span>; i &lt; b; ++i, j*=a);</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true"></a>    <span class="kw">return</span> j;</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true"></a>}</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
 </div>
 <p>What follows is the Python function used to generate the OpenCL code.</p>
 <div class="annotated-code">

@@ -1,6 +1,7 @@
 /* ~\~ language=OpenCL filename=fftsynth/templates/codelets.cl */
 /* ~\~ begin <<lit/code-generator.md|fftsynth/templates/codelets.cl>>[0] */
-void fft_2(__global float2 * restrict s0, __global float2 * restrict s1,{% if fpga %} float2 * restrict s0_in, float2 * restrict s1_in, float2 * restrict s0_out, float2 * restrict s1_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int iw)
+{% if radix == 2%}
+void fft_2(float2 * restrict s0, float2 * restrict s1,{% if fpga %} float2 * restrict s0_in, float2 * restrict s1_in, float2 * restrict s0_out, float2 * restrict s1_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int iw)
 {
     float2 t0, t1, ws0, ws1;
     __constant float2 *w = W[iw];
@@ -56,19 +57,21 @@ void fft_2(__global float2 * restrict s0, __global float2 * restrict s1,{% if fp
 
 #ifdef TESTING
 __kernel void test_radix_2(__global float2 *x, __global float2 *y, int n) {
-
-    float2 w = (float2) (1.0, 0.0);
     int i = get_global_id(0) * 2;
 
     //n is the number of radix2 ffts to perform
     if (i < 2 * n) {
-        fft_2(x, x, 0, i, i + 1, 0);
+        float2 s0 = x[i];
+        float2 s1 = x[i + 1];
 
-        y[i] = x[i]; y[i + 1] = x[i + 1];
+        fft_2(&s0, &s1, 0, 0, 0, 0);
+
+        y[i] = s0; y[i + 1] = s1;
     }
 }
 #endif // TESTING
 
+{% elif radix == 4 %}
 void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, float2 * restrict s3,{% if fpga %} float2 * restrict s0_in, float2 * restrict s1_in, float2 * restrict s2_in, float2 * restrict s3_in, float2 * restrict s0_out, float2 * restrict s1_out, float2 * restrict s2_out, float2 * restrict s3_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int i2, int i3, int iw)
 {
     float2 t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;
@@ -144,19 +147,20 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
 }
 
 #ifdef TESTING
-// __kernel void test_radix_4(__global float2 *x, __global float2 *y, int n) {
-// 
-//     float2 w0 = (float2) (1.0, 0.0);
-//     float2 w1 = (float2) (1.0, 0.0);
-//     int i = get_global_id(0) * 4;
-// 
-//     //n is the number of radix4 ffts to perform
-//     if (i < 4 * n) {
-//         fft_4(x, x, x, x, 0, i, i + 1, i + 2, i + 3, 0);
-// 
-//         y[i] = x[i];    y[i + 1] = x[i + 1];    y[i + 2] = x[i + 2];    y[i + 3] = x[i + 3];
-//     }
-// }
-#endif // TESTING
+__kernel void test_radix_4(__global float2 *x, __global float2 *y, int n) {
+    int i = get_global_id(0) * 4;
 
+    //n is the number of radix4 ffts to perform
+    if (i < 4 * n) {
+        float2 s0 = x[i];
+        float2 s1 = x[i + 1];
+        float2 s2 = x[i + 2];
+        float2 s3 = x[i + 3];
+        fft_4(&s0, &s1, &s2, &s3, 0, 0, 0, 0, 0, 0);
+
+        y[i] = s0;    y[i + 1] = s1;    y[i + 2] = s2;    y[i + 3] = s3;
+    }
+}
+#endif // TESTING
+{% endif %}
 /* ~\~ end */

@@ -134,13 +134,13 @@ def generate_fft_functions(parity_splitting: ParitySplitting, fpga: bool):
 
 
 # ~\~ begin <<lit/code-generator.md|generate-codelets>>[0]
-def generate_codelets(fpga: bool):
+def generate_codelets(parity_splitting: ParitySplitting, fpga: bool):
     """
     Generate OpenCL codelets for FFT.
     """
     template = template_environment.get_template("codelets.cl")
 
-    return template.render(fpga=fpga)
+    return template.render(radix=parity_splitting.radix, fpga=fpga)
 # ~\~ end
 
 

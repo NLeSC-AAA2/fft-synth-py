@@ -900,7 +900,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb11-147"><a href="#cb11-147" aria-hidden="true"></a>    N <span class="op">=</span> args.radix<span class="op">**</span>args.depth</span>
 <span id="cb11-148"><a href="#cb11-148" aria-hidden="true"></a>    ps <span class="op">=</span> ParitySplitting(N, args.radix)</span>
 <span id="cb11-149"><a href="#cb11-149" aria-hidden="true"></a>    <span class="cf">if</span> args.fma:</span>
-<span id="cb11-150"><a href="#cb11-150" aria-hidden="true"></a>        generate_fma_fft(ps, args.fpga)</span>
+<span id="cb11-150"><a href="#cb11-150" aria-hidden="true"></a>        <span class="bu">print</span>(generate_fma_fft(ps, args.fpga))</span>
 <span id="cb11-151"><a href="#cb11-151" aria-hidden="true"></a>    <span class="cf">else</span>:</span>
 <span id="cb11-152"><a href="#cb11-152" aria-hidden="true"></a>        <span class="bu">print</span>(generate_fft(ps, args.fpga))</span></code></pre></div>
 </div>

@@ -230,6 +230,8 @@ float fft_5(float2 t0, float2 t1, float2 t2, float2 t3, float2 t4,
 ## Testing
 
 ``` {.opencl .bootstrap-fold #fma-codelet-tests}
+#ifdef TESTING
+
 {% if radix == 2 %}
 __kernel void test_radix_2(__global float2 *x, __global float2 *y, int n) {
 
@@ -301,6 +303,7 @@ __kernel void test_radix_5(__global float2 *x, __global float2 *y, int n) {
     }
 }
 {% endif %}
+#endif // TESTING
 ```
 
 ``` {.python file=test/test_fma_codelets.py}
@@ -326,7 +329,7 @@ def test_radix(radix):
     codelets = "{}\n{}".format(generator.generate_preprocessor(parity_splitting, False),
                                generator.generate_fma_codelets(parity_splitting, False))
     args = [x, y, n]
-    answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {})
+    answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {}, compiler_options=["-DTESTING"])
 
     y = answer[1]
     y = y[..., 0] + 1j * y[..., 1]

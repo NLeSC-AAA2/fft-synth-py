@@ -644,77 +644,80 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div class="fold-block">
 <button class="btn btn-outline-primary btn-sm fold-toggle" type="button" data-toggle="collapse" data-target="#fma-codelet-tests-container" aria-controls="fma-codelet-tests-container">&lt;&lt;fma-codelet-tests&gt;&gt;=</button>
 <div id="fma-codelet-tests-container" class="collapse">
-<div class="sourceCode" id="fma-codelet-tests" style="max-height: 50vh"><pre class="sourceCode opencl bootstrap-fold overflow-auto"><code class="sourceCode opencl"><span id="fma-codelet-tests-1"><a href="#fma-codelet-tests-1" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">2</span> %}</span>
-<span id="fma-codelet-tests-2"><a href="#fma-codelet-tests-2" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_2(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
-<span id="fma-codelet-tests-3"><a href="#fma-codelet-tests-3" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-4"><a href="#fma-codelet-tests-4" aria-hidden="true"></a>    <span class="dt">float2</span> w = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-5"><a href="#fma-codelet-tests-5" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">2</span>;</span>
-<span id="fma-codelet-tests-6"><a href="#fma-codelet-tests-6" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-7"><a href="#fma-codelet-tests-7" aria-hidden="true"></a>    <span class="co">//n is the number of radix2 ffts to perform</span></span>
-<span id="fma-codelet-tests-8"><a href="#fma-codelet-tests-8" aria-hidden="true"></a>    <span class="kw">if</span> (i&lt;<span class="dv">2</span>*n) {</span>
-<span id="fma-codelet-tests-9"><a href="#fma-codelet-tests-9" aria-hidden="true"></a>        <span class="dt">float2</span> y0, y1;</span>
-<span id="fma-codelet-tests-10"><a href="#fma-codelet-tests-10" aria-hidden="true"></a>        fft_2(x[i], x[i+<span class="dv">1</span>], w, &amp;y0, &amp;y1);</span>
-<span id="fma-codelet-tests-11"><a href="#fma-codelet-tests-11" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-12"><a href="#fma-codelet-tests-12" aria-hidden="true"></a>        y[i] = y0; y[i+<span class="dv">1</span>] = y1;</span>
-<span id="fma-codelet-tests-13"><a href="#fma-codelet-tests-13" aria-hidden="true"></a>    }</span>
-<span id="fma-codelet-tests-14"><a href="#fma-codelet-tests-14" aria-hidden="true"></a>}</span>
-<span id="fma-codelet-tests-15"><a href="#fma-codelet-tests-15" aria-hidden="true"></a>{% endif %}</span>
-<span id="fma-codelet-tests-16"><a href="#fma-codelet-tests-16" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-17"><a href="#fma-codelet-tests-17" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">3</span> %}</span>
-<span id="fma-codelet-tests-18"><a href="#fma-codelet-tests-18" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_3(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
-<span id="fma-codelet-tests-19"><a href="#fma-codelet-tests-19" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-20"><a href="#fma-codelet-tests-20" aria-hidden="true"></a>    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-21"><a href="#fma-codelet-tests-21" aria-hidden="true"></a>    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-22"><a href="#fma-codelet-tests-22" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">3</span>;</span>
-<span id="fma-codelet-tests-23"><a href="#fma-codelet-tests-23" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-24"><a href="#fma-codelet-tests-24" aria-hidden="true"></a>    <span class="co">//n is the number of radix3 ffts to perform</span></span>
-<span id="fma-codelet-tests-25"><a href="#fma-codelet-tests-25" aria-hidden="true"></a>    <span class="kw">if</span> (i&lt;<span class="dv">3</span>*n) {</span>
-<span id="fma-codelet-tests-26"><a href="#fma-codelet-tests-26" aria-hidden="true"></a>        <span class="dt">float2</span> y0, y1, y2;</span>
-<span id="fma-codelet-tests-27"><a href="#fma-codelet-tests-27" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-28"><a href="#fma-codelet-tests-28" aria-hidden="true"></a>        fft_3(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], w0, w1, &amp;y0, &amp;y1, &amp;y2);</span>
+<div class="sourceCode" id="fma-codelet-tests" style="max-height: 50vh"><pre class="sourceCode opencl bootstrap-fold overflow-auto"><code class="sourceCode opencl"><span id="fma-codelet-tests-1"><a href="#fma-codelet-tests-1" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
+<span id="fma-codelet-tests-2"><a href="#fma-codelet-tests-2" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-3"><a href="#fma-codelet-tests-3" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">2</span> %}</span>
+<span id="fma-codelet-tests-4"><a href="#fma-codelet-tests-4" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_2(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
+<span id="fma-codelet-tests-5"><a href="#fma-codelet-tests-5" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-6"><a href="#fma-codelet-tests-6" aria-hidden="true"></a>    <span class="dt">float2</span> w = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-7"><a href="#fma-codelet-tests-7" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">2</span>;</span>
+<span id="fma-codelet-tests-8"><a href="#fma-codelet-tests-8" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-9"><a href="#fma-codelet-tests-9" aria-hidden="true"></a>    <span class="co">//n is the number of radix2 ffts to perform</span></span>
+<span id="fma-codelet-tests-10"><a href="#fma-codelet-tests-10" aria-hidden="true"></a>    <span class="kw">if</span> (i&lt;<span class="dv">2</span>*n) {</span>
+<span id="fma-codelet-tests-11"><a href="#fma-codelet-tests-11" aria-hidden="true"></a>        <span class="dt">float2</span> y0, y1;</span>
+<span id="fma-codelet-tests-12"><a href="#fma-codelet-tests-12" aria-hidden="true"></a>        fft_2(x[i], x[i+<span class="dv">1</span>], w, &amp;y0, &amp;y1);</span>
+<span id="fma-codelet-tests-13"><a href="#fma-codelet-tests-13" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-14"><a href="#fma-codelet-tests-14" aria-hidden="true"></a>        y[i] = y0; y[i+<span class="dv">1</span>] = y1;</span>
+<span id="fma-codelet-tests-15"><a href="#fma-codelet-tests-15" aria-hidden="true"></a>    }</span>
+<span id="fma-codelet-tests-16"><a href="#fma-codelet-tests-16" aria-hidden="true"></a>}</span>
+<span id="fma-codelet-tests-17"><a href="#fma-codelet-tests-17" aria-hidden="true"></a>{% endif %}</span>
+<span id="fma-codelet-tests-18"><a href="#fma-codelet-tests-18" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-19"><a href="#fma-codelet-tests-19" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">3</span> %}</span>
+<span id="fma-codelet-tests-20"><a href="#fma-codelet-tests-20" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_3(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
+<span id="fma-codelet-tests-21"><a href="#fma-codelet-tests-21" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-22"><a href="#fma-codelet-tests-22" aria-hidden="true"></a>    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-23"><a href="#fma-codelet-tests-23" aria-hidden="true"></a>    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-24"><a href="#fma-codelet-tests-24" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">3</span>;</span>
+<span id="fma-codelet-tests-25"><a href="#fma-codelet-tests-25" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-26"><a href="#fma-codelet-tests-26" aria-hidden="true"></a>    <span class="co">//n is the number of radix3 ffts to perform</span></span>
+<span id="fma-codelet-tests-27"><a href="#fma-codelet-tests-27" aria-hidden="true"></a>    <span class="kw">if</span> (i&lt;<span class="dv">3</span>*n) {</span>
+<span id="fma-codelet-tests-28"><a href="#fma-codelet-tests-28" aria-hidden="true"></a>        <span class="dt">float2</span> y0, y1, y2;</span>
 <span id="fma-codelet-tests-29"><a href="#fma-codelet-tests-29" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-30"><a href="#fma-codelet-tests-30" aria-hidden="true"></a>        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;</span>
-<span id="fma-codelet-tests-31"><a href="#fma-codelet-tests-31" aria-hidden="true"></a>    }</span>
-<span id="fma-codelet-tests-32"><a href="#fma-codelet-tests-32" aria-hidden="true"></a>}</span>
-<span id="fma-codelet-tests-33"><a href="#fma-codelet-tests-33" aria-hidden="true"></a>{% endif %}</span>
-<span id="fma-codelet-tests-34"><a href="#fma-codelet-tests-34" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-35"><a href="#fma-codelet-tests-35" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">4</span> %}</span>
-<span id="fma-codelet-tests-36"><a href="#fma-codelet-tests-36" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_4(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
-<span id="fma-codelet-tests-37"><a href="#fma-codelet-tests-37" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-38"><a href="#fma-codelet-tests-38" aria-hidden="true"></a>    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-39"><a href="#fma-codelet-tests-39" aria-hidden="true"></a>    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-40"><a href="#fma-codelet-tests-40" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">4</span>;</span>
-<span id="fma-codelet-tests-41"><a href="#fma-codelet-tests-41" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-42"><a href="#fma-codelet-tests-42" aria-hidden="true"></a>    <span class="co">//n is the number of radix4 ffts to perform</span></span>
-<span id="fma-codelet-tests-43"><a href="#fma-codelet-tests-43" aria-hidden="true"></a>    <span class="kw">if</span> (i&lt;<span class="dv">4</span>*n) {</span>
-<span id="fma-codelet-tests-44"><a href="#fma-codelet-tests-44" aria-hidden="true"></a>        <span class="dt">float2</span> y0, y1, y2, y3;</span>
-<span id="fma-codelet-tests-45"><a href="#fma-codelet-tests-45" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-46"><a href="#fma-codelet-tests-46" aria-hidden="true"></a>        fft_4(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], x[i+<span class="dv">3</span>], w0, w1, &amp;y0, &amp;y1, &amp;y2, &amp;y3);</span>
+<span id="fma-codelet-tests-30"><a href="#fma-codelet-tests-30" aria-hidden="true"></a>        fft_3(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], w0, w1, &amp;y0, &amp;y1, &amp;y2);</span>
+<span id="fma-codelet-tests-31"><a href="#fma-codelet-tests-31" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-32"><a href="#fma-codelet-tests-32" aria-hidden="true"></a>        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;</span>
+<span id="fma-codelet-tests-33"><a href="#fma-codelet-tests-33" aria-hidden="true"></a>    }</span>
+<span id="fma-codelet-tests-34"><a href="#fma-codelet-tests-34" aria-hidden="true"></a>}</span>
+<span id="fma-codelet-tests-35"><a href="#fma-codelet-tests-35" aria-hidden="true"></a>{% endif %}</span>
+<span id="fma-codelet-tests-36"><a href="#fma-codelet-tests-36" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-37"><a href="#fma-codelet-tests-37" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">4</span> %}</span>
+<span id="fma-codelet-tests-38"><a href="#fma-codelet-tests-38" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_4(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
+<span id="fma-codelet-tests-39"><a href="#fma-codelet-tests-39" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-40"><a href="#fma-codelet-tests-40" aria-hidden="true"></a>    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-41"><a href="#fma-codelet-tests-41" aria-hidden="true"></a>    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-42"><a href="#fma-codelet-tests-42" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">4</span>;</span>
+<span id="fma-codelet-tests-43"><a href="#fma-codelet-tests-43" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-44"><a href="#fma-codelet-tests-44" aria-hidden="true"></a>    <span class="co">//n is the number of radix4 ffts to perform</span></span>
+<span id="fma-codelet-tests-45"><a href="#fma-codelet-tests-45" aria-hidden="true"></a>    <span class="kw">if</span> (i&lt;<span class="dv">4</span>*n) {</span>
+<span id="fma-codelet-tests-46"><a href="#fma-codelet-tests-46" aria-hidden="true"></a>        <span class="dt">float2</span> y0, y1, y2, y3;</span>
 <span id="fma-codelet-tests-47"><a href="#fma-codelet-tests-47" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-48"><a href="#fma-codelet-tests-48" aria-hidden="true"></a>        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;    y[i+<span class="dv">3</span>] = y3;</span>
-<span id="fma-codelet-tests-49"><a href="#fma-codelet-tests-49" aria-hidden="true"></a>    }</span>
-<span id="fma-codelet-tests-50"><a href="#fma-codelet-tests-50" aria-hidden="true"></a>}</span>
-<span id="fma-codelet-tests-51"><a href="#fma-codelet-tests-51" aria-hidden="true"></a>{% endif %}</span>
-<span id="fma-codelet-tests-52"><a href="#fma-codelet-tests-52" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-53"><a href="#fma-codelet-tests-53" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">5</span> %}</span>
-<span id="fma-codelet-tests-54"><a href="#fma-codelet-tests-54" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_5(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
-<span id="fma-codelet-tests-55"><a href="#fma-codelet-tests-55" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-56"><a href="#fma-codelet-tests-56" aria-hidden="true"></a>    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-57"><a href="#fma-codelet-tests-57" aria-hidden="true"></a>    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-58"><a href="#fma-codelet-tests-58" aria-hidden="true"></a>    <span class="dt">float2</span> w2 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-59"><a href="#fma-codelet-tests-59" aria-hidden="true"></a>    <span class="dt">float2</span> w3 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-60"><a href="#fma-codelet-tests-60" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">5</span>;</span>
-<span id="fma-codelet-tests-61"><a href="#fma-codelet-tests-61" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-62"><a href="#fma-codelet-tests-62" aria-hidden="true"></a>    <span class="co">//n is the number of radix5 ffts to perform</span></span>
-<span id="fma-codelet-tests-63"><a href="#fma-codelet-tests-63" aria-hidden="true"></a>    <span class="kw">if</span> (i&lt;<span class="dv">5</span>*n) {</span>
-<span id="fma-codelet-tests-64"><a href="#fma-codelet-tests-64" aria-hidden="true"></a>        <span class="dt">float2</span> y0, y1, y2, y3, y4;</span>
-<span id="fma-codelet-tests-65"><a href="#fma-codelet-tests-65" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-66"><a href="#fma-codelet-tests-66" aria-hidden="true"></a>        fft_5(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], x[i+<span class="dv">3</span>], x[i+<span class="dv">4</span>], w0, w1, w2, w3, &amp;y0, &amp;y1, &amp;y2, &amp;y3, &amp;y4);</span>
+<span id="fma-codelet-tests-48"><a href="#fma-codelet-tests-48" aria-hidden="true"></a>        fft_4(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], x[i+<span class="dv">3</span>], w0, w1, &amp;y0, &amp;y1, &amp;y2, &amp;y3);</span>
+<span id="fma-codelet-tests-49"><a href="#fma-codelet-tests-49" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-50"><a href="#fma-codelet-tests-50" aria-hidden="true"></a>        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;    y[i+<span class="dv">3</span>] = y3;</span>
+<span id="fma-codelet-tests-51"><a href="#fma-codelet-tests-51" aria-hidden="true"></a>    }</span>
+<span id="fma-codelet-tests-52"><a href="#fma-codelet-tests-52" aria-hidden="true"></a>}</span>
+<span id="fma-codelet-tests-53"><a href="#fma-codelet-tests-53" aria-hidden="true"></a>{% endif %}</span>
+<span id="fma-codelet-tests-54"><a href="#fma-codelet-tests-54" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-55"><a href="#fma-codelet-tests-55" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">5</span> %}</span>
+<span id="fma-codelet-tests-56"><a href="#fma-codelet-tests-56" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_5(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
+<span id="fma-codelet-tests-57"><a href="#fma-codelet-tests-57" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-58"><a href="#fma-codelet-tests-58" aria-hidden="true"></a>    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-59"><a href="#fma-codelet-tests-59" aria-hidden="true"></a>    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-60"><a href="#fma-codelet-tests-60" aria-hidden="true"></a>    <span class="dt">float2</span> w2 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-61"><a href="#fma-codelet-tests-61" aria-hidden="true"></a>    <span class="dt">float2</span> w3 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-62"><a href="#fma-codelet-tests-62" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">5</span>;</span>
+<span id="fma-codelet-tests-63"><a href="#fma-codelet-tests-63" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-64"><a href="#fma-codelet-tests-64" aria-hidden="true"></a>    <span class="co">//n is the number of radix5 ffts to perform</span></span>
+<span id="fma-codelet-tests-65"><a href="#fma-codelet-tests-65" aria-hidden="true"></a>    <span class="kw">if</span> (i&lt;<span class="dv">5</span>*n) {</span>
+<span id="fma-codelet-tests-66"><a href="#fma-codelet-tests-66" aria-hidden="true"></a>        <span class="dt">float2</span> y0, y1, y2, y3, y4;</span>
 <span id="fma-codelet-tests-67"><a href="#fma-codelet-tests-67" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-68"><a href="#fma-codelet-tests-68" aria-hidden="true"></a>        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;    y[i+<span class="dv">3</span>] = y3;    y[i+<span class="dv">4</span>] = y4;</span>
-<span id="fma-codelet-tests-69"><a href="#fma-codelet-tests-69" aria-hidden="true"></a>    }</span>
-<span id="fma-codelet-tests-70"><a href="#fma-codelet-tests-70" aria-hidden="true"></a>}</span>
-<span id="fma-codelet-tests-71"><a href="#fma-codelet-tests-71" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
+<span id="fma-codelet-tests-68"><a href="#fma-codelet-tests-68" aria-hidden="true"></a>        fft_5(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], x[i+<span class="dv">3</span>], x[i+<span class="dv">4</span>], w0, w1, w2, w3, &amp;y0, &amp;y1, &amp;y2, &amp;y3, &amp;y4);</span>
+<span id="fma-codelet-tests-69"><a href="#fma-codelet-tests-69" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-70"><a href="#fma-codelet-tests-70" aria-hidden="true"></a>        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;    y[i+<span class="dv">3</span>] = y3;    y[i+<span class="dv">4</span>] = y4;</span>
+<span id="fma-codelet-tests-71"><a href="#fma-codelet-tests-71" aria-hidden="true"></a>    }</span>
+<span id="fma-codelet-tests-72"><a href="#fma-codelet-tests-72" aria-hidden="true"></a>}</span>
+<span id="fma-codelet-tests-73"><a href="#fma-codelet-tests-73" aria-hidden="true"></a>{% endif %}</span>
+<span id="fma-codelet-tests-74"><a href="#fma-codelet-tests-74" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span></code></pre></div>
 </div>
 </div>
 <div class="annotated-code">
@@ -741,7 +744,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-20"><a href="#cb10-20" aria-hidden="true"></a>    codelets <span class="op">=</span> <span class="st">&quot;</span><span class="sc">{}</span><span class="ch">\n</span><span class="sc">{}</span><span class="st">&quot;</span>.<span class="bu">format</span>(generator.generate_preprocessor(parity_splitting, <span class="va">False</span>),</span>
 <span id="cb10-21"><a href="#cb10-21" aria-hidden="true"></a>                               generator.generate_fma_codelets(parity_splitting, <span class="va">False</span>))</span>
 <span id="cb10-22"><a href="#cb10-22" aria-hidden="true"></a>    args <span class="op">=</span> [x, y, n]</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true"></a>    answer <span class="op">=</span> run_kernel(<span class="ss">f&quot;test_radix_</span><span class="sc">{</span>radix<span class="sc">}</span><span class="ss">&quot;</span>, codelets, <span class="dv">1</span>, args, {})</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true"></a>    answer <span class="op">=</span> run_kernel(<span class="ss">f&quot;test_radix_</span><span class="sc">{</span>radix<span class="sc">}</span><span class="ss">&quot;</span>, codelets, <span class="dv">1</span>, args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
 <span id="cb10-24"><a href="#cb10-24" aria-hidden="true"></a></span>
 <span id="cb10-25"><a href="#cb10-25" aria-hidden="true"></a>    y <span class="op">=</span> answer[<span class="dv">1</span>]</span>
 <span id="cb10-26"><a href="#cb10-26" aria-hidden="true"></a>    y <span class="op">=</span> y[..., <span class="dv">0</span>] <span class="op">+</span> <span class="ot">1j</span> <span class="op">*</span> y[..., <span class="dv">1</span>]</span>

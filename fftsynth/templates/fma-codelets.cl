@@ -197,6 +197,8 @@ float fft_5(float2 t0, float2 t1, float2 t2, float2 t3, float2 t4,
 {% endif %}
 
 /* ~\~ begin <<lit/fma-codelets.md|fma-codelet-tests>>[0] */
+#ifdef TESTING
+
 {% if radix == 2 %}
 __kernel void test_radix_2(__global float2 *x, __global float2 *y, int n) {
 
@@ -268,5 +270,6 @@ __kernel void test_radix_5(__global float2 *x, __global float2 *y, int n) {
     }
 }
 {% endif %}
+#endif // TESTING
 /* ~\~ end */
 /* ~\~ end */

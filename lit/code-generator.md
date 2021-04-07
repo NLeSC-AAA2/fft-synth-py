@@ -242,7 +242,7 @@ __kernel void test_radix_2(__global float2 *x, __global float2 *y, int n) {
 }
 #endif // TESTING
 
-void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, float2 * restrict s3,{% if fpga %} float2 * restrict s0_in, float2 * restrict s1_in, float2 * restrict s2_in, float2 * restrict s3_in, float2 * restrict s0_out, float2 * restrict s1_out, float2 * restrict s2_out, float2 * restrict s3_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int i2, int i3, int iw)
+void fft_4(__global float2 * restrict s0, __global float2 * restrict s1, __global float2 * restrict s2, __global float2 * restrict s3,{% if fpga %} float2 * restrict s0_in, float2 * restrict s1_in, float2 * restrict s2_in, float2 * restrict s3_in, float2 * restrict s0_out, float2 * restrict s1_out, float2 * restrict s2_out, float2 * restrict s3_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int i2, int i3, int iw)
 {
     float2 t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;
     __constant float2 *w = W[iw];
@@ -317,19 +317,19 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
 }
 
 #ifdef TESTING
-// __kernel void test_radix_4(__global float2 *x, __global float2 *y, int n) {
-// 
-//     float2 w0 = (float2) (1.0, 0.0);
-//     float2 w1 = (float2) (1.0, 0.0);
-//     int i = get_global_id(0) * 4;
-// 
-//     //n is the number of radix4 ffts to perform
-//     if (i < 4 * n) {
-//         fft_4(x, x, x, x, 0, i, i + 1, i + 2, i + 3, 0);
-// 
-//         y[i] = x[i];    y[i + 1] = x[i + 1];    y[i + 2] = x[i + 2];    y[i + 3] = x[i + 3];
-//     }
-// }
+__kernel void test_radix_4(__global float2 *x, __global float2 *y, int n) {
+
+    float2 w0 = (float2) (1.0, 0.0);
+    float2 w1 = (float2) (1.0, 0.0);
+    int i = get_global_id(0) * 4;
+
+    //n is the number of radix4 ffts to perform
+    if (i < 4 * n) {
+        fft_4(x, x, x, x, 0, i, i + 1, i + 2, i + 3, 0);
+
+        y[i] = x[i];    y[i + 1] = x[i + 1];    y[i + 2] = x[i + 2];    y[i + 3] = x[i + 3];
+    }
+}
 #endif // TESTING
 
 ```
@@ -426,63 +426,20 @@ To test we need to define small `__kernel` functions.
 import pytest
 import numpy as np
 from kernel_tuner import run_kernel  # type: ignore
-from contextlib import redirect_stdout
-import io
 
 from fftsynth.parity import ParitySplitting, parity
-from fftsynth.generator import (
-    generate_preprocessor, generate_transpose_function, generate_parity_function,
-    generate_fft, generate_fma_fft )
+from fftsynth.generator import generate_preprocessor, generate_transpose_function, generate_parity_function
 
 cases = [
-    ParitySplitting(64, 2),
     ParitySplitting(64, 4),
     ParitySplitting(81, 3),
     ParitySplitting(125, 5)
 ]
 
-limited_cases = [
-    ParitySplitting(64, 4)
-]
 
 <<test-parity>>
 
 <<test-transpose>>
-
-@pytest.mark.parametrize('ps', limited_cases)
-def test_fft(ps: ParitySplitting):
-    f = io.StringIO()
-    with redirect_stdout(f):
-        generate_fft(ps, False)
-    kernel = f.getvalue()
-
-    x = np.random.normal(size=(ps.N, 2)).astype(np.float32)
-    y = np.zeros_like(x)
-
-    results = run_kernel(
-        f"fft_{ps.N}", kernel, ps.N, [x, y], {},
-        compiler_options=["-DTESTING"])
-    y_ref = np.fft.fft(x[:,0] + 1j * x[:,1])
-    y = results[1][:,0] + 1j * results[1][:,1]
-    np.testing.assert_almost_equal(y, y_ref, decimal=4, verbose=True)
-
-
-@pytest.mark.parametrize('ps', cases)
-def test_fft_fma(ps: ParitySplitting):
-    f = io.StringIO()
-    with redirect_stdout(f):
-        generate_fma_fft(ps, False)
-    kernel = f.getvalue()
-
-    x = np.random.normal(size=(ps.N, 2)).astype(np.float32)
-    y = np.zeros_like(x)
-
-    results = run_kernel(
-        f"fft_{ps.N}", kernel, ps.N, [x, y], {},
-        compiler_options=["-DTESTING"])
-    y_ref = np.fft.fft(x[:,0] + 1j * x[:,1])
-    y = results[1][:,0] + 1j * results[1][:,1]
-    np.testing.assert_almost_equal(y, y_ref, decimal=4, verbose=True)
 ```
 
 ## Bit math
@@ -831,7 +788,7 @@ inline int ipow(int b)
 {
     int i, j;
     int a = {{ radix }};
-    #pragma unroll 10
+    #pragma unroll
     for (i = 0, j = 1; i < b; ++i, j*=a);
     return j;
 }

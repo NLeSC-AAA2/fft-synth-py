@@ -15,7 +15,7 @@ inline int ipow(int b)
 {
     int i, j;
     int a = {{ radix }};
-    #pragma unroll 10
+    #pragma unroll
     for (i = 0, j = 1; i < b; ++i, j*=a);
     return j;
 }

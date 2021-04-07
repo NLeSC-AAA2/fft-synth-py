@@ -357,7 +357,11 @@ This is the parameterized OpenCL code used to write the preprocessor directives.
 channel float2 in_channel, out_channel;
 #define SWAP(type, x, y) do { type temp = x; x = y, y = temp; } while ( false );
 {% endif -%}
-{% if radix == 4 %}
+{%if radix == 2 %}
+#define DIVR(x) ((x) >> 1)
+#define MODR(x) ((x) & 1)
+#define MULR(x) ((x) << 1)
+{% elif radix == 4 %}
 #define DIVR(x) ((x) >> 2)
 #define MODR(x) ((x) & 3)
 #define MULR(x) ((x) << 2)

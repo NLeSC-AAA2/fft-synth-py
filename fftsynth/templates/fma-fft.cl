@@ -9,7 +9,7 @@ void fft_{{ radix }}_fma(
 
     switch (cycle) {
         {% for i in range(radix) %}
-        case {{ i }}: radix{{ radix }}_fma(
+        case {{ i }}: fft_{{ radix }}(
             {% for j in range(radix) %}s{{(i + j) % radix}}[i{{ j }}],{% endfor %}
             {% for j in range(n_twiddles) %}w[{{ j }}],{% endfor %}
             {% for j in range(radix) %}s{{(i + j) % radix}}+i{{ j }}{%- if not loop.last %},{% endif %}{% endfor %});

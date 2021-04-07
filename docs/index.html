@@ -1223,7 +1223,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="test-fft-10"><a href="#test-fft-10" aria-hidden="true"></a>        compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
 <span id="test-fft-11"><a href="#test-fft-11" aria-hidden="true"></a>    y_ref <span class="op">=</span> np.fft.fft(x[:, <span class="dv">0</span>] <span class="op">+</span> <span class="ot">1j</span> <span class="op">*</span> x[:, <span class="dv">1</span>])</span>
 <span id="test-fft-12"><a href="#test-fft-12" aria-hidden="true"></a>    y <span class="op">=</span> results[<span class="dv">1</span>][:, <span class="dv">0</span>] <span class="op">+</span> <span class="ot">1j</span> <span class="op">*</span> results[<span class="dv">1</span>][:, <span class="dv">1</span>]</span>
-<span id="test-fft-13"><a href="#test-fft-13" aria-hidden="true"></a>    np.testing.assert_almost_equal(y, y_ref, decimal<span class="op">=</span><span class="dv">5</span>)</span></code></pre></div>
+<span id="test-fft-13"><a href="#test-fft-13" aria-hidden="true"></a>    np.testing.assert_almost_equal(y, y_ref, decimal<span class="op">=</span><span class="dv">4</span>)</span></code></pre></div>
 </div>
 <div class="annotated-code">
 <p><span><em>«test-fft-fma»=</em></span></p>
@@ -1239,7 +1239,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="test-fft-fma-10"><a href="#test-fft-fma-10" aria-hidden="true"></a>        compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
 <span id="test-fft-fma-11"><a href="#test-fft-fma-11" aria-hidden="true"></a>    y_ref <span class="op">=</span> np.fft.fft(x[:, <span class="dv">0</span>] <span class="op">+</span> <span class="ot">1j</span> <span class="op">*</span> x[:, <span class="dv">1</span>])</span>
 <span id="test-fft-fma-12"><a href="#test-fft-fma-12" aria-hidden="true"></a>    y <span class="op">=</span> results[<span class="dv">1</span>][:, <span class="dv">0</span>] <span class="op">+</span> <span class="ot">1j</span> <span class="op">*</span> results[<span class="dv">1</span>][:, <span class="dv">1</span>]</span>
-<span id="test-fft-fma-13"><a href="#test-fft-fma-13" aria-hidden="true"></a>    np.testing.assert_almost_equal(y, y_ref, decimal<span class="op">=</span><span class="dv">5</span>)</span></code></pre></div>
+<span id="test-fft-fma-13"><a href="#test-fft-fma-13" aria-hidden="true"></a>    np.testing.assert_almost_equal(y, y_ref, decimal<span class="op">=</span><span class="dv">4</span>)</span></code></pre></div>
 </div>
 <h2 id="bit-math">Bit math</h2>
 <p>The <code>transpose_{r}</code> function should reverse the digits in a base-n representation of the integer.</p>

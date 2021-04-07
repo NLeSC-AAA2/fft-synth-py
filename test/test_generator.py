@@ -54,7 +54,7 @@ def test_fft(parity_splitting: ParitySplitting):
         compiler_options=["-DTESTING"])
     y_ref = np.fft.fft(x[:, 0] + 1j * x[:, 1])
     y = results[1][:, 0] + 1j * results[1][:, 1]
-    np.testing.assert_almost_equal(y, y_ref, decimal=5)
+    np.testing.assert_almost_equal(y, y_ref, decimal=4)
 # ~\~ end
 
 # ~\~ begin <<lit/code-generator.md|test-fft-fma>>[0]
@@ -70,7 +70,7 @@ def test_fft_fma(parity_splitting: ParitySplitting):
         compiler_options=["-DTESTING"])
     y_ref = np.fft.fft(x[:, 0] + 1j * x[:, 1])
     y = results[1][:, 0] + 1j * results[1][:, 1]
-    np.testing.assert_almost_equal(y, y_ref, decimal=5)
+    np.testing.assert_almost_equal(y, y_ref, decimal=4)
 # ~\~ end
 
 # ~\~ end

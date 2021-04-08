@@ -1,23 +1,3 @@
-//void fft_{{ radix }}_fma(
-//    {% for i in range(radix) %} float2 * restrict s{{ i }},{% endfor %}
-//    int cycle,
-//    {% for i in range(radix) %} int i{{ i }},{% endfor %}
-//    // int i0, int i1, int i2, int i3,
-//    int iw)
-//{
-//    __constant float2 *w = W[iw];
-//
-//    switch (cycle) {
-//        {% for i in range(radix) %}
-//        case {{ i }}: fft_{{ radix }}(
-//            {% for j in range(radix) %}s{{(i + j) % radix}}[i{{ j }}],{% endfor %}
-//            {% for j in range(n_twiddles) %}w[{{ j }}],{% endfor %}
-//            {% for j in range(radix) %}s{{(i + j) % radix}}+i{{ j }}{%- if not loop.last %},{% endif %}{% endfor %});
-//            break;
-//        {% endfor %}
-//    }
-//}
-
 
 void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %}{% if fpga %},{% for i in range(radix) %} float2 * restrict s{{ i }}_in,{% endfor %}{% for i in range(radix) %} float2 * restrict s{{ i }}_out{%- if not loop.last %},{% endif %}{% endfor %}{% endif %})
 {

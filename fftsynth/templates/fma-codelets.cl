@@ -33,6 +33,9 @@ void fft_2(float2 * restrict s0, float2 * restrict s1,{% if fpga %} float2 * res
     a += (float2) (w[0].x * t1.x, w[0].x * t1.y);
     b = 2 * t0 - a;
 
+    t0 = a;
+    t1 = b;
+
     {% if fpga %}
     switch (cycle) {
         case 1: SWAP(float2, t0, t1); break;

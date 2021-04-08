@@ -468,26 +468,29 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="fma-radix2-30"><a href="#fma-radix2-30" aria-hidden="true"></a>    a += (<span class="dt">float2</span>) (w[<span class="dv">0</span>].x * t1.x, w[<span class="dv">0</span>].x * t1.y);</span>
 <span id="fma-radix2-31"><a href="#fma-radix2-31" aria-hidden="true"></a>    b = <span class="dv">2</span> * t0 - a;</span>
 <span id="fma-radix2-32"><a href="#fma-radix2-32" aria-hidden="true"></a></span>
-<span id="fma-radix2-33"><a href="#fma-radix2-33" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
-<span id="fma-radix2-34"><a href="#fma-radix2-34" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="fma-radix2-35"><a href="#fma-radix2-35" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t0, t1); <span class="kw">break</span>;</span>
-<span id="fma-radix2-36"><a href="#fma-radix2-36" aria-hidden="true"></a>    }</span>
-<span id="fma-radix2-37"><a href="#fma-radix2-37" aria-hidden="true"></a>    <span class="kw">if</span> ( last_iteration )</span>
-<span id="fma-radix2-38"><a href="#fma-radix2-38" aria-hidden="true"></a>    {</span>
-<span id="fma-radix2-39"><a href="#fma-radix2-39" aria-hidden="true"></a>        s0_out[i0] = t0; s1_out[i1] = t1;</span>
-<span id="fma-radix2-40"><a href="#fma-radix2-40" aria-hidden="true"></a>    }</span>
-<span id="fma-radix2-41"><a href="#fma-radix2-41" aria-hidden="true"></a>    <span class="kw">else</span></span>
-<span id="fma-radix2-42"><a href="#fma-radix2-42" aria-hidden="true"></a>    {</span>
-<span id="fma-radix2-43"><a href="#fma-radix2-43" aria-hidden="true"></a>        s0[i0] = t0; s1[i1] = t1;</span>
-<span id="fma-radix2-44"><a href="#fma-radix2-44" aria-hidden="true"></a>    }</span>
-<span id="fma-radix2-45"><a href="#fma-radix2-45" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
-<span id="fma-radix2-46"><a href="#fma-radix2-46" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="fma-radix2-47"><a href="#fma-radix2-47" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: s0[i0] = t0; s1[i1] = t1; <span class="kw">break</span>;</span>
-<span id="fma-radix2-48"><a href="#fma-radix2-48" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: s1[i0] = t0; s0[i1] = t1; <span class="kw">break</span>;</span>
-<span id="fma-radix2-49"><a href="#fma-radix2-49" aria-hidden="true"></a>    }</span>
-<span id="fma-radix2-50"><a href="#fma-radix2-50" aria-hidden="true"></a>    {% endif %}</span>
-<span id="fma-radix2-51"><a href="#fma-radix2-51" aria-hidden="true"></a>}</span>
-<span id="fma-radix2-52"><a href="#fma-radix2-52" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
+<span id="fma-radix2-33"><a href="#fma-radix2-33" aria-hidden="true"></a>    t0 = a;</span>
+<span id="fma-radix2-34"><a href="#fma-radix2-34" aria-hidden="true"></a>    t1 = b;</span>
+<span id="fma-radix2-35"><a href="#fma-radix2-35" aria-hidden="true"></a></span>
+<span id="fma-radix2-36"><a href="#fma-radix2-36" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
+<span id="fma-radix2-37"><a href="#fma-radix2-37" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="fma-radix2-38"><a href="#fma-radix2-38" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t0, t1); <span class="kw">break</span>;</span>
+<span id="fma-radix2-39"><a href="#fma-radix2-39" aria-hidden="true"></a>    }</span>
+<span id="fma-radix2-40"><a href="#fma-radix2-40" aria-hidden="true"></a>    <span class="kw">if</span> ( last_iteration )</span>
+<span id="fma-radix2-41"><a href="#fma-radix2-41" aria-hidden="true"></a>    {</span>
+<span id="fma-radix2-42"><a href="#fma-radix2-42" aria-hidden="true"></a>        s0_out[i0] = t0; s1_out[i1] = t1;</span>
+<span id="fma-radix2-43"><a href="#fma-radix2-43" aria-hidden="true"></a>    }</span>
+<span id="fma-radix2-44"><a href="#fma-radix2-44" aria-hidden="true"></a>    <span class="kw">else</span></span>
+<span id="fma-radix2-45"><a href="#fma-radix2-45" aria-hidden="true"></a>    {</span>
+<span id="fma-radix2-46"><a href="#fma-radix2-46" aria-hidden="true"></a>        s0[i0] = t0; s1[i1] = t1;</span>
+<span id="fma-radix2-47"><a href="#fma-radix2-47" aria-hidden="true"></a>    }</span>
+<span id="fma-radix2-48"><a href="#fma-radix2-48" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
+<span id="fma-radix2-49"><a href="#fma-radix2-49" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="fma-radix2-50"><a href="#fma-radix2-50" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: s0[i0] = t0; s1[i1] = t1; <span class="kw">break</span>;</span>
+<span id="fma-radix2-51"><a href="#fma-radix2-51" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: s1[i0] = t0; s0[i1] = t1; <span class="kw">break</span>;</span>
+<span id="fma-radix2-52"><a href="#fma-radix2-52" aria-hidden="true"></a>    }</span>
+<span id="fma-radix2-53"><a href="#fma-radix2-53" aria-hidden="true"></a>    {% endif %}</span>
+<span id="fma-radix2-54"><a href="#fma-radix2-54" aria-hidden="true"></a>}</span>
+<span id="fma-radix2-55"><a href="#fma-radix2-55" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
 </div>
 <p>Now we have six multiplications and six additions, but they are completely contained in six FMA operations.</p>
 <h2 id="higher-radix">Higher radix</h2>

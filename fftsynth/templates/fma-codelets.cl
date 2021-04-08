@@ -2,14 +2,55 @@
 /* ~\~ begin <<lit/fma-codelets.md|fftsynth/templates/fma-codelets.cl>>[0] */
 /* ~\~ begin <<lit/fma-codelets.md|fma-radix2>>[0] */
 {% if radix == 2 %}
-void fft_2(float2 t0, float2 t1, float2 w0, float2* xa, float2* xb)
+void fft_2(float2 * restrict s0, float2 * restrict s1,{% if fpga %} float2 * restrict s0_in, float2 * restrict s1_in, float2 * restrict s0_out, float2 * restrict s1_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int iw)
 {
-    float2 a = (float2) (-w0.y * t1.y + t0.x, w0.y * t1.x + t0.y);
-    a += (float2) (w0.x * t1.x, w0.x * t1.y);
-    float2 b = 2 * t0 - a;
+    float2 t0, t1, a, b;
+    __constant float2 *w = W[iw];
 
-    *xa = a;
-    *xb = b;
+    {% if fpga %}
+    switch (cycle) {
+        case 1: SWAP(int, i0, i1); break;
+    }
+    if ( first_iteration )
+    {
+        t0 = s0_in[i0]; t1 = s1_in[i1];
+    }
+    else
+    {
+        t0 = s0[i0]; t1 = s1[i1];
+    }
+    switch (cycle) {
+        case 1: SWAP(float2, t0, t1); break;
+    }
+    {% else %}
+    switch (cycle) {
+        case 0: t0 = s0[i0]; t1 = s1[i1]; break;
+        case 1: t0 = s1[i0]; t1 = s0[i1]; break;
+    }
+    {% endif %}
+
+    a = (float2) (-w[0].y * t1.y + t0.x, w[0].y * t1.x + t0.y);
+    a += (float2) (w[0].x * t1.x, w[0].x * t1.y);
+    b = 2 * t0 - a;
+
+    {% if fpga %}
+    switch (cycle) {
+        case 1: SWAP(float2, t0, t1); break;
+    }
+    if ( last_iteration )
+    {
+        s0_out[i0] = t0; s1_out[i1] = t1;
+    }
+    else
+    {
+        s0[i0] = t0; s1[i1] = t1;
+    }
+    {% else %}
+    switch (cycle) {
+        case 0: s0[i0] = t0; s1[i1] = t1; break;
+        case 1: s1[i0] = t0; s0[i1] = t1; break;
+    }
+    {% endif %}
 }
 {% endif %}
 /* ~\~ end */
@@ -56,43 +97,90 @@ void fft_3(float2 t0, float2 t1, float2 t2, float2 w0, float2 w1, float2* xa, fl
 {% endif %}
 
 {% if radix == 4 %}
-float fft_4(float2 t0, float2 t1, float2 t2, float2 t3,
-                float2 w0, float2 w1,
-                float2* x0, float2* x1, float2 *x2, float2* x3) {
+void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, float2 * restrict s3,{% if fpga %} float2 * restrict s0_in, float2 * restrict s1_in, float2 * restrict s2_in, float2 * restrict s3_in, float2 * restrict s0_out, float2 * restrict s1_out, float2 * restrict s2_out, float2 * restrict s3_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int i2, int i3, int iw)
+{
+     float2 t0, t1, t2, t3, a, b, c, d;
+    __constant float2 *w = W[iw];
 
-   //adapted from pedram2013transforming, however
-   //some versions of the pedram2013transforming paper, including the one hosted by IEEE and the one hosted here:
-   //https://www.cs.utexas.edu/users/flame/pubs/LAC_fft.pdf
-   //contains serious errors in the FMA-optimized radix-4 pseudocode
-   //finally corrected based on the pseudocode reported in karner1998top
+    {% if fpga %}
+    switch (cycle) {
+        case 1: SWAP(int, i0, i1); SWAP(int, i2, i3); SWAP(int, i0, i2); break;
+        case 2: SWAP(int, i0, i2); SWAP(int, i1, i3); break;
+        case 3: SWAP(int, i0, i1); SWAP(int, i1, i3); SWAP(int, i1, i2); break;
+    }
+    if ( first_iteration )
+    {
+        t0 = s0_in[i0]; t1 = s1_in[i1]; t2 = s2_in[i2]; t3 = s3_in[i3];
+    }
+    else
+    {
+        t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3];
+    }
+    switch (cycle) {
+        case 1: SWAP(float2, t0, t1); SWAP(float2, t1, t2); SWAP(float2, t2, t3); break;
+        case 2: SWAP(float2, t0, t2); SWAP(float2, t1, t3); break;
+        case 3: SWAP(float2, t2, t3); SWAP(float2, t0, t1); SWAP(float2, t0, t2); break;
+    }
+    {% else %}
+    switch (cycle) {
+        case 0: t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3]; break;
+        case 1: t0 = s1[i0]; t1 = s2[i1]; t2 = s3[i2]; t3 = s0[i3]; break;
+        case 2: t0 = s2[i0]; t1 = s3[i1]; t2 = s0[i2]; t3 = s1[i3]; break;
+        case 3: t0 = s3[i0]; t1 = s0[i1]; t2 = s1[i2]; t3 = s2[i3]; break;
+    }
+    {% endif %}
 
-    float2 a, b, c, d;
-
+   // adapted from pedram2013transforming, however
+   // some versions of the pedram2013transforming paper, including the one hosted by IEEE and the one hosted here:
+   // https://www.cs.utexas.edu/users/flame/pubs/LAC_fft.pdf
+   // contains serious errors in the FMA-optimized radix-4 pseudocode
+   // finally corrected based on the pseudocode reported in karner1998top
     a = t0;     b = t2;     c = t1;     d = t3;
 
-    b = (float2) (a.x - w1.x * b.x + w1.y * b.y,
-                  a.y - w1.x * b.y - w1.y * b.x);
+    b = (float2) (a.x - w[1].x * b.x + w[1].y * b.y,
+                  a.y - w[1].x * b.y - w[1].y * b.x);
     a = (float2) (2*a.x - b.x,
                   2*a.y - b.y);
-    d = (float2) (c.x - w1.x * d.x + w1.y * d.y,
-                  c.y - w1.x * d.y - w1.y * d.x);
+    d = (float2) (c.x - w[1].x * d.x + w[1].y * d.y,
+                  c.y - w[1].x * d.y - w[1].y * d.x);
     c = (float2) (2*c.x - d.x,
                   2*c.y - d.y);
 
-    c = (float2) (a.x - w0.x * c.x + w0.y * c.y,
-                  a.y - w0.x * c.y - w0.y * c.x);
-    *x2 = c;
-    *x0 = (float2) (2*a.x - c.x,
+    c = (float2) (a.x - w[0].x * c.x + w[0].y * c.y,
+                  a.y - w[0].x * c.y - w[0].y * c.x);
+    t2 = c;
+    t0 = (float2) (2*a.x - c.x,
                     2*a.y - c.y);
 
     //d = b - i*w0*d
-    d = (float2) (b.x + w0.x * d.y + w0.y * d.x,
-                  b.y - w0.x * d.x + w0.y * d.y);
-    *x1 = d;
-    *x3 = (float2) (2*b.x - d.x,
+    d = (float2) (b.x + w[0].x * d.y + w[0].y * d.x,
+                  b.y - w[0].x * d.x + w[0].y * d.y);
+    t1 = d;
+    t3 = (float2) (2*b.x - d.x,
                     2*b.y - d.y);
 
-    return 0.0;
+    {% if fpga %}
+    switch (cycle) {
+        case 1: SWAP(float2, t2, t3); SWAP(float2, t1, t2); SWAP(float2, t0, t1); break;
+        case 2: SWAP(float2, t1, t3); SWAP(float2, t0, t2); break;
+        case 3: SWAP(float2, t0, t2); SWAP(float2, t0, t1); SWAP(float2, t2, t3); break;
+    }
+    if ( last_iteration )
+    {
+        s0_out[i0] = t0; s1_out[i1] = t1; s2_out[i2] = t2; s3_out[i3] = t3;
+    }
+    else
+    {
+        s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;
+    }
+    {% else %}
+    switch (cycle) {
+        case 0: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; break;
+        case 1: s1[i0] = t0; s2[i1] = t1; s3[i2] = t2; s0[i3] = t3; break;
+        case 2: s2[i0] = t0; s3[i1] = t1; s0[i2] = t2; s1[i3] = t3; break;
+        case 3: s3[i0] = t0; s0[i1] = t1; s1[i2] = t2; s2[i3] = t3; break;
+    }
+    {% endif %}
 }
 {% endif %}
 
@@ -201,16 +289,16 @@ float fft_5(float2 t0, float2 t1, float2 t2, float2 t3, float2 t4,
 
 {% if radix == 2 %}
 __kernel void test_radix_2(__global float2 *x, __global float2 *y, int n) {
+    int i = get_global_id(0) * 2;
 
-    float2 w = (float2) (1.0, 0.0);
-    int i = get_global_id(0)*2;
+    // n is the number of radix2 ffts to perform
+    if (i < 2 * n) {
+        float2 s0 = x[i];
+        float2 s1 = x[i + 1];
 
-    //n is the number of radix2 ffts to perform
-    if (i<2*n) {
-        float2 y0, y1;
-        fft_2(x[i], x[i+1], w, &y0, &y1);
+        fft_2(&s0, &s1, 0, 0, 0, 0);
 
-        y[i] = y0; y[i+1] = y1;
+        y[i] = s0; y[i + 1] = s1;
     }
 }
 {% endif %}
@@ -222,7 +310,7 @@ __kernel void test_radix_3(__global float2 *x, __global float2 *y, int n) {
     float2 w1 = (float2) (1.0, 0.0);
     int i = get_global_id(0)*3;
 
-    //n is the number of radix3 ffts to perform
+    // n is the number of radix3 ffts to perform
     if (i<3*n) {
         float2 y0, y1, y2;
 
@@ -235,18 +323,17 @@ __kernel void test_radix_3(__global float2 *x, __global float2 *y, int n) {
 
 {% if radix == 4 %}
 __kernel void test_radix_4(__global float2 *x, __global float2 *y, int n) {
+    int i = get_global_id(0) * 4;
 
-    float2 w0 = (float2) (1.0, 0.0);
-    float2 w1 = (float2) (1.0, 0.0);
-    int i = get_global_id(0)*4;
+    // n is the number of radix4 ffts to perform
+    if (i < 4 * n) {
+        float2 s0 = x[i];
+        float2 s1 = x[i + 1];
+        float2 s2 = x[i + 2];
+        float2 s3 = x[i + 3];
+        fft_4(&s0, &s1, &s2, &s3, 0, 0, 0, 0, 0, 0);
 
-    //n is the number of radix4 ffts to perform
-    if (i<4*n) {
-        float2 y0, y1, y2, y3;
-
-        fft_4(x[i], x[i+1], x[i+2], x[i+3], w0, w1, &y0, &y1, &y2, &y3);
-
-        y[i] = y0;    y[i+1] = y1;    y[i+2] = y2;    y[i+3] = y3;
+        y[i] = s0;    y[i + 1] = s1;    y[i + 2] = s2;    y[i + 3] = s3;
     }
 }
 {% endif %}
@@ -260,7 +347,7 @@ __kernel void test_radix_5(__global float2 *x, __global float2 *y, int n) {
     float2 w3 = (float2) (1.0, 0.0);
     int i = get_global_id(0)*5;
 
-    //n is the number of radix5 ffts to perform
+    // n is the number of radix5 ffts to perform
     if (i<5*n) {
         float2 y0, y1, y2, y3, y4;
 

@@ -437,16 +437,57 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div class="annotated-code">
 <p><span><em>«fma-radix2»=</em></span></p>
 <div class="sourceCode" id="fma-radix2"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="fma-radix2-1"><a href="#fma-radix2-1" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">2</span> %}</span>
-<span id="fma-radix2-2"><a href="#fma-radix2-2" aria-hidden="true"></a><span class="dt">void</span> fft_2(<span class="dt">float2</span> t0, <span class="dt">float2</span> t1, <span class="dt">float2</span> w0, <span class="dt">float2</span>* xa, <span class="dt">float2</span>* xb)</span>
+<span id="fma-radix2-2"><a href="#fma-radix2-2" aria-hidden="true"></a><span class="dt">void</span> fft_2(<span class="dt">float2</span> * <span class="dt">restrict</span> s0, <span class="dt">float2</span> * <span class="dt">restrict</span> s1,{% <span class="kw">if</span> fpga %} <span class="dt">float2</span> * <span class="dt">restrict</span> s0_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s1_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s0_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s1_out, <span class="dt">bool</span> first_iteration, <span class="dt">bool</span> last_iteration,{% endif %} <span class="dt">int</span> cycle, <span class="dt">int</span> i0, <span class="dt">int</span> i1, <span class="dt">int</span> iw)</span>
 <span id="fma-radix2-3"><a href="#fma-radix2-3" aria-hidden="true"></a>{</span>
-<span id="fma-radix2-4"><a href="#fma-radix2-4" aria-hidden="true"></a>    <span class="dt">float2</span> a = (<span class="dt">float2</span>) (-w0.y * t1.y + t0.x, w0.y * t1.x + t0.y);</span>
-<span id="fma-radix2-5"><a href="#fma-radix2-5" aria-hidden="true"></a>    a += (<span class="dt">float2</span>) (w0.x * t1.x, w0.x * t1.y);</span>
-<span id="fma-radix2-6"><a href="#fma-radix2-6" aria-hidden="true"></a>    <span class="dt">float2</span> b = <span class="dv">2</span> * t0 - a;</span>
-<span id="fma-radix2-7"><a href="#fma-radix2-7" aria-hidden="true"></a></span>
-<span id="fma-radix2-8"><a href="#fma-radix2-8" aria-hidden="true"></a>    *xa = a;</span>
-<span id="fma-radix2-9"><a href="#fma-radix2-9" aria-hidden="true"></a>    *xb = b;</span>
-<span id="fma-radix2-10"><a href="#fma-radix2-10" aria-hidden="true"></a>}</span>
-<span id="fma-radix2-11"><a href="#fma-radix2-11" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
+<span id="fma-radix2-4"><a href="#fma-radix2-4" aria-hidden="true"></a>    <span class="dt">float2</span> t0, t1, a, b;</span>
+<span id="fma-radix2-5"><a href="#fma-radix2-5" aria-hidden="true"></a>    <span class="kw">__constant</span> <span class="dt">float2</span> *w = W[iw];</span>
+<span id="fma-radix2-6"><a href="#fma-radix2-6" aria-hidden="true"></a></span>
+<span id="fma-radix2-7"><a href="#fma-radix2-7" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
+<span id="fma-radix2-8"><a href="#fma-radix2-8" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="fma-radix2-9"><a href="#fma-radix2-9" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">int</span>, i0, i1); <span class="kw">break</span>;</span>
+<span id="fma-radix2-10"><a href="#fma-radix2-10" aria-hidden="true"></a>    }</span>
+<span id="fma-radix2-11"><a href="#fma-radix2-11" aria-hidden="true"></a>    <span class="kw">if</span> ( first_iteration )</span>
+<span id="fma-radix2-12"><a href="#fma-radix2-12" aria-hidden="true"></a>    {</span>
+<span id="fma-radix2-13"><a href="#fma-radix2-13" aria-hidden="true"></a>        t0 = s0_in[i0]; t1 = s1_in[i1];</span>
+<span id="fma-radix2-14"><a href="#fma-radix2-14" aria-hidden="true"></a>    }</span>
+<span id="fma-radix2-15"><a href="#fma-radix2-15" aria-hidden="true"></a>    <span class="kw">else</span></span>
+<span id="fma-radix2-16"><a href="#fma-radix2-16" aria-hidden="true"></a>    {</span>
+<span id="fma-radix2-17"><a href="#fma-radix2-17" aria-hidden="true"></a>        t0 = s0[i0]; t1 = s1[i1];</span>
+<span id="fma-radix2-18"><a href="#fma-radix2-18" aria-hidden="true"></a>    }</span>
+<span id="fma-radix2-19"><a href="#fma-radix2-19" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="fma-radix2-20"><a href="#fma-radix2-20" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t0, t1); <span class="kw">break</span>;</span>
+<span id="fma-radix2-21"><a href="#fma-radix2-21" aria-hidden="true"></a>    }</span>
+<span id="fma-radix2-22"><a href="#fma-radix2-22" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
+<span id="fma-radix2-23"><a href="#fma-radix2-23" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="fma-radix2-24"><a href="#fma-radix2-24" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: t0 = s0[i0]; t1 = s1[i1]; <span class="kw">break</span>;</span>
+<span id="fma-radix2-25"><a href="#fma-radix2-25" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: t0 = s1[i0]; t1 = s0[i1]; <span class="kw">break</span>;</span>
+<span id="fma-radix2-26"><a href="#fma-radix2-26" aria-hidden="true"></a>    }</span>
+<span id="fma-radix2-27"><a href="#fma-radix2-27" aria-hidden="true"></a>    {% endif %}</span>
+<span id="fma-radix2-28"><a href="#fma-radix2-28" aria-hidden="true"></a></span>
+<span id="fma-radix2-29"><a href="#fma-radix2-29" aria-hidden="true"></a>    a = (<span class="dt">float2</span>) (-w[<span class="dv">0</span>].y * t1.y + t0.x, w[<span class="dv">0</span>].y * t1.x + t0.y);</span>
+<span id="fma-radix2-30"><a href="#fma-radix2-30" aria-hidden="true"></a>    a += (<span class="dt">float2</span>) (w[<span class="dv">0</span>].x * t1.x, w[<span class="dv">0</span>].x * t1.y);</span>
+<span id="fma-radix2-31"><a href="#fma-radix2-31" aria-hidden="true"></a>    b = <span class="dv">2</span> * t0 - a;</span>
+<span id="fma-radix2-32"><a href="#fma-radix2-32" aria-hidden="true"></a></span>
+<span id="fma-radix2-33"><a href="#fma-radix2-33" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
+<span id="fma-radix2-34"><a href="#fma-radix2-34" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="fma-radix2-35"><a href="#fma-radix2-35" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t0, t1); <span class="kw">break</span>;</span>
+<span id="fma-radix2-36"><a href="#fma-radix2-36" aria-hidden="true"></a>    }</span>
+<span id="fma-radix2-37"><a href="#fma-radix2-37" aria-hidden="true"></a>    <span class="kw">if</span> ( last_iteration )</span>
+<span id="fma-radix2-38"><a href="#fma-radix2-38" aria-hidden="true"></a>    {</span>
+<span id="fma-radix2-39"><a href="#fma-radix2-39" aria-hidden="true"></a>        s0_out[i0] = t0; s1_out[i1] = t1;</span>
+<span id="fma-radix2-40"><a href="#fma-radix2-40" aria-hidden="true"></a>    }</span>
+<span id="fma-radix2-41"><a href="#fma-radix2-41" aria-hidden="true"></a>    <span class="kw">else</span></span>
+<span id="fma-radix2-42"><a href="#fma-radix2-42" aria-hidden="true"></a>    {</span>
+<span id="fma-radix2-43"><a href="#fma-radix2-43" aria-hidden="true"></a>        s0[i0] = t0; s1[i1] = t1;</span>
+<span id="fma-radix2-44"><a href="#fma-radix2-44" aria-hidden="true"></a>    }</span>
+<span id="fma-radix2-45"><a href="#fma-radix2-45" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
+<span id="fma-radix2-46"><a href="#fma-radix2-46" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="fma-radix2-47"><a href="#fma-radix2-47" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: s0[i0] = t0; s1[i1] = t1; <span class="kw">break</span>;</span>
+<span id="fma-radix2-48"><a href="#fma-radix2-48" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: s1[i0] = t0; s0[i1] = t1; <span class="kw">break</span>;</span>
+<span id="fma-radix2-49"><a href="#fma-radix2-49" aria-hidden="true"></a>    }</span>
+<span id="fma-radix2-50"><a href="#fma-radix2-50" aria-hidden="true"></a>    {% endif %}</span>
+<span id="fma-radix2-51"><a href="#fma-radix2-51" aria-hidden="true"></a>}</span>
+<span id="fma-radix2-52"><a href="#fma-radix2-52" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
 </div>
 <p>Now we have six multiplications and six additions, but they are completely contained in six FMA operations.</p>
 <h2 id="higher-radix">Higher radix</h2>
@@ -497,147 +538,194 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-42"><a href="#cb9-42" aria-hidden="true"></a>{% endif %}</span>
 <span id="cb9-43"><a href="#cb9-43" aria-hidden="true"></a></span>
 <span id="cb9-44"><a href="#cb9-44" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">4</span> %}</span>
-<span id="cb9-45"><a href="#cb9-45" aria-hidden="true"></a><span class="dt">float</span> fft_4(<span class="dt">float2</span> t0, <span class="dt">float2</span> t1, <span class="dt">float2</span> t2, <span class="dt">float2</span> t3,</span>
-<span id="cb9-46"><a href="#cb9-46" aria-hidden="true"></a>                <span class="dt">float2</span> w0, <span class="dt">float2</span> w1,</span>
-<span id="cb9-47"><a href="#cb9-47" aria-hidden="true"></a>                <span class="dt">float2</span>* x0, <span class="dt">float2</span>* x1, <span class="dt">float2</span> *x2, <span class="dt">float2</span>* x3) {</span>
-<span id="cb9-48"><a href="#cb9-48" aria-hidden="true"></a></span>
-<span id="cb9-49"><a href="#cb9-49" aria-hidden="true"></a>   <span class="co">//adapted from pedram2013transforming, however</span></span>
-<span id="cb9-50"><a href="#cb9-50" aria-hidden="true"></a>   <span class="co">//some versions of the pedram2013transforming paper, including the one hosted by IEEE and the one hosted here:</span></span>
-<span id="cb9-51"><a href="#cb9-51" aria-hidden="true"></a>   <span class="co">//https://www.cs.utexas.edu/users/flame/pubs/LAC_fft.pdf</span></span>
-<span id="cb9-52"><a href="#cb9-52" aria-hidden="true"></a>   <span class="co">//contains serious errors in the FMA-optimized radix-4 pseudocode</span></span>
-<span id="cb9-53"><a href="#cb9-53" aria-hidden="true"></a>   <span class="co">//finally corrected based on the pseudocode reported in karner1998top</span></span>
-<span id="cb9-54"><a href="#cb9-54" aria-hidden="true"></a></span>
-<span id="cb9-55"><a href="#cb9-55" aria-hidden="true"></a>    <span class="dt">float2</span> a, b, c, d;</span>
-<span id="cb9-56"><a href="#cb9-56" aria-hidden="true"></a></span>
-<span id="cb9-57"><a href="#cb9-57" aria-hidden="true"></a>    a = t0;     b = t2;     c = t1;     d = t3;</span>
-<span id="cb9-58"><a href="#cb9-58" aria-hidden="true"></a></span>
-<span id="cb9-59"><a href="#cb9-59" aria-hidden="true"></a>    b = (<span class="dt">float2</span>) (a.x - w1.x * b.x + w1.y * b.y,</span>
-<span id="cb9-60"><a href="#cb9-60" aria-hidden="true"></a>                  a.y - w1.x * b.y - w1.y * b.x);</span>
-<span id="cb9-61"><a href="#cb9-61" aria-hidden="true"></a>    a = (<span class="dt">float2</span>) (<span class="dv">2</span>*a.x - b.x,</span>
-<span id="cb9-62"><a href="#cb9-62" aria-hidden="true"></a>                  <span class="dv">2</span>*a.y - b.y);</span>
-<span id="cb9-63"><a href="#cb9-63" aria-hidden="true"></a>    d = (<span class="dt">float2</span>) (c.x - w1.x * d.x + w1.y * d.y,</span>
-<span id="cb9-64"><a href="#cb9-64" aria-hidden="true"></a>                  c.y - w1.x * d.y - w1.y * d.x);</span>
-<span id="cb9-65"><a href="#cb9-65" aria-hidden="true"></a>    c = (<span class="dt">float2</span>) (<span class="dv">2</span>*c.x - d.x,</span>
-<span id="cb9-66"><a href="#cb9-66" aria-hidden="true"></a>                  <span class="dv">2</span>*c.y - d.y);</span>
-<span id="cb9-67"><a href="#cb9-67" aria-hidden="true"></a></span>
-<span id="cb9-68"><a href="#cb9-68" aria-hidden="true"></a>    c = (<span class="dt">float2</span>) (a.x - w0.x * c.x + w0.y * c.y,</span>
-<span id="cb9-69"><a href="#cb9-69" aria-hidden="true"></a>                  a.y - w0.x * c.y - w0.y * c.x);</span>
-<span id="cb9-70"><a href="#cb9-70" aria-hidden="true"></a>    *x2 = c;</span>
-<span id="cb9-71"><a href="#cb9-71" aria-hidden="true"></a>    *x0 = (<span class="dt">float2</span>) (<span class="dv">2</span>*a.x - c.x,</span>
-<span id="cb9-72"><a href="#cb9-72" aria-hidden="true"></a>                    <span class="dv">2</span>*a.y - c.y);</span>
-<span id="cb9-73"><a href="#cb9-73" aria-hidden="true"></a></span>
-<span id="cb9-74"><a href="#cb9-74" aria-hidden="true"></a>    <span class="co">//d = b - i*w0*d</span></span>
-<span id="cb9-75"><a href="#cb9-75" aria-hidden="true"></a>    d = (<span class="dt">float2</span>) (b.x + w0.x * d.y + w0.y * d.x,</span>
-<span id="cb9-76"><a href="#cb9-76" aria-hidden="true"></a>                  b.y - w0.x * d.x + w0.y * d.y);</span>
-<span id="cb9-77"><a href="#cb9-77" aria-hidden="true"></a>    *x1 = d;</span>
-<span id="cb9-78"><a href="#cb9-78" aria-hidden="true"></a>    *x3 = (<span class="dt">float2</span>) (<span class="dv">2</span>*b.x - d.x,</span>
-<span id="cb9-79"><a href="#cb9-79" aria-hidden="true"></a>                    <span class="dv">2</span>*b.y - d.y);</span>
-<span id="cb9-80"><a href="#cb9-80" aria-hidden="true"></a></span>
-<span id="cb9-81"><a href="#cb9-81" aria-hidden="true"></a>    <span class="kw">return</span> <span class="fl">0.0</span>;</span>
-<span id="cb9-82"><a href="#cb9-82" aria-hidden="true"></a>}</span>
-<span id="cb9-83"><a href="#cb9-83" aria-hidden="true"></a>{% endif %}</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true"></a><span class="dt">void</span> fft_4(<span class="dt">float2</span> * <span class="dt">restrict</span> s0, <span class="dt">float2</span> * <span class="dt">restrict</span> s1, <span class="dt">float2</span> * <span class="dt">restrict</span> s2, <span class="dt">float2</span> * <span class="dt">restrict</span> s3,{% <span class="kw">if</span> fpga %} <span class="dt">float2</span> * <span class="dt">restrict</span> s0_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s1_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s2_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s3_in, <span class="dt">float2</span> * <span class="dt">restrict</span> s0_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s1_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s2_out, <span class="dt">float2</span> * <span class="dt">restrict</span> s3_out, <span class="dt">bool</span> first_iteration, <span class="dt">bool</span> last_iteration,{% endif %} <span class="dt">int</span> cycle, <span class="dt">int</span> i0, <span class="dt">int</span> i1, <span class="dt">int</span> i2, <span class="dt">int</span> i3, <span class="dt">int</span> iw)</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true"></a>{</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true"></a>     <span class="dt">float2</span> t0, t1, t2, t3, a, b, c, d;</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true"></a>    <span class="kw">__constant</span> <span class="dt">float2</span> *w = W[iw];</span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true"></a></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">int</span>, i0, i1); SWAP(<span class="dt">int</span>, i2, i3); SWAP(<span class="dt">int</span>, i0, i2); <span class="kw">break</span>;</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP(<span class="dt">int</span>, i0, i2); SWAP(<span class="dt">int</span>, i1, i3); <span class="kw">break</span>;</span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP(<span class="dt">int</span>, i0, i1); SWAP(<span class="dt">int</span>, i1, i3); SWAP(<span class="dt">int</span>, i1, i2); <span class="kw">break</span>;</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true"></a>    }</span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true"></a>    <span class="kw">if</span> ( first_iteration )</span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true"></a>    {</span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true"></a>        t0 = s0_in[i0]; t1 = s1_in[i1]; t2 = s2_in[i2]; t3 = s3_in[i3];</span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true"></a>    }</span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true"></a>    <span class="kw">else</span></span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true"></a>    {</span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true"></a>        t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3];</span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true"></a>    }</span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t0, t1); SWAP(<span class="dt">float2</span>, t1, t2); SWAP(<span class="dt">float2</span>, t2, t3); <span class="kw">break</span>;</span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP(<span class="dt">float2</span>, t0, t2); SWAP(<span class="dt">float2</span>, t1, t3); <span class="kw">break</span>;</span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP(<span class="dt">float2</span>, t2, t3); SWAP(<span class="dt">float2</span>, t0, t1); SWAP(<span class="dt">float2</span>, t0, t2); <span class="kw">break</span>;</span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true"></a>    }</span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3]; <span class="kw">break</span>;</span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: t0 = s1[i0]; t1 = s2[i1]; t2 = s3[i2]; t3 = s0[i3]; <span class="kw">break</span>;</span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: t0 = s2[i0]; t1 = s3[i1]; t2 = s0[i2]; t3 = s1[i3]; <span class="kw">break</span>;</span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: t0 = s3[i0]; t1 = s0[i1]; t2 = s1[i2]; t3 = s2[i3]; <span class="kw">break</span>;</span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true"></a>    }</span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true"></a>    {% endif %}</span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true"></a></span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true"></a>   <span class="co">// adapted from pedram2013transforming, however</span></span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true"></a>   <span class="co">// some versions of the pedram2013transforming paper, including the one hosted by IEEE and the one hosted here:</span></span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true"></a>   <span class="co">// https://www.cs.utexas.edu/users/flame/pubs/LAC_fft.pdf</span></span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true"></a>   <span class="co">// contains serious errors in the FMA-optimized radix-4 pseudocode</span></span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true"></a>   <span class="co">// finally corrected based on the pseudocode reported in karner1998top</span></span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true"></a>    a = t0;     b = t2;     c = t1;     d = t3;</span>
 <span id="cb9-84"><a href="#cb9-84" aria-hidden="true"></a></span>
-<span id="cb9-85"><a href="#cb9-85" aria-hidden="true"></a></span>
-<span id="cb9-86"><a href="#cb9-86" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">5</span> %}</span>
-<span id="cb9-87"><a href="#cb9-87" aria-hidden="true"></a><span class="dt">float</span> fft_5(<span class="dt">float2</span> t0, <span class="dt">float2</span> t1, <span class="dt">float2</span> t2, <span class="dt">float2</span> t3, <span class="dt">float2</span> t4,</span>
-<span id="cb9-88"><a href="#cb9-88" aria-hidden="true"></a>                 <span class="dt">float2</span> w0, <span class="dt">float2</span> w1, <span class="dt">float2</span> w2, <span class="dt">float2</span> w3,</span>
-<span id="cb9-89"><a href="#cb9-89" aria-hidden="true"></a>                 <span class="dt">float2</span>* x0, <span class="dt">float2</span>* x1, <span class="dt">float2</span> *x2, <span class="dt">float2</span>* x3, <span class="dt">float2</span> *x4) {</span>
-<span id="cb9-90"><a href="#cb9-90" aria-hidden="true"></a></span>
-<span id="cb9-91"><a href="#cb9-91" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c1 = <span class="fl">0.25</span>;                  <span class="co">// 1/4</span></span>
-<span id="cb9-92"><a href="#cb9-92" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c2 = <span class="fl">0.5590169943749475</span>;      <span class="co">// sqrt(5)/4</span></span>
-<span id="cb9-93"><a href="#cb9-93" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c3 = <span class="fl">0.6180339887498949</span>;    <span class="co">// sqrt( (5-sqrt(5))/(5+sqrt(5)) )</span></span>
-<span id="cb9-94"><a href="#cb9-94" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c4 = <span class="fl">0.9510565162951535</span>;    <span class="co">// 1/2 * np.sqrt(5/2 + np.sqrt(5)/2)</span></span>
-<span id="cb9-95"><a href="#cb9-95" aria-hidden="true"></a></span>
-<span id="cb9-96"><a href="#cb9-96" aria-hidden="true"></a>    <span class="dt">float2</span> z0, z1, z2;</span>
-<span id="cb9-97"><a href="#cb9-97" aria-hidden="true"></a>    <span class="dt">float2</span> s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;</span>
-<span id="cb9-98"><a href="#cb9-98" aria-hidden="true"></a>    <span class="dt">float2</span> q1, q2;</span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true"></a>    b = (<span class="dt">float2</span>) (a.x - w[<span class="dv">1</span>].x * b.x + w[<span class="dv">1</span>].y * b.y,</span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true"></a>                  a.y - w[<span class="dv">1</span>].x * b.y - w[<span class="dv">1</span>].y * b.x);</span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true"></a>    a = (<span class="dt">float2</span>) (<span class="dv">2</span>*a.x - b.x,</span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true"></a>                  <span class="dv">2</span>*a.y - b.y);</span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true"></a>    d = (<span class="dt">float2</span>) (c.x - w[<span class="dv">1</span>].x * d.x + w[<span class="dv">1</span>].y * d.y,</span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true"></a>                  c.y - w[<span class="dv">1</span>].x * d.y - w[<span class="dv">1</span>].y * d.x);</span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true"></a>    c = (<span class="dt">float2</span>) (<span class="dv">2</span>*c.x - d.x,</span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true"></a>                  <span class="dv">2</span>*c.y - d.y);</span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true"></a></span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true"></a>    c = (<span class="dt">float2</span>) (a.x - w[<span class="dv">0</span>].x * c.x + w[<span class="dv">0</span>].y * c.y,</span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true"></a>                  a.y - w[<span class="dv">0</span>].x * c.y - w[<span class="dv">0</span>].y * c.x);</span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true"></a>    t2 = c;</span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true"></a>    t0 = (<span class="dt">float2</span>) (<span class="dv">2</span>*a.x - c.x,</span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true"></a>                    <span class="dv">2</span>*a.y - c.y);</span>
 <span id="cb9-99"><a href="#cb9-99" aria-hidden="true"></a></span>
-<span id="cb9-100"><a href="#cb9-100" aria-hidden="true"></a>    <span class="co">//z0 = t0</span></span>
-<span id="cb9-101"><a href="#cb9-101" aria-hidden="true"></a>    z0 = t0;</span>
-<span id="cb9-102"><a href="#cb9-102" aria-hidden="true"></a></span>
-<span id="cb9-103"><a href="#cb9-103" aria-hidden="true"></a>    <span class="co">//z1 = w0*t1</span></span>
-<span id="cb9-104"><a href="#cb9-104" aria-hidden="true"></a>    z1 = (<span class="dt">float2</span>) (w0.x * t1.x - w0.y * t1.y,</span>
-<span id="cb9-105"><a href="#cb9-105" aria-hidden="true"></a>                   w0.x * t1.y + w0.y * t1.x);</span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true"></a>    <span class="co">//d = b - i*w0*d</span></span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true"></a>    d = (<span class="dt">float2</span>) (b.x + w[<span class="dv">0</span>].x * d.y + w[<span class="dv">0</span>].y * d.x,</span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true"></a>                  b.y - w[<span class="dv">0</span>].x * d.x + w[<span class="dv">0</span>].y * d.y);</span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true"></a>    t1 = d;</span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true"></a>    t3 = (<span class="dt">float2</span>) (<span class="dv">2</span>*b.x - d.x,</span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true"></a>                    <span class="dv">2</span>*b.y - d.y);</span>
 <span id="cb9-106"><a href="#cb9-106" aria-hidden="true"></a></span>
-<span id="cb9-107"><a href="#cb9-107" aria-hidden="true"></a>    <span class="co">//z2 = w1*t2</span></span>
-<span id="cb9-108"><a href="#cb9-108" aria-hidden="true"></a>    z2 = (<span class="dt">float2</span>) (w1.x * t2.x - w1.y * t2.y,</span>
-<span id="cb9-109"><a href="#cb9-109" aria-hidden="true"></a>                   w1.x * t2.y + w1.y * t2.x);</span>
-<span id="cb9-110"><a href="#cb9-110" aria-hidden="true"></a></span>
-<span id="cb9-111"><a href="#cb9-111" aria-hidden="true"></a>    <span class="co">//s1 = z1 - w3*t4</span></span>
-<span id="cb9-112"><a href="#cb9-112" aria-hidden="true"></a>    s1 = (<span class="dt">float2</span>) (z1.x - w3.x * t4.x + w3.y * t4.y,</span>
-<span id="cb9-113"><a href="#cb9-113" aria-hidden="true"></a>                   z1.y - w3.x * t4.y - w3.y * t4.x);</span>
-<span id="cb9-114"><a href="#cb9-114" aria-hidden="true"></a></span>
-<span id="cb9-115"><a href="#cb9-115" aria-hidden="true"></a>    <span class="co">//s2 = 2*z1-s1</span></span>
-<span id="cb9-116"><a href="#cb9-116" aria-hidden="true"></a>    s2 = (<span class="dt">float2</span>) (<span class="dv">2</span>*z1.x - s1.x,</span>
-<span id="cb9-117"><a href="#cb9-117" aria-hidden="true"></a>                   <span class="dv">2</span>*z1.y - s1.y);</span>
-<span id="cb9-118"><a href="#cb9-118" aria-hidden="true"></a></span>
-<span id="cb9-119"><a href="#cb9-119" aria-hidden="true"></a>    <span class="co">//s3 = z2 - w2*t3</span></span>
-<span id="cb9-120"><a href="#cb9-120" aria-hidden="true"></a>    s3 = (<span class="dt">float2</span>) (z2.x - w2.x * t3.x + w2.y * t3.y,</span>
-<span id="cb9-121"><a href="#cb9-121" aria-hidden="true"></a>                   z2.y - w2.x * t3.y - w2.y * t3.x);</span>
-<span id="cb9-122"><a href="#cb9-122" aria-hidden="true"></a></span>
-<span id="cb9-123"><a href="#cb9-123" aria-hidden="true"></a>    <span class="co">//s4 = 2*z2 - s3</span></span>
-<span id="cb9-124"><a href="#cb9-124" aria-hidden="true"></a>    s4 = (<span class="dt">float2</span>) (<span class="dv">2</span>*z2.x - s3.x,</span>
-<span id="cb9-125"><a href="#cb9-125" aria-hidden="true"></a>                   <span class="dv">2</span>*z2.y - s3.y);</span>
-<span id="cb9-126"><a href="#cb9-126" aria-hidden="true"></a></span>
-<span id="cb9-127"><a href="#cb9-127" aria-hidden="true"></a>    <span class="co">//s5 = s2+s4</span></span>
-<span id="cb9-128"><a href="#cb9-128" aria-hidden="true"></a>    s5 = (<span class="dt">float2</span>) (s2.x + s4.x,</span>
-<span id="cb9-129"><a href="#cb9-129" aria-hidden="true"></a>                   s2.y + s4.y);</span>
-<span id="cb9-130"><a href="#cb9-130" aria-hidden="true"></a></span>
-<span id="cb9-131"><a href="#cb9-131" aria-hidden="true"></a>    <span class="co">//s6 = s2-s4</span></span>
-<span id="cb9-132"><a href="#cb9-132" aria-hidden="true"></a>    s6 = (<span class="dt">float2</span>) (s2.x - s4.x,</span>
-<span id="cb9-133"><a href="#cb9-133" aria-hidden="true"></a>                   s2.y - s4.y);</span>
-<span id="cb9-134"><a href="#cb9-134" aria-hidden="true"></a></span>
-<span id="cb9-135"><a href="#cb9-135" aria-hidden="true"></a>    <span class="co">//s7 = z0 - c1*s5</span></span>
-<span id="cb9-136"><a href="#cb9-136" aria-hidden="true"></a>    s7 = (<span class="dt">float2</span>) (z0.x - c1*s5.x,</span>
-<span id="cb9-137"><a href="#cb9-137" aria-hidden="true"></a>                   z0.y - c1*s5.y);</span>
-<span id="cb9-138"><a href="#cb9-138" aria-hidden="true"></a></span>
-<span id="cb9-139"><a href="#cb9-139" aria-hidden="true"></a>    <span class="co">//s8 = s7 - c2*s6</span></span>
-<span id="cb9-140"><a href="#cb9-140" aria-hidden="true"></a>    s8 = (<span class="dt">float2</span>) (s7.x - c2*s6.x,</span>
-<span id="cb9-141"><a href="#cb9-141" aria-hidden="true"></a>                   s7.y - c2*s6.y);</span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
+<span id="cb9-108"><a href="#cb9-108" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb9-109"><a href="#cb9-109" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t2, t3); SWAP(<span class="dt">float2</span>, t1, t2); SWAP(<span class="dt">float2</span>, t0, t1); <span class="kw">break</span>;</span>
+<span id="cb9-110"><a href="#cb9-110" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP(<span class="dt">float2</span>, t1, t3); SWAP(<span class="dt">float2</span>, t0, t2); <span class="kw">break</span>;</span>
+<span id="cb9-111"><a href="#cb9-111" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP(<span class="dt">float2</span>, t0, t2); SWAP(<span class="dt">float2</span>, t0, t1); SWAP(<span class="dt">float2</span>, t2, t3); <span class="kw">break</span>;</span>
+<span id="cb9-112"><a href="#cb9-112" aria-hidden="true"></a>    }</span>
+<span id="cb9-113"><a href="#cb9-113" aria-hidden="true"></a>    <span class="kw">if</span> ( last_iteration )</span>
+<span id="cb9-114"><a href="#cb9-114" aria-hidden="true"></a>    {</span>
+<span id="cb9-115"><a href="#cb9-115" aria-hidden="true"></a>        s0_out[i0] = t0; s1_out[i1] = t1; s2_out[i2] = t2; s3_out[i3] = t3;</span>
+<span id="cb9-116"><a href="#cb9-116" aria-hidden="true"></a>    }</span>
+<span id="cb9-117"><a href="#cb9-117" aria-hidden="true"></a>    <span class="kw">else</span></span>
+<span id="cb9-118"><a href="#cb9-118" aria-hidden="true"></a>    {</span>
+<span id="cb9-119"><a href="#cb9-119" aria-hidden="true"></a>        s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;</span>
+<span id="cb9-120"><a href="#cb9-120" aria-hidden="true"></a>    }</span>
+<span id="cb9-121"><a href="#cb9-121" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
+<span id="cb9-122"><a href="#cb9-122" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb9-123"><a href="#cb9-123" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb9-124"><a href="#cb9-124" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: s1[i0] = t0; s2[i1] = t1; s3[i2] = t2; s0[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb9-125"><a href="#cb9-125" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: s2[i0] = t0; s3[i1] = t1; s0[i2] = t2; s1[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb9-126"><a href="#cb9-126" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: s3[i0] = t0; s0[i1] = t1; s1[i2] = t2; s2[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb9-127"><a href="#cb9-127" aria-hidden="true"></a>    }</span>
+<span id="cb9-128"><a href="#cb9-128" aria-hidden="true"></a>    {% endif %}</span>
+<span id="cb9-129"><a href="#cb9-129" aria-hidden="true"></a>}</span>
+<span id="cb9-130"><a href="#cb9-130" aria-hidden="true"></a>{% endif %}</span>
+<span id="cb9-131"><a href="#cb9-131" aria-hidden="true"></a></span>
+<span id="cb9-132"><a href="#cb9-132" aria-hidden="true"></a></span>
+<span id="cb9-133"><a href="#cb9-133" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">5</span> %}</span>
+<span id="cb9-134"><a href="#cb9-134" aria-hidden="true"></a><span class="dt">float</span> fft_5(<span class="dt">float2</span> t0, <span class="dt">float2</span> t1, <span class="dt">float2</span> t2, <span class="dt">float2</span> t3, <span class="dt">float2</span> t4,</span>
+<span id="cb9-135"><a href="#cb9-135" aria-hidden="true"></a>                 <span class="dt">float2</span> w0, <span class="dt">float2</span> w1, <span class="dt">float2</span> w2, <span class="dt">float2</span> w3,</span>
+<span id="cb9-136"><a href="#cb9-136" aria-hidden="true"></a>                 <span class="dt">float2</span>* x0, <span class="dt">float2</span>* x1, <span class="dt">float2</span> *x2, <span class="dt">float2</span>* x3, <span class="dt">float2</span> *x4) {</span>
+<span id="cb9-137"><a href="#cb9-137" aria-hidden="true"></a></span>
+<span id="cb9-138"><a href="#cb9-138" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c1 = <span class="fl">0.25</span>;                  <span class="co">// 1/4</span></span>
+<span id="cb9-139"><a href="#cb9-139" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c2 = <span class="fl">0.5590169943749475</span>;      <span class="co">// sqrt(5)/4</span></span>
+<span id="cb9-140"><a href="#cb9-140" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c3 = <span class="fl">0.6180339887498949</span>;    <span class="co">// sqrt( (5-sqrt(5))/(5+sqrt(5)) )</span></span>
+<span id="cb9-141"><a href="#cb9-141" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c4 = <span class="fl">0.9510565162951535</span>;    <span class="co">// 1/2 * np.sqrt(5/2 + np.sqrt(5)/2)</span></span>
 <span id="cb9-142"><a href="#cb9-142" aria-hidden="true"></a></span>
-<span id="cb9-143"><a href="#cb9-143" aria-hidden="true"></a>    <span class="co">//s9 = 2*s7 - s8</span></span>
-<span id="cb9-144"><a href="#cb9-144" aria-hidden="true"></a>    s9 = (<span class="dt">float2</span>) (<span class="dv">2</span>*s7.x - s8.x,</span>
-<span id="cb9-145"><a href="#cb9-145" aria-hidden="true"></a>                   <span class="dv">2</span>*s7.y - s8.y);</span>
+<span id="cb9-143"><a href="#cb9-143" aria-hidden="true"></a>    <span class="dt">float2</span> z0, z1, z2;</span>
+<span id="cb9-144"><a href="#cb9-144" aria-hidden="true"></a>    <span class="dt">float2</span> s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;</span>
+<span id="cb9-145"><a href="#cb9-145" aria-hidden="true"></a>    <span class="dt">float2</span> q1, q2;</span>
 <span id="cb9-146"><a href="#cb9-146" aria-hidden="true"></a></span>
-<span id="cb9-147"><a href="#cb9-147" aria-hidden="true"></a>    <span class="co">//s10 = s1 + c3*s3</span></span>
-<span id="cb9-148"><a href="#cb9-148" aria-hidden="true"></a>    s10 = (<span class="dt">float2</span>) (s1.x + c3*s3.x,</span>
-<span id="cb9-149"><a href="#cb9-149" aria-hidden="true"></a>                    s1.y + c3*s3.y);</span>
-<span id="cb9-150"><a href="#cb9-150" aria-hidden="true"></a></span>
-<span id="cb9-151"><a href="#cb9-151" aria-hidden="true"></a>    <span class="co">//s11 = c3*s1 - s3</span></span>
-<span id="cb9-152"><a href="#cb9-152" aria-hidden="true"></a>    s11 = (<span class="dt">float2</span>) (c3*s1.x - s3.x,</span>
-<span id="cb9-153"><a href="#cb9-153" aria-hidden="true"></a>                    c3*s1.y - s3.y);</span>
-<span id="cb9-154"><a href="#cb9-154" aria-hidden="true"></a></span>
-<span id="cb9-155"><a href="#cb9-155" aria-hidden="true"></a>    <span class="co">// *x0 = z0 + s5</span></span>
-<span id="cb9-156"><a href="#cb9-156" aria-hidden="true"></a>    *x0 = (<span class="dt">float2</span>) (z0.x + s5.x,</span>
-<span id="cb9-157"><a href="#cb9-157" aria-hidden="true"></a>                    z0.y + s5.y);</span>
-<span id="cb9-158"><a href="#cb9-158" aria-hidden="true"></a></span>
-<span id="cb9-159"><a href="#cb9-159" aria-hidden="true"></a>    <span class="co">//q1 = s9 - i*c4*s10</span></span>
-<span id="cb9-160"><a href="#cb9-160" aria-hidden="true"></a>    q1 = (<span class="dt">float2</span>) (s9.x - c4*s10.y,</span>
-<span id="cb9-161"><a href="#cb9-161" aria-hidden="true"></a>                   s9.y + c4*s10.x);</span>
-<span id="cb9-162"><a href="#cb9-162" aria-hidden="true"></a></span>
-<span id="cb9-163"><a href="#cb9-163" aria-hidden="true"></a>    <span class="co">// *x1 = 2*s9 - q1</span></span>
-<span id="cb9-164"><a href="#cb9-164" aria-hidden="true"></a>    *x1 = (<span class="dt">float2</span>) (<span class="dv">2</span>*s9.x - q1.x,</span>
-<span id="cb9-165"><a href="#cb9-165" aria-hidden="true"></a>                    <span class="dv">2</span>*s9.y - q1.y);</span>
-<span id="cb9-166"><a href="#cb9-166" aria-hidden="true"></a></span>
-<span id="cb9-167"><a href="#cb9-167" aria-hidden="true"></a>    <span class="co">//q2 = s8 - i*c4*s11</span></span>
-<span id="cb9-168"><a href="#cb9-168" aria-hidden="true"></a>    q2 = (<span class="dt">float2</span>) (s8.x - c4*s11.y,</span>
-<span id="cb9-169"><a href="#cb9-169" aria-hidden="true"></a>                   s8.y + c4*s11.x);</span>
-<span id="cb9-170"><a href="#cb9-170" aria-hidden="true"></a></span>
-<span id="cb9-171"><a href="#cb9-171" aria-hidden="true"></a>    <span class="co">// *x2 = 2*s8-q2</span></span>
-<span id="cb9-172"><a href="#cb9-172" aria-hidden="true"></a>    *x2 = (<span class="dt">float2</span>) (<span class="dv">2</span>*s8.x - q2.x,</span>
-<span id="cb9-173"><a href="#cb9-173" aria-hidden="true"></a>                    <span class="dv">2</span>*s8.y - q2.y);</span>
-<span id="cb9-174"><a href="#cb9-174" aria-hidden="true"></a></span>
-<span id="cb9-175"><a href="#cb9-175" aria-hidden="true"></a>    <span class="co">// *x3 = q2</span></span>
-<span id="cb9-176"><a href="#cb9-176" aria-hidden="true"></a>    *x3 = q2;</span>
+<span id="cb9-147"><a href="#cb9-147" aria-hidden="true"></a>    <span class="co">//z0 = t0</span></span>
+<span id="cb9-148"><a href="#cb9-148" aria-hidden="true"></a>    z0 = t0;</span>
+<span id="cb9-149"><a href="#cb9-149" aria-hidden="true"></a></span>
+<span id="cb9-150"><a href="#cb9-150" aria-hidden="true"></a>    <span class="co">//z1 = w0*t1</span></span>
+<span id="cb9-151"><a href="#cb9-151" aria-hidden="true"></a>    z1 = (<span class="dt">float2</span>) (w0.x * t1.x - w0.y * t1.y,</span>
+<span id="cb9-152"><a href="#cb9-152" aria-hidden="true"></a>                   w0.x * t1.y + w0.y * t1.x);</span>
+<span id="cb9-153"><a href="#cb9-153" aria-hidden="true"></a></span>
+<span id="cb9-154"><a href="#cb9-154" aria-hidden="true"></a>    <span class="co">//z2 = w1*t2</span></span>
+<span id="cb9-155"><a href="#cb9-155" aria-hidden="true"></a>    z2 = (<span class="dt">float2</span>) (w1.x * t2.x - w1.y * t2.y,</span>
+<span id="cb9-156"><a href="#cb9-156" aria-hidden="true"></a>                   w1.x * t2.y + w1.y * t2.x);</span>
+<span id="cb9-157"><a href="#cb9-157" aria-hidden="true"></a></span>
+<span id="cb9-158"><a href="#cb9-158" aria-hidden="true"></a>    <span class="co">//s1 = z1 - w3*t4</span></span>
+<span id="cb9-159"><a href="#cb9-159" aria-hidden="true"></a>    s1 = (<span class="dt">float2</span>) (z1.x - w3.x * t4.x + w3.y * t4.y,</span>
+<span id="cb9-160"><a href="#cb9-160" aria-hidden="true"></a>                   z1.y - w3.x * t4.y - w3.y * t4.x);</span>
+<span id="cb9-161"><a href="#cb9-161" aria-hidden="true"></a></span>
+<span id="cb9-162"><a href="#cb9-162" aria-hidden="true"></a>    <span class="co">//s2 = 2*z1-s1</span></span>
+<span id="cb9-163"><a href="#cb9-163" aria-hidden="true"></a>    s2 = (<span class="dt">float2</span>) (<span class="dv">2</span>*z1.x - s1.x,</span>
+<span id="cb9-164"><a href="#cb9-164" aria-hidden="true"></a>                   <span class="dv">2</span>*z1.y - s1.y);</span>
+<span id="cb9-165"><a href="#cb9-165" aria-hidden="true"></a></span>
+<span id="cb9-166"><a href="#cb9-166" aria-hidden="true"></a>    <span class="co">//s3 = z2 - w2*t3</span></span>
+<span id="cb9-167"><a href="#cb9-167" aria-hidden="true"></a>    s3 = (<span class="dt">float2</span>) (z2.x - w2.x * t3.x + w2.y * t3.y,</span>
+<span id="cb9-168"><a href="#cb9-168" aria-hidden="true"></a>                   z2.y - w2.x * t3.y - w2.y * t3.x);</span>
+<span id="cb9-169"><a href="#cb9-169" aria-hidden="true"></a></span>
+<span id="cb9-170"><a href="#cb9-170" aria-hidden="true"></a>    <span class="co">//s4 = 2*z2 - s3</span></span>
+<span id="cb9-171"><a href="#cb9-171" aria-hidden="true"></a>    s4 = (<span class="dt">float2</span>) (<span class="dv">2</span>*z2.x - s3.x,</span>
+<span id="cb9-172"><a href="#cb9-172" aria-hidden="true"></a>                   <span class="dv">2</span>*z2.y - s3.y);</span>
+<span id="cb9-173"><a href="#cb9-173" aria-hidden="true"></a></span>
+<span id="cb9-174"><a href="#cb9-174" aria-hidden="true"></a>    <span class="co">//s5 = s2+s4</span></span>
+<span id="cb9-175"><a href="#cb9-175" aria-hidden="true"></a>    s5 = (<span class="dt">float2</span>) (s2.x + s4.x,</span>
+<span id="cb9-176"><a href="#cb9-176" aria-hidden="true"></a>                   s2.y + s4.y);</span>
 <span id="cb9-177"><a href="#cb9-177" aria-hidden="true"></a></span>
-<span id="cb9-178"><a href="#cb9-178" aria-hidden="true"></a>    <span class="co">// *x4 = q1 </span></span>
-<span id="cb9-179"><a href="#cb9-179" aria-hidden="true"></a>    *x4 = q1;</span>
-<span id="cb9-180"><a href="#cb9-180" aria-hidden="true"></a></span>
-<span id="cb9-181"><a href="#cb9-181" aria-hidden="true"></a>    <span class="kw">return</span> <span class="fl">0.0</span>;</span>
-<span id="cb9-182"><a href="#cb9-182" aria-hidden="true"></a>}</span>
-<span id="cb9-183"><a href="#cb9-183" aria-hidden="true"></a>{% endif %}</span>
-<span id="cb9-184"><a href="#cb9-184" aria-hidden="true"></a></span>
-<span id="cb9-185"><a href="#cb9-185" aria-hidden="true"></a>&lt;&lt;fma-codelet-tests&gt;&gt;</span></code></pre></div>
+<span id="cb9-178"><a href="#cb9-178" aria-hidden="true"></a>    <span class="co">//s6 = s2-s4</span></span>
+<span id="cb9-179"><a href="#cb9-179" aria-hidden="true"></a>    s6 = (<span class="dt">float2</span>) (s2.x - s4.x,</span>
+<span id="cb9-180"><a href="#cb9-180" aria-hidden="true"></a>                   s2.y - s4.y);</span>
+<span id="cb9-181"><a href="#cb9-181" aria-hidden="true"></a></span>
+<span id="cb9-182"><a href="#cb9-182" aria-hidden="true"></a>    <span class="co">//s7 = z0 - c1*s5</span></span>
+<span id="cb9-183"><a href="#cb9-183" aria-hidden="true"></a>    s7 = (<span class="dt">float2</span>) (z0.x - c1*s5.x,</span>
+<span id="cb9-184"><a href="#cb9-184" aria-hidden="true"></a>                   z0.y - c1*s5.y);</span>
+<span id="cb9-185"><a href="#cb9-185" aria-hidden="true"></a></span>
+<span id="cb9-186"><a href="#cb9-186" aria-hidden="true"></a>    <span class="co">//s8 = s7 - c2*s6</span></span>
+<span id="cb9-187"><a href="#cb9-187" aria-hidden="true"></a>    s8 = (<span class="dt">float2</span>) (s7.x - c2*s6.x,</span>
+<span id="cb9-188"><a href="#cb9-188" aria-hidden="true"></a>                   s7.y - c2*s6.y);</span>
+<span id="cb9-189"><a href="#cb9-189" aria-hidden="true"></a></span>
+<span id="cb9-190"><a href="#cb9-190" aria-hidden="true"></a>    <span class="co">//s9 = 2*s7 - s8</span></span>
+<span id="cb9-191"><a href="#cb9-191" aria-hidden="true"></a>    s9 = (<span class="dt">float2</span>) (<span class="dv">2</span>*s7.x - s8.x,</span>
+<span id="cb9-192"><a href="#cb9-192" aria-hidden="true"></a>                   <span class="dv">2</span>*s7.y - s8.y);</span>
+<span id="cb9-193"><a href="#cb9-193" aria-hidden="true"></a></span>
+<span id="cb9-194"><a href="#cb9-194" aria-hidden="true"></a>    <span class="co">//s10 = s1 + c3*s3</span></span>
+<span id="cb9-195"><a href="#cb9-195" aria-hidden="true"></a>    s10 = (<span class="dt">float2</span>) (s1.x + c3*s3.x,</span>
+<span id="cb9-196"><a href="#cb9-196" aria-hidden="true"></a>                    s1.y + c3*s3.y);</span>
+<span id="cb9-197"><a href="#cb9-197" aria-hidden="true"></a></span>
+<span id="cb9-198"><a href="#cb9-198" aria-hidden="true"></a>    <span class="co">//s11 = c3*s1 - s3</span></span>
+<span id="cb9-199"><a href="#cb9-199" aria-hidden="true"></a>    s11 = (<span class="dt">float2</span>) (c3*s1.x - s3.x,</span>
+<span id="cb9-200"><a href="#cb9-200" aria-hidden="true"></a>                    c3*s1.y - s3.y);</span>
+<span id="cb9-201"><a href="#cb9-201" aria-hidden="true"></a></span>
+<span id="cb9-202"><a href="#cb9-202" aria-hidden="true"></a>    <span class="co">// *x0 = z0 + s5</span></span>
+<span id="cb9-203"><a href="#cb9-203" aria-hidden="true"></a>    *x0 = (<span class="dt">float2</span>) (z0.x + s5.x,</span>
+<span id="cb9-204"><a href="#cb9-204" aria-hidden="true"></a>                    z0.y + s5.y);</span>
+<span id="cb9-205"><a href="#cb9-205" aria-hidden="true"></a></span>
+<span id="cb9-206"><a href="#cb9-206" aria-hidden="true"></a>    <span class="co">//q1 = s9 - i*c4*s10</span></span>
+<span id="cb9-207"><a href="#cb9-207" aria-hidden="true"></a>    q1 = (<span class="dt">float2</span>) (s9.x - c4*s10.y,</span>
+<span id="cb9-208"><a href="#cb9-208" aria-hidden="true"></a>                   s9.y + c4*s10.x);</span>
+<span id="cb9-209"><a href="#cb9-209" aria-hidden="true"></a></span>
+<span id="cb9-210"><a href="#cb9-210" aria-hidden="true"></a>    <span class="co">// *x1 = 2*s9 - q1</span></span>
+<span id="cb9-211"><a href="#cb9-211" aria-hidden="true"></a>    *x1 = (<span class="dt">float2</span>) (<span class="dv">2</span>*s9.x - q1.x,</span>
+<span id="cb9-212"><a href="#cb9-212" aria-hidden="true"></a>                    <span class="dv">2</span>*s9.y - q1.y);</span>
+<span id="cb9-213"><a href="#cb9-213" aria-hidden="true"></a></span>
+<span id="cb9-214"><a href="#cb9-214" aria-hidden="true"></a>    <span class="co">//q2 = s8 - i*c4*s11</span></span>
+<span id="cb9-215"><a href="#cb9-215" aria-hidden="true"></a>    q2 = (<span class="dt">float2</span>) (s8.x - c4*s11.y,</span>
+<span id="cb9-216"><a href="#cb9-216" aria-hidden="true"></a>                   s8.y + c4*s11.x);</span>
+<span id="cb9-217"><a href="#cb9-217" aria-hidden="true"></a></span>
+<span id="cb9-218"><a href="#cb9-218" aria-hidden="true"></a>    <span class="co">// *x2 = 2*s8-q2</span></span>
+<span id="cb9-219"><a href="#cb9-219" aria-hidden="true"></a>    *x2 = (<span class="dt">float2</span>) (<span class="dv">2</span>*s8.x - q2.x,</span>
+<span id="cb9-220"><a href="#cb9-220" aria-hidden="true"></a>                    <span class="dv">2</span>*s8.y - q2.y);</span>
+<span id="cb9-221"><a href="#cb9-221" aria-hidden="true"></a></span>
+<span id="cb9-222"><a href="#cb9-222" aria-hidden="true"></a>    <span class="co">// *x3 = q2</span></span>
+<span id="cb9-223"><a href="#cb9-223" aria-hidden="true"></a>    *x3 = q2;</span>
+<span id="cb9-224"><a href="#cb9-224" aria-hidden="true"></a></span>
+<span id="cb9-225"><a href="#cb9-225" aria-hidden="true"></a>    <span class="co">// *x4 = q1 </span></span>
+<span id="cb9-226"><a href="#cb9-226" aria-hidden="true"></a>    *x4 = q1;</span>
+<span id="cb9-227"><a href="#cb9-227" aria-hidden="true"></a></span>
+<span id="cb9-228"><a href="#cb9-228" aria-hidden="true"></a>    <span class="kw">return</span> <span class="fl">0.0</span>;</span>
+<span id="cb9-229"><a href="#cb9-229" aria-hidden="true"></a>}</span>
+<span id="cb9-230"><a href="#cb9-230" aria-hidden="true"></a>{% endif %}</span>
+<span id="cb9-231"><a href="#cb9-231" aria-hidden="true"></a></span>
+<span id="cb9-232"><a href="#cb9-232" aria-hidden="true"></a>&lt;&lt;fma-codelet-tests&gt;&gt;</span></code></pre></div>
 </div>
 </div>
 <h2 id="testing">Testing</h2>
@@ -648,16 +736,16 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="fma-codelet-tests-2"><a href="#fma-codelet-tests-2" aria-hidden="true"></a></span>
 <span id="fma-codelet-tests-3"><a href="#fma-codelet-tests-3" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">2</span> %}</span>
 <span id="fma-codelet-tests-4"><a href="#fma-codelet-tests-4" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_2(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
-<span id="fma-codelet-tests-5"><a href="#fma-codelet-tests-5" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-6"><a href="#fma-codelet-tests-6" aria-hidden="true"></a>    <span class="dt">float2</span> w = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-7"><a href="#fma-codelet-tests-7" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">2</span>;</span>
-<span id="fma-codelet-tests-8"><a href="#fma-codelet-tests-8" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-9"><a href="#fma-codelet-tests-9" aria-hidden="true"></a>    <span class="co">//n is the number of radix2 ffts to perform</span></span>
-<span id="fma-codelet-tests-10"><a href="#fma-codelet-tests-10" aria-hidden="true"></a>    <span class="kw">if</span> (i&lt;<span class="dv">2</span>*n) {</span>
-<span id="fma-codelet-tests-11"><a href="#fma-codelet-tests-11" aria-hidden="true"></a>        <span class="dt">float2</span> y0, y1;</span>
-<span id="fma-codelet-tests-12"><a href="#fma-codelet-tests-12" aria-hidden="true"></a>        fft_2(x[i], x[i+<span class="dv">1</span>], w, &amp;y0, &amp;y1);</span>
+<span id="fma-codelet-tests-5"><a href="#fma-codelet-tests-5" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>) * <span class="dv">2</span>;</span>
+<span id="fma-codelet-tests-6"><a href="#fma-codelet-tests-6" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-7"><a href="#fma-codelet-tests-7" aria-hidden="true"></a>    <span class="co">// n is the number of radix2 ffts to perform</span></span>
+<span id="fma-codelet-tests-8"><a href="#fma-codelet-tests-8" aria-hidden="true"></a>    <span class="kw">if</span> (i &lt; <span class="dv">2</span> * n) {</span>
+<span id="fma-codelet-tests-9"><a href="#fma-codelet-tests-9" aria-hidden="true"></a>        <span class="dt">float2</span> s0 = x[i];</span>
+<span id="fma-codelet-tests-10"><a href="#fma-codelet-tests-10" aria-hidden="true"></a>        <span class="dt">float2</span> s1 = x[i + <span class="dv">1</span>];</span>
+<span id="fma-codelet-tests-11"><a href="#fma-codelet-tests-11" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-12"><a href="#fma-codelet-tests-12" aria-hidden="true"></a>        fft_2(&amp;s0, &amp;s1, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>);</span>
 <span id="fma-codelet-tests-13"><a href="#fma-codelet-tests-13" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-14"><a href="#fma-codelet-tests-14" aria-hidden="true"></a>        y[i] = y0; y[i+<span class="dv">1</span>] = y1;</span>
+<span id="fma-codelet-tests-14"><a href="#fma-codelet-tests-14" aria-hidden="true"></a>        y[i] = s0; y[i + <span class="dv">1</span>] = s1;</span>
 <span id="fma-codelet-tests-15"><a href="#fma-codelet-tests-15" aria-hidden="true"></a>    }</span>
 <span id="fma-codelet-tests-16"><a href="#fma-codelet-tests-16" aria-hidden="true"></a>}</span>
 <span id="fma-codelet-tests-17"><a href="#fma-codelet-tests-17" aria-hidden="true"></a>{% endif %}</span>
@@ -669,7 +757,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="fma-codelet-tests-23"><a href="#fma-codelet-tests-23" aria-hidden="true"></a>    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
 <span id="fma-codelet-tests-24"><a href="#fma-codelet-tests-24" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">3</span>;</span>
 <span id="fma-codelet-tests-25"><a href="#fma-codelet-tests-25" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-26"><a href="#fma-codelet-tests-26" aria-hidden="true"></a>    <span class="co">//n is the number of radix3 ffts to perform</span></span>
+<span id="fma-codelet-tests-26"><a href="#fma-codelet-tests-26" aria-hidden="true"></a>    <span class="co">// n is the number of radix3 ffts to perform</span></span>
 <span id="fma-codelet-tests-27"><a href="#fma-codelet-tests-27" aria-hidden="true"></a>    <span class="kw">if</span> (i&lt;<span class="dv">3</span>*n) {</span>
 <span id="fma-codelet-tests-28"><a href="#fma-codelet-tests-28" aria-hidden="true"></a>        <span class="dt">float2</span> y0, y1, y2;</span>
 <span id="fma-codelet-tests-29"><a href="#fma-codelet-tests-29" aria-hidden="true"></a></span>
@@ -682,42 +770,41 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="fma-codelet-tests-36"><a href="#fma-codelet-tests-36" aria-hidden="true"></a></span>
 <span id="fma-codelet-tests-37"><a href="#fma-codelet-tests-37" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">4</span> %}</span>
 <span id="fma-codelet-tests-38"><a href="#fma-codelet-tests-38" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_4(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
-<span id="fma-codelet-tests-39"><a href="#fma-codelet-tests-39" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-40"><a href="#fma-codelet-tests-40" aria-hidden="true"></a>    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-41"><a href="#fma-codelet-tests-41" aria-hidden="true"></a>    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-42"><a href="#fma-codelet-tests-42" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">4</span>;</span>
-<span id="fma-codelet-tests-43"><a href="#fma-codelet-tests-43" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-44"><a href="#fma-codelet-tests-44" aria-hidden="true"></a>    <span class="co">//n is the number of radix4 ffts to perform</span></span>
-<span id="fma-codelet-tests-45"><a href="#fma-codelet-tests-45" aria-hidden="true"></a>    <span class="kw">if</span> (i&lt;<span class="dv">4</span>*n) {</span>
-<span id="fma-codelet-tests-46"><a href="#fma-codelet-tests-46" aria-hidden="true"></a>        <span class="dt">float2</span> y0, y1, y2, y3;</span>
-<span id="fma-codelet-tests-47"><a href="#fma-codelet-tests-47" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-48"><a href="#fma-codelet-tests-48" aria-hidden="true"></a>        fft_4(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], x[i+<span class="dv">3</span>], w0, w1, &amp;y0, &amp;y1, &amp;y2, &amp;y3);</span>
-<span id="fma-codelet-tests-49"><a href="#fma-codelet-tests-49" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-50"><a href="#fma-codelet-tests-50" aria-hidden="true"></a>        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;    y[i+<span class="dv">3</span>] = y3;</span>
-<span id="fma-codelet-tests-51"><a href="#fma-codelet-tests-51" aria-hidden="true"></a>    }</span>
-<span id="fma-codelet-tests-52"><a href="#fma-codelet-tests-52" aria-hidden="true"></a>}</span>
-<span id="fma-codelet-tests-53"><a href="#fma-codelet-tests-53" aria-hidden="true"></a>{% endif %}</span>
-<span id="fma-codelet-tests-54"><a href="#fma-codelet-tests-54" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-55"><a href="#fma-codelet-tests-55" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">5</span> %}</span>
-<span id="fma-codelet-tests-56"><a href="#fma-codelet-tests-56" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_5(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
-<span id="fma-codelet-tests-57"><a href="#fma-codelet-tests-57" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-58"><a href="#fma-codelet-tests-58" aria-hidden="true"></a>    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-59"><a href="#fma-codelet-tests-59" aria-hidden="true"></a>    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-60"><a href="#fma-codelet-tests-60" aria-hidden="true"></a>    <span class="dt">float2</span> w2 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-61"><a href="#fma-codelet-tests-61" aria-hidden="true"></a>    <span class="dt">float2</span> w3 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
-<span id="fma-codelet-tests-62"><a href="#fma-codelet-tests-62" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">5</span>;</span>
-<span id="fma-codelet-tests-63"><a href="#fma-codelet-tests-63" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-64"><a href="#fma-codelet-tests-64" aria-hidden="true"></a>    <span class="co">//n is the number of radix5 ffts to perform</span></span>
-<span id="fma-codelet-tests-65"><a href="#fma-codelet-tests-65" aria-hidden="true"></a>    <span class="kw">if</span> (i&lt;<span class="dv">5</span>*n) {</span>
-<span id="fma-codelet-tests-66"><a href="#fma-codelet-tests-66" aria-hidden="true"></a>        <span class="dt">float2</span> y0, y1, y2, y3, y4;</span>
-<span id="fma-codelet-tests-67"><a href="#fma-codelet-tests-67" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-68"><a href="#fma-codelet-tests-68" aria-hidden="true"></a>        fft_5(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], x[i+<span class="dv">3</span>], x[i+<span class="dv">4</span>], w0, w1, w2, w3, &amp;y0, &amp;y1, &amp;y2, &amp;y3, &amp;y4);</span>
-<span id="fma-codelet-tests-69"><a href="#fma-codelet-tests-69" aria-hidden="true"></a></span>
-<span id="fma-codelet-tests-70"><a href="#fma-codelet-tests-70" aria-hidden="true"></a>        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;    y[i+<span class="dv">3</span>] = y3;    y[i+<span class="dv">4</span>] = y4;</span>
-<span id="fma-codelet-tests-71"><a href="#fma-codelet-tests-71" aria-hidden="true"></a>    }</span>
-<span id="fma-codelet-tests-72"><a href="#fma-codelet-tests-72" aria-hidden="true"></a>}</span>
-<span id="fma-codelet-tests-73"><a href="#fma-codelet-tests-73" aria-hidden="true"></a>{% endif %}</span>
-<span id="fma-codelet-tests-74"><a href="#fma-codelet-tests-74" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span></code></pre></div>
+<span id="fma-codelet-tests-39"><a href="#fma-codelet-tests-39" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>) * <span class="dv">4</span>;</span>
+<span id="fma-codelet-tests-40"><a href="#fma-codelet-tests-40" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-41"><a href="#fma-codelet-tests-41" aria-hidden="true"></a>    <span class="co">// n is the number of radix4 ffts to perform</span></span>
+<span id="fma-codelet-tests-42"><a href="#fma-codelet-tests-42" aria-hidden="true"></a>    <span class="kw">if</span> (i &lt; <span class="dv">4</span> * n) {</span>
+<span id="fma-codelet-tests-43"><a href="#fma-codelet-tests-43" aria-hidden="true"></a>        <span class="dt">float2</span> s0 = x[i];</span>
+<span id="fma-codelet-tests-44"><a href="#fma-codelet-tests-44" aria-hidden="true"></a>        <span class="dt">float2</span> s1 = x[i + <span class="dv">1</span>];</span>
+<span id="fma-codelet-tests-45"><a href="#fma-codelet-tests-45" aria-hidden="true"></a>        <span class="dt">float2</span> s2 = x[i + <span class="dv">2</span>];</span>
+<span id="fma-codelet-tests-46"><a href="#fma-codelet-tests-46" aria-hidden="true"></a>        <span class="dt">float2</span> s3 = x[i + <span class="dv">3</span>];</span>
+<span id="fma-codelet-tests-47"><a href="#fma-codelet-tests-47" aria-hidden="true"></a>        fft_4(&amp;s0, &amp;s1, &amp;s2, &amp;s3, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>);</span>
+<span id="fma-codelet-tests-48"><a href="#fma-codelet-tests-48" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-49"><a href="#fma-codelet-tests-49" aria-hidden="true"></a>        y[i] = s0;    y[i + <span class="dv">1</span>] = s1;    y[i + <span class="dv">2</span>] = s2;    y[i + <span class="dv">3</span>] = s3;</span>
+<span id="fma-codelet-tests-50"><a href="#fma-codelet-tests-50" aria-hidden="true"></a>    }</span>
+<span id="fma-codelet-tests-51"><a href="#fma-codelet-tests-51" aria-hidden="true"></a>}</span>
+<span id="fma-codelet-tests-52"><a href="#fma-codelet-tests-52" aria-hidden="true"></a>{% endif %}</span>
+<span id="fma-codelet-tests-53"><a href="#fma-codelet-tests-53" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-54"><a href="#fma-codelet-tests-54" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">5</span> %}</span>
+<span id="fma-codelet-tests-55"><a href="#fma-codelet-tests-55" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_5(<span class="kw">__global</span> <span class="dt">float2</span> *x, <span class="kw">__global</span> <span class="dt">float2</span> *y, <span class="dt">int</span> n) {</span>
+<span id="fma-codelet-tests-56"><a href="#fma-codelet-tests-56" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-57"><a href="#fma-codelet-tests-57" aria-hidden="true"></a>    <span class="dt">float2</span> w0 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-58"><a href="#fma-codelet-tests-58" aria-hidden="true"></a>    <span class="dt">float2</span> w1 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-59"><a href="#fma-codelet-tests-59" aria-hidden="true"></a>    <span class="dt">float2</span> w2 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-60"><a href="#fma-codelet-tests-60" aria-hidden="true"></a>    <span class="dt">float2</span> w3 = (<span class="dt">float2</span>) (<span class="fl">1.0</span>, <span class="fl">0.0</span>);</span>
+<span id="fma-codelet-tests-61"><a href="#fma-codelet-tests-61" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>)*<span class="dv">5</span>;</span>
+<span id="fma-codelet-tests-62"><a href="#fma-codelet-tests-62" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-63"><a href="#fma-codelet-tests-63" aria-hidden="true"></a>    <span class="co">// n is the number of radix5 ffts to perform</span></span>
+<span id="fma-codelet-tests-64"><a href="#fma-codelet-tests-64" aria-hidden="true"></a>    <span class="kw">if</span> (i&lt;<span class="dv">5</span>*n) {</span>
+<span id="fma-codelet-tests-65"><a href="#fma-codelet-tests-65" aria-hidden="true"></a>        <span class="dt">float2</span> y0, y1, y2, y3, y4;</span>
+<span id="fma-codelet-tests-66"><a href="#fma-codelet-tests-66" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-67"><a href="#fma-codelet-tests-67" aria-hidden="true"></a>        fft_5(x[i], x[i+<span class="dv">1</span>], x[i+<span class="dv">2</span>], x[i+<span class="dv">3</span>], x[i+<span class="dv">4</span>], w0, w1, w2, w3, &amp;y0, &amp;y1, &amp;y2, &amp;y3, &amp;y4);</span>
+<span id="fma-codelet-tests-68"><a href="#fma-codelet-tests-68" aria-hidden="true"></a></span>
+<span id="fma-codelet-tests-69"><a href="#fma-codelet-tests-69" aria-hidden="true"></a>        y[i] = y0;    y[i+<span class="dv">1</span>] = y1;    y[i+<span class="dv">2</span>] = y2;    y[i+<span class="dv">3</span>] = y3;    y[i+<span class="dv">4</span>] = y4;</span>
+<span id="fma-codelet-tests-70"><a href="#fma-codelet-tests-70" aria-hidden="true"></a>    }</span>
+<span id="fma-codelet-tests-71"><a href="#fma-codelet-tests-71" aria-hidden="true"></a>}</span>
+<span id="fma-codelet-tests-72"><a href="#fma-codelet-tests-72" aria-hidden="true"></a>{% endif %}</span>
+<span id="fma-codelet-tests-73"><a href="#fma-codelet-tests-73" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span></code></pre></div>
 </div>
 </div>
 <div class="annotated-code">
@@ -729,27 +816,28 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true"></a><span class="im">from</span> kernel_tuner <span class="im">import</span> run_kernel     <span class="co"># type: ignore</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true"></a></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true"></a><span class="at">@pytest.mark.parametrize</span>(<span class="st">&#39;radix&#39;</span>, [<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>])</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true"></a><span class="at">@pytest.mark.parametrize</span>(<span class="st">&#39;radix&#39;</span>, [<span class="dv">2</span>, <span class="dv">4</span>])</span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true"></a><span class="kw">def</span> test_radix(radix):</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true"></a>    <span class="co">#this test runs 256 instances of the radix n function</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true"></a>    <span class="co">#it does not use twiddle factors, so as a test</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true"></a>    <span class="co">#it&#39;s not to be relied upon fully</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true"></a>    <span class="co"># this test runs 256 instances of the radix n function</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true"></a>    <span class="co"># it does not use twiddle factors, so as a test</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true"></a>    <span class="co"># it&#39;s not to be relied upon fully</span></span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true"></a>    n <span class="op">=</span> numpy.int32(<span class="dv">256</span>)</span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true"></a>    x <span class="op">=</span> numpy.random.normal(size<span class="op">=</span>(n, radix, <span class="dv">2</span>)).astype(numpy.float32)</span>
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true"></a>    y <span class="op">=</span> numpy.zeros_like(x)</span>
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true"></a></span>
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true"></a>    y_ref <span class="op">=</span> numpy.fft.fft(x[..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[..., <span class="dv">1</span>])</span>
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true"></a></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true"></a>    parity_splitting <span class="op">=</span> parity.ParitySplitting(<span class="dv">1</span>, radix)</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true"></a>    codelets <span class="op">=</span> <span class="st">&quot;</span><span class="sc">{}</span><span class="ch">\n</span><span class="sc">{}</span><span class="st">&quot;</span>.<span class="bu">format</span>(generator.generate_preprocessor(parity_splitting, <span class="va">False</span>),</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true"></a>                               generator.generate_fma_codelets(parity_splitting, <span class="va">False</span>))</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true"></a>    args <span class="op">=</span> [x, y, n]</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true"></a>    answer <span class="op">=</span> run_kernel(<span class="ss">f&quot;test_radix_</span><span class="sc">{</span>radix<span class="sc">}</span><span class="ss">&quot;</span>, codelets, <span class="dv">1</span>, args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true"></a></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true"></a>    y <span class="op">=</span> answer[<span class="dv">1</span>]</span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true"></a>    y <span class="op">=</span> y[..., <span class="dv">0</span>] <span class="op">+</span> <span class="ot">1j</span> <span class="op">*</span> y[..., <span class="dv">1</span>]</span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true"></a></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true"></a>    numpy.testing.assert_almost_equal(y, y_ref, decimal<span class="op">=</span><span class="dv">5</span>)</span></code></pre></div>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true"></a>    parity_splitting <span class="op">=</span> parity.ParitySplitting(radix <span class="op">*</span> n, radix)</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true"></a>    codelets <span class="op">=</span> <span class="st">&quot;</span><span class="sc">{}</span><span class="ch">\n</span><span class="sc">{}</span><span class="ch">\n</span><span class="sc">{}</span><span class="st">&quot;</span>.<span class="bu">format</span>(generator.generate_preprocessor(parity_splitting, <span class="va">False</span>),</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true"></a>                                   generator.generate_fma_twiddle_array(parity_splitting),</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true"></a>                                   generator.generate_fma_codelets(parity_splitting, <span class="va">False</span>))</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true"></a>    args <span class="op">=</span> [x, y, n]</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true"></a>    answer <span class="op">=</span> run_kernel(<span class="ss">f&quot;test_radix_</span><span class="sc">{</span>radix<span class="sc">}</span><span class="ss">&quot;</span>, codelets, <span class="dv">1</span>, args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true"></a></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true"></a>    y <span class="op">=</span> answer[<span class="dv">1</span>]</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true"></a>    y <span class="op">=</span> y[..., <span class="dv">0</span>] <span class="op">+</span> <span class="ot">1j</span> <span class="op">*</span> y[..., <span class="dv">1</span>]</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true"></a></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true"></a>    numpy.testing.assert_almost_equal(y, y_ref, decimal<span class="op">=</span><span class="dv">5</span>)</span></code></pre></div>
 </div>
 <h1 id="code-generator">Code generator</h1>
 <div class="annotated-code">
@@ -1108,14 +1196,16 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true"></a>    y_ref <span class="op">=</span> numpy.fft.fft(x[..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[..., <span class="dv">1</span>])</span>
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true"></a></span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true"></a>    parity_splitting <span class="op">=</span> parity.ParitySplitting(radix <span class="op">*</span> n, radix)</span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true"></a>    codelets <span class="op">=</span> <span class="st">&quot;</span><span class="sc">{}</span><span class="st"> </span><span class="sc">{}</span><span class="st"> </span><span class="sc">{}</span><span class="st">&quot;</span>.<span class="bu">format</span>(generator.generate_preprocessor(parity_splitting, <span class="va">False</span>), generator.generate_twiddle_array(parity_splitting), generator.generate_codelets(parity_splitting, <span class="va">False</span>))</span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true"></a>    args <span class="op">=</span> [x, y, n]</span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true"></a>    answer <span class="op">=</span> run_kernel(<span class="ss">f&quot;test_radix_</span><span class="sc">{</span>radix<span class="sc">}</span><span class="ss">&quot;</span>, codelets, <span class="dv">1</span>, args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true"></a></span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true"></a>    y <span class="op">=</span> answer[<span class="dv">1</span>]</span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true"></a>    y <span class="op">=</span> y[..., <span class="dv">0</span>] <span class="op">+</span> <span class="ot">1j</span> <span class="op">*</span> y[..., <span class="dv">1</span>]</span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true"></a></span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true"></a>    numpy.testing.assert_almost_equal(y, y_ref, decimal<span class="op">=</span><span class="dv">5</span>)</span></code></pre></div>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true"></a>    codelets <span class="op">=</span> <span class="st">&quot;</span><span class="sc">{}</span><span class="ch">\n</span><span class="sc">{}</span><span class="ch">\n</span><span class="sc">{}</span><span class="st">&quot;</span>.<span class="bu">format</span>(generator.generate_preprocessor(parity_splitting, <span class="va">False</span>),</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true"></a>                                   generator.generate_twiddle_array(parity_splitting),</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true"></a>                                   generator.generate_codelets(parity_splitting, <span class="va">False</span>))</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true"></a>    args <span class="op">=</span> [x, y, n]</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true"></a>    answer <span class="op">=</span> run_kernel(<span class="ss">f&quot;test_radix_</span><span class="sc">{</span>radix<span class="sc">}</span><span class="ss">&quot;</span>, codelets, <span class="dv">1</span>, args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true"></a></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true"></a>    y <span class="op">=</span> answer[<span class="dv">1</span>]</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true"></a>    y <span class="op">=</span> y[..., <span class="dv">0</span>] <span class="op">+</span> <span class="ot">1j</span> <span class="op">*</span> y[..., <span class="dv">1</span>]</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true"></a></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true"></a>    numpy.testing.assert_almost_equal(y, y_ref, decimal<span class="op">=</span><span class="dv">5</span>)</span></code></pre></div>
 </div>
 <h3 id="preprocessor">Preprocessor</h3>
 <p>This is the parameterized OpenCL code used to write the preprocessor directives.</p>
@@ -1591,7 +1681,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 
 <footer class="py-4 bg-dark text-white-50 footer"><div class="container">
 Generated from the Entangled Bootstrap template.<br />
-2021-04-07 — version: 0.1.0
+2021-04-08 — version: 0.1.0
 </div></footer>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

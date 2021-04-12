@@ -482,8 +482,7 @@ def test_fft(parity_splitting: ParitySplitting):
     y = np.zeros_like(x)
 
     results = run_kernel(
-        f"fft_{parity_splitting.N}", kernel, parity_splitting.N, [x, y], {},
-        compiler_options=["-DTESTING"])
+        f"fft_{parity_splitting.N}", kernel, parity_splitting.N, [x, y], {})
     y_ref = np.fft.fft(x[:, 0] + 1j * x[:, 1])
     y = results[1][:, 0] + 1j * results[1][:, 1]
     np.testing.assert_almost_equal(y, y_ref, decimal=4)
@@ -498,8 +497,7 @@ def test_fft_fma(parity_splitting: ParitySplitting):
     y = np.zeros_like(x)
 
     results = run_kernel(
-        f"fft_{parity_splitting.N}", kernel, parity_splitting.N, [x, y], {},
-        compiler_options=["-DTESTING"])
+        f"fft_{parity_splitting.N}", kernel, parity_splitting.N, [x, y], {})
     y_ref = np.fft.fft(x[:, 0] + 1j * x[:, 1])
     y = results[1][:, 0] + 1j * results[1][:, 1]
     np.testing.assert_almost_equal(y, y_ref, decimal=4)

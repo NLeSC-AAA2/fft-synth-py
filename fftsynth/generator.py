@@ -3,7 +3,6 @@
 from jinja2 import Environment, FileSystemLoader
 import numpy
 from pkg_resources import resource_filename
-from math import ceil
 
 from .parity import ParitySplitting, comp_perm
 from .twiddle import make_twiddle
@@ -159,7 +158,6 @@ def generate_fft(parity_splitting: ParitySplitting, fpga: bool):
     if fpga:
         code = "{}\n{}\n".format(code, generate_fpga_functions())
     return code
-
 
 
 def generate_fma_twiddle_array(parity_splitting: ParitySplitting):

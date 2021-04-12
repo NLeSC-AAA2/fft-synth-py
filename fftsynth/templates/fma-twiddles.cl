@@ -1,3 +1,5 @@
+/* ~\~ language=OpenCL filename=fftsynth/templates/fma-twiddles.cl */
+/* ~\~ begin <<lit/fma-codelets.md|fftsynth/templates/fma-twiddles.cl>>[0] */
 __constant float2 W[{{ W.shape[0] - radix }}][{{ n_twiddles }}] = {
 {% for ws in W[radix:] %}
 { {% for w in ws[1:n_twiddles+1] -%}
@@ -5,3 +7,5 @@ __constant float2 W[{{ W.shape[0] - radix }}][{{ n_twiddles }}] = {
 {%- endfor %} } {%- if not loop.last %},{% endif %}
 {%- endfor %}
 };
+
+/* ~\~ end */

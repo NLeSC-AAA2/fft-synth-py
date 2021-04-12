@@ -162,7 +162,7 @@ def generate_fft(parity_splitting: ParitySplitting, fpga: bool):
 
 def generate_fma_twiddle_array(parity_splitting: ParitySplitting):
     """
-    Generate OpenCL constant array for twiddle factors
+    Generate OpenCL constant array for twiddle factors (FMA version).
     """
     template = template_environment.get_template("fma-twiddles.cl")
     twiddles = numpy.ones(shape=[parity_splitting.radix, parity_splitting.radix])

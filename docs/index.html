@@ -968,7 +968,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb12-60"><a href="#cb12-60" aria-hidden="true"></a></span>
 <span id="cb12-61"><a href="#cb12-61" aria-hidden="true"></a><span class="kw">def</span> generate_fma_twiddle_array(parity_splitting: ParitySplitting):</span>
 <span id="cb12-62"><a href="#cb12-62" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
-<span id="cb12-63"><a href="#cb12-63" aria-hidden="true"></a><span class="co">    Generate OpenCL constant array for twiddle factors</span></span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true"></a><span class="co">    Generate OpenCL constant array for twiddle factors (FMA version).</span></span>
 <span id="cb12-64"><a href="#cb12-64" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
 <span id="cb12-65"><a href="#cb12-65" aria-hidden="true"></a>    template <span class="op">=</span> template_environment.get_template(<span class="st">&quot;fma-twiddles.cl&quot;</span>)</span>
 <span id="cb12-66"><a href="#cb12-66" aria-hidden="true"></a>    twiddles <span class="op">=</span> numpy.ones(shape<span class="op">=</span>[parity_splitting.radix, parity_splitting.radix])</span>

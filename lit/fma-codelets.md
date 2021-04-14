@@ -174,8 +174,8 @@ void fft_3(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2,{% i
 
     {% if fpga %}
     switch (cycle) {
-        case 1: SWAP(float2, t2, t3); SWAP(float2, t1, t2); SWAP(float2, t0, t1); break;
-        case 2: SWAP(float2, t1, t3); SWAP(float2, t0, t2); break;
+        case 1: SWAP(float2, t1, t2); SWAP(float2, t0, t1); break;
+        case 2: SWAP(float2, t0, t2); break;
     }
     if ( last_iteration )
     {

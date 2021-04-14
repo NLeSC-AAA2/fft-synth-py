@@ -586,8 +586,8 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-72"><a href="#cb10-72" aria-hidden="true"></a></span>
 <span id="cb10-73"><a href="#cb10-73" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
 <span id="cb10-74"><a href="#cb10-74" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb10-75"><a href="#cb10-75" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t2, t3); SWAP(<span class="dt">float2</span>, t1, t2); SWAP(<span class="dt">float2</span>, t0, t1); <span class="kw">break</span>;</span>
-<span id="cb10-76"><a href="#cb10-76" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP(<span class="dt">float2</span>, t1, t3); SWAP(<span class="dt">float2</span>, t0, t2); <span class="kw">break</span>;</span>
+<span id="cb10-75"><a href="#cb10-75" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP(<span class="dt">float2</span>, t1, t2); SWAP(<span class="dt">float2</span>, t0, t1); <span class="kw">break</span>;</span>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP(<span class="dt">float2</span>, t0, t2); <span class="kw">break</span>;</span>
 <span id="cb10-77"><a href="#cb10-77" aria-hidden="true"></a>    }</span>
 <span id="cb10-78"><a href="#cb10-78" aria-hidden="true"></a>    <span class="kw">if</span> ( last_iteration )</span>
 <span id="cb10-79"><a href="#cb10-79" aria-hidden="true"></a>    {</span>
@@ -1363,7 +1363,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true"></a></span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true"></a>cases <span class="op">=</span> [</span>
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true"></a>    ParitySplitting(<span class="dv">128</span>, <span class="dv">2</span>),</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true"></a>    ParitySplitting(<span class="dv">64</span>, <span class="dv">4</span>),</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true"></a>    ParitySplitting(<span class="dv">64</span>, <span class="dv">4</span>)</span>
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true"></a>]</span>
 <span id="cb17-12"><a href="#cb17-12" aria-hidden="true"></a></span>
 <span id="cb17-13"><a href="#cb17-13" aria-hidden="true"></a></span>
@@ -1863,7 +1863,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 
 <footer class="py-4 bg-dark text-white-50 footer"><div class="container">
 Generated from the Entangled Bootstrap template.<br />
-2021-04-12 — version: 0.1.0
+2021-04-14 — version: 0.1.0
 </div></footer>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

@@ -9,7 +9,7 @@ from fftsynth.generator import generate_preprocessor, generate_transpose_functio
 
 cases = [
     ParitySplitting(128, 2),
-    ParitySplitting(64, 4),
+    ParitySplitting(64, 4)
 ]
 
 

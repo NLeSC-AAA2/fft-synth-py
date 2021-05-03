@@ -22,7 +22,7 @@ def test_radix(radix):
     codelets = "{}\n{}".format(generator.generate_preprocessor(parity_splitting, False),
                                generator.generate_fma_codelets(parity_splitting, False))
     args = [x, y, n]
-    answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {}, compiler_options=["-DTESTING"])
+    answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {}, compiler_options=["-DTESTING", "-DTESTING_RADIX"])
 
     y = answer[1]
     y = y[..., 0] + 1j * y[..., 1]

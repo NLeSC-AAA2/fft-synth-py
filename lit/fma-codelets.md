@@ -37,12 +37,12 @@ This contains one complex multiplication and two complex additions, totaling fou
 void fft_2({{c_type}} * restrict s0, {{c_type}} * restrict s1,{% if fpga %} {{c_type}} * restrict s0_in, {{c_type}} * restrict s1_in, {{c_type}} * restrict s0_out, {{c_type}} * restrict s1_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int iw)
 {
     {{c_type}} t0, t1, a, b;
-    #ifndef TESTING
+    #ifndef TESTING_RADIX
     __constant float2 *w = W[iw];
-    #endif
-    #ifdef TESTING
+    #endif // !TESTING_RADIX
+    #ifdef TESTING_RADIX
     float2 w[] = {(float2)(1.0, 0.0)};
-    #endif // TESTING
+    #endif // TESTING_RADIX
 
     {% if fpga %}
     switch (cycle) {
@@ -108,12 +108,12 @@ void fft_3({{c_type}} * restrict s0, {{c_type}} * restrict s1, {{c_type}} * rest
     {{c_type}} t0, t1, t2, z1, a, b, c, d, e, f;
     const float c1 = -0.5;
     const float c2 = -0.8660254037844386;
-    #ifndef TESTING
+    #ifndef TESTING_RADIX
     __constant float2 *w = W[iw];
-    #endif
-    #ifdef TESTING
+    #endif // !TESTING_RADIX
+    #ifdef TESTING_RADIX
     float2 w[] = {(float2)(1.0, 0.0), (float2)(1.0, 0.0)};
-    #endif // TESTING
+    #endif // TESTING_RADIX
 
     {% if fpga %}
     switch (cycle) {
@@ -199,12 +199,12 @@ void fft_3({{c_type}} * restrict s0, {{c_type}} * restrict s1, {{c_type}} * rest
 void fft_4({{c_type}} * restrict s0, {{c_type}} * restrict s1, {{c_type}} * restrict s2, {{c_type}} * restrict s3,{% if fpga %} {{c_type}} * restrict s0_in, {{c_type}} * restrict s1_in, {{c_type}} * restrict s2_in, {{c_type}} * restrict s3_in, {{c_type}} * restrict s0_out, {{c_type}} * restrict s1_out, {{c_type}} * restrict s2_out, {{c_type}} * restrict s3_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int i2, int i3, int iw)
 {
      {{c_type}} t0, t1, t2, t3, a, b, c, d;
-    #ifndef TESTING
+    #ifndef TESTING_RADIX
     __constant float2 *w = W[iw];
-    #endif
-    #ifdef TESTING
+    #endif // !TESTING_RADIX
+    #ifdef TESTING_RADIX
     float2 w[] = {(float2)(1.0, 0.0), (float2)(1.0, 0.0)};
-    #endif // TESTING
+    #endif // TESTING_RADIX
 
     {% if fpga %}
     switch (cycle) {
@@ -493,7 +493,7 @@ def test_radix(radix):
     codelets = "{}\n{}".format(generator.generate_preprocessor(parity_splitting, False),
                                generator.generate_fma_codelets(parity_splitting, False))
     args = [x, y, n]
-    answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {}, compiler_options=["-DTESTING"])
+    answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {}, compiler_options=["-DTESTING", "-DTESTING_RADIX"])
 
     y = answer[1]
     y = y[..., 0] + 1j * y[..., 1]

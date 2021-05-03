@@ -379,7 +379,9 @@ This is the parameterized OpenCL code used to write the preprocessor directives.
 {% if fpga -%}
 #pragma OPENCL EXTENSION cl_intel_channels : enable
 #include <ihc_apint.h>
+#ifdef TESTING
 channel {{c_type}} in_channel, out_channel;
+#endif // TESTING
 #define SWAP(type, x, y) do { type temp = x; x = y, y = temp; } while ( false );
 {% endif -%}
 {%if radix == 2 %}
@@ -484,7 +486,7 @@ def test_fft(parity_splitting: ParitySplitting):
     y = np.zeros_like(x)
 
     results = run_kernel(
-        f"fft_{parity_splitting.N}", kernel, parity_splitting.N, [x, y], {})
+        f"fft_{parity_splitting.N}", kernel, parity_splitting.N, [x, y], {}, compiler_options=["-DTESTING"])
     y_ref = np.fft.fft(x[:, 0] + 1j * x[:, 1])
     y = results[1][:, 0] + 1j * results[1][:, 1]
     np.testing.assert_almost_equal(y, y_ref, decimal=4)
@@ -499,7 +501,7 @@ def test_fft_fma(parity_splitting: ParitySplitting):
     y = np.zeros_like(x)
 
     results = run_kernel(
-        f"fft_{parity_splitting.N}", kernel, parity_splitting.N, [x, y], {})
+        f"fft_{parity_splitting.N}", kernel, parity_splitting.N, [x, y], {}, compiler_options=["-DTESTING"])
     y_ref = np.fft.fft(x[:, 0] + 1j * x[:, 1])
     y = results[1][:, 0] + 1j * results[1][:, 1]
     np.testing.assert_almost_equal(y, y_ref, decimal=4)
@@ -728,6 +730,7 @@ void fft_{{ N }}_ps({% for i in range(radix) %} {{c_type}} * restrict s{{ i }}{%
 The outer kernel reads the data, puts it in the correct parity-channel and then calls the respective `fft_{n}_ps` kernel.
 
 ```{.opencl file=fftsynth/templates/fft.cl}
+#ifdef TESTING
 __kernel {%if fpga %}__attribute__((autorun)) __attribute__((max_global_work_dim(0))){% endif %}
 void fft_{{ N }}({% if not fpga %}__global const {{c_type}} * restrict x, __global {{c_type}} * restrict y{% endif %})
 {
@@ -797,11 +800,13 @@ void fft_{{ N }}({% if not fpga %}__global const {{c_type}} * restrict x, __glob
     }
     {%- endif %}
 }
+#endif // TESTING
 ```
 
 FMA version.
 
 ```{.opencl file=fftsynth/templates/fma-fft.cl}
+#ifdef TESTING
 __kernel {%if fpga %}__attribute__((autorun)) __attribute__((max_global_work_dim(0))){% endif %}
 void fft_{{ N }}({% if not fpga %}__global const {{c_type}} * restrict x, __global {{c_type}} * restrict y{% endif %})
 {
@@ -871,6 +876,7 @@ void fft_{{ N }}({% if not fpga %}__global const {{c_type}} * restrict x, __glob
     }
     {%- endif %}
 }
+#endif // TESTING
 ```
 
 ## Twiddles

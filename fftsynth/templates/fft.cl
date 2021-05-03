@@ -36,6 +36,7 @@ void fft_{{ N }}_ps({% for i in range(radix) %} {{c_type}} * restrict s{{ i }}{%
 }
 /* ~\~ end */
 /* ~\~ begin <<lit/code-generator.md|fftsynth/templates/fft.cl>>[1] */
+#ifdef TESTING
 __kernel {%if fpga %}__attribute__((autorun)) __attribute__((max_global_work_dim(0))){% endif %}
 void fft_{{ N }}({% if not fpga %}__global const {{c_type}} * restrict x, __global {{c_type}} * restrict y{% endif %})
 {
@@ -105,4 +106,5 @@ void fft_{{ N }}({% if not fpga %}__global const {{c_type}} * restrict x, __glob
     }
     {%- endif %}
 }
+#endif // TESTING
 /* ~\~ end */

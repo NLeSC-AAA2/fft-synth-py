@@ -164,7 +164,7 @@ These are the codelets for specific radix FFT.
 void fft_2({{c_type}} * restrict s0, {{c_type}} * restrict s1,{% if fpga %} {{c_type}} * restrict s0_in, {{c_type}} * restrict s1_in, {{c_type}} * restrict s0_out, {{c_type}} * restrict s1_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int iw)
 {
     {{c_type}} t0, t1, ws0, ws1;
-    __constant {{c_type}} *w = W[iw];
+    __constant float2 *w = W[iw];
 
     {% if fpga %}
     switch (cycle) {
@@ -235,7 +235,7 @@ __kernel void test_radix_2(__global {{c_type}} *x, __global {{c_type}} *y, int n
 void fft_4({{c_type}} * restrict s0, {{c_type}} * restrict s1, {{c_type}} * restrict s2, {{c_type}} * restrict s3,{% if fpga %} {{c_type}} * restrict s0_in, {{c_type}} * restrict s1_in, {{c_type}} * restrict s2_in, {{c_type}} * restrict s3_in, {{c_type}} * restrict s0_out, {{c_type}} * restrict s1_out, {{c_type}} * restrict s2_out, {{c_type}} * restrict s3_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int i2, int i3, int iw)
 {
     {{c_type}} t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;
-    __constant {{c_type}} *w = W[iw];
+    __constant float2 *w = W[iw];
 
     {% if fpga %}
     switch (cycle) {

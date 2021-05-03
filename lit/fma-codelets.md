@@ -38,10 +38,10 @@ void fft_2({{c_type}} * restrict s0, {{c_type}} * restrict s1,{% if fpga %} {{c_
 {
     {{c_type}} t0, t1, a, b;
     #ifndef TESTING
-    __constant {{c_type}} *w = W[iw];
+    __constant float2 *w = W[iw];
     #endif
     #ifdef TESTING
-    {{c_type}} w[] = {({{c_type}})(1.0, 0.0)};
+    float2 w[] = {(float2)(1.0, 0.0)};
     #endif // TESTING
 
     {% if fpga %}
@@ -109,10 +109,10 @@ void fft_3({{c_type}} * restrict s0, {{c_type}} * restrict s1, {{c_type}} * rest
     const float c1 = -0.5;
     const float c2 = -0.8660254037844386;
     #ifndef TESTING
-    __constant {{c_type}} *w = W[iw];
+    __constant float2 *w = W[iw];
     #endif
     #ifdef TESTING
-    {{c_type}} w[] = {({{c_type}})(1.0, 0.0), ({{c_type}})(1.0, 0.0)};
+    float2 w[] = {(float2)(1.0, 0.0), (float2)(1.0, 0.0)};
     #endif // TESTING
 
     {% if fpga %}
@@ -200,10 +200,10 @@ void fft_4({{c_type}} * restrict s0, {{c_type}} * restrict s1, {{c_type}} * rest
 {
      {{c_type}} t0, t1, t2, t3, a, b, c, d;
     #ifndef TESTING
-    __constant {{c_type}} *w = W[iw];
+    __constant float2 *w = W[iw];
     #endif
     #ifdef TESTING
-    {{c_type}} w[] = {({{c_type}})(1.0, 0.0), ({{c_type}})(1.0, 0.0)};
+    float2 w[] = {(float2)(1.0, 0.0), (float2)(1.0, 0.0)};
     #endif // TESTING
 
     {% if fpga %}

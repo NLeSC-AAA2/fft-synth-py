@@ -17,13 +17,13 @@ def get_n_twiddles(radix):
 
 
 # ~\~ begin <<lit/code-generator.md|generate-preprocessor>>[0]
-def generate_preprocessor(parity_splitting: ParitySplitting, fpga: bool):
+def generate_preprocessor(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
     """
     Generate the preprocessor directives necessary for the FFT.
     """
     template = template_environment.get_template("preprocessor.cl")
 
-    return template.render(radix=parity_splitting.radix, fpga=fpga)
+    return template.render(radix=parity_splitting.radix, fpga=fpga, c_type=c_type)
 # ~\~ end
 
 
@@ -108,7 +108,7 @@ def generate_index_functions(parity_splitting: ParitySplitting):
 
 
 # ~\~ begin <<lit/code-generator.md|generate-fft-functions>>[0]
-def generate_fft_functions(parity_splitting: ParitySplitting, fpga: bool):
+def generate_fft_functions(parity_splitting: ParitySplitting, fpga: bool, c_type: str):
     """
     Generate outer and inner loop for OpenCL FFT.
     """
@@ -128,33 +128,34 @@ def generate_fft_functions(parity_splitting: ParitySplitting, fpga: bool):
                            fpga=fpga,
                            depth_type=depth_type,
                            m_type=m_type,
-                           n_type=n_type)
+                           n_type=n_type,
+                           c_type=c_type)
 # ~\~ end
 
 
 # ~\~ begin <<lit/code-generator.md|generate-codelets>>[0]
-def generate_codelets(parity_splitting: ParitySplitting, fpga: bool):
+def generate_codelets(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
     """
     Generate OpenCL codelets for FFT.
     """
     template = template_environment.get_template("codelets.cl")
 
-    return template.render(radix=parity_splitting.radix, fpga=fpga)
+    return template.render(radix=parity_splitting.radix, fpga=fpga, c_type=c_type)
 # ~\~ end
 
 
-def generate_fft(parity_splitting: ParitySplitting, fpga: bool):
+def generate_fft(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
     """
     Generate the complete OpenCL FFT code.
     """
-    code = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(generate_preprocessor(parity_splitting, fpga),
+    code = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(generate_preprocessor(parity_splitting, fpga, c_type),
                                                      generate_twiddle_array(parity_splitting),
                                                      generate_parity_function(parity_splitting),
                                                      generate_transpose_function(parity_splitting),
                                                      generate_ipow_function(parity_splitting),
                                                      generate_index_functions(parity_splitting),
-                                                     generate_codelets(parity_splitting, fpga),
-                                                     generate_fft_functions(parity_splitting, fpga))
+                                                     generate_codelets(parity_splitting, fpga, c_type),
+                                                     generate_fft_functions(parity_splitting, fpga, c_type))
     if fpga:
         code = "{}\n{}\n".format(code, generate_fpga_functions())
     return code
@@ -182,16 +183,16 @@ def generate_fma_twiddle_array(parity_splitting: ParitySplitting):
                            W=twiddles)
 
 
-def generate_fma_codelets(parity_splitting: ParitySplitting, fpga: bool):
+def generate_fma_codelets(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
     """
     Generate OpenCL codelets for FFT (FMA version).
     """
     template = template_environment.get_template("fma-codelets.cl")
 
-    return template.render(radix=parity_splitting.radix, fpga=fpga)
+    return template.render(radix=parity_splitting.radix, fpga=fpga, c_type=c_type)
 
 
-def generate_fma_fft_functions(parity_splitting: ParitySplitting, fpga: bool):
+def generate_fma_fft_functions(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
     """
     Generate outer loop for OpenCL FFT (FMA version).
     """
@@ -212,21 +213,22 @@ def generate_fma_fft_functions(parity_splitting: ParitySplitting, fpga: bool):
                            fpga=fpga,
                            depth_type=depth_type,
                            m_type=m_type,
-                           n_type=n_type)
+                           n_type=n_type,
+                           c_type=c_type)
 
 
-def generate_fma_fft(parity_splitting: ParitySplitting, fpga: bool):
+def generate_fma_fft(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
     """
     Generate the complete OpenCL FFT code (FMA version).
     """
-    code = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(generate_preprocessor(parity_splitting, fpga),
+    code = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(generate_preprocessor(parity_splitting, fpga, c_type=c_type),
                                                      generate_fma_twiddle_array(parity_splitting),
                                                      generate_parity_function(parity_splitting),
                                                      generate_transpose_function(parity_splitting),
                                                      generate_ipow_function(parity_splitting),
                                                      generate_index_functions(parity_splitting),
-                                                     generate_fma_codelets(parity_splitting, fpga),
-                                                     generate_fma_fft_functions(parity_splitting, fpga))
+                                                     generate_fma_codelets(parity_splitting, fpga, c_type=c_type),
+                                                     generate_fma_fft_functions(parity_splitting, fpga, c_type=c_type))
     if fpga:
         code = "{}\n{}\n".format(code, generate_fpga_functions())
     return code
@@ -240,6 +242,7 @@ if __name__ == "__main__":
     parser.add_argument("--depth", type=int, default=3, help="FFT depth")
     parser.add_argument("--fpga", action="store_true")
     parser.add_argument("--fma", action="store_true")
+    parser.add_argument("--ctype", type=str, default="float2", help="complex type")
     args = parser.parse_args()
     print("/* FFT")
     print(f" * command: python -m fftsynth.generator {' '.join(sys.argv[1:])}")
@@ -247,7 +250,7 @@ if __name__ == "__main__":
     N = args.radix**args.depth
     ps = ParitySplitting(N, args.radix)
     if args.fma:
-        print(generate_fma_fft(ps, args.fpga))
+        print(generate_fma_fft(ps, args.fpga, args.ctype))
     else:
-        print(generate_fft(ps, args.fpga))
+        print(generate_fft(ps, args.fpga, args.ctype))
 # ~\~ end

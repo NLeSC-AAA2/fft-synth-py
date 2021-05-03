@@ -44,18 +44,18 @@ def get_n_twiddles(radix):
 <<generate-codelets>>
 
 
-def generate_fft(parity_splitting: ParitySplitting, fpga: bool):
+def generate_fft(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
     """
     Generate the complete OpenCL FFT code.
     """
-    code = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(generate_preprocessor(parity_splitting, fpga),
+    code = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(generate_preprocessor(parity_splitting, fpga, c_type),
                                                      generate_twiddle_array(parity_splitting),
                                                      generate_parity_function(parity_splitting),
                                                      generate_transpose_function(parity_splitting),
                                                      generate_ipow_function(parity_splitting),
                                                      generate_index_functions(parity_splitting),
-                                                     generate_codelets(parity_splitting, fpga),
-                                                     generate_fft_functions(parity_splitting, fpga))
+                                                     generate_codelets(parity_splitting, fpga, c_type),
+                                                     generate_fft_functions(parity_splitting, fpga, c_type))
     if fpga:
         code = "{}\n{}\n".format(code, generate_fpga_functions())
     return code
@@ -83,16 +83,16 @@ def generate_fma_twiddle_array(parity_splitting: ParitySplitting):
                            W=twiddles)
 
 
-def generate_fma_codelets(parity_splitting: ParitySplitting, fpga: bool):
+def generate_fma_codelets(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
     """
     Generate OpenCL codelets for FFT (FMA version).
     """
     template = template_environment.get_template("fma-codelets.cl")
 
-    return template.render(radix=parity_splitting.radix, fpga=fpga)
+    return template.render(radix=parity_splitting.radix, fpga=fpga, c_type=c_type)
 
 
-def generate_fma_fft_functions(parity_splitting: ParitySplitting, fpga: bool):
+def generate_fma_fft_functions(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
     """
     Generate outer loop for OpenCL FFT (FMA version).
     """
@@ -113,21 +113,22 @@ def generate_fma_fft_functions(parity_splitting: ParitySplitting, fpga: bool):
                            fpga=fpga,
                            depth_type=depth_type,
                            m_type=m_type,
-                           n_type=n_type)
+                           n_type=n_type,
+                           c_type=c_type)
 
 
-def generate_fma_fft(parity_splitting: ParitySplitting, fpga: bool):
+def generate_fma_fft(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
     """
     Generate the complete OpenCL FFT code (FMA version).
     """
-    code = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(generate_preprocessor(parity_splitting, fpga),
+    code = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(generate_preprocessor(parity_splitting, fpga, c_type=c_type),
                                                      generate_fma_twiddle_array(parity_splitting),
                                                      generate_parity_function(parity_splitting),
                                                      generate_transpose_function(parity_splitting),
                                                      generate_ipow_function(parity_splitting),
                                                      generate_index_functions(parity_splitting),
-                                                     generate_fma_codelets(parity_splitting, fpga),
-                                                     generate_fma_fft_functions(parity_splitting, fpga))
+                                                     generate_fma_codelets(parity_splitting, fpga, c_type=c_type),
+                                                     generate_fma_fft_functions(parity_splitting, fpga, c_type=c_type))
     if fpga:
         code = "{}\n{}\n".format(code, generate_fpga_functions())
     return code
@@ -141,6 +142,7 @@ if __name__ == "__main__":
     parser.add_argument("--depth", type=int, default=3, help="FFT depth")
     parser.add_argument("--fpga", action="store_true")
     parser.add_argument("--fma", action="store_true")
+    parser.add_argument("--ctype", type=str, default="float2", help="complex type")
     args = parser.parse_args()
     print("/* FFT")
     print(f" * command: python -m fftsynth.generator {' '.join(sys.argv[1:])}")
@@ -148,9 +150,9 @@ if __name__ == "__main__":
     N = args.radix**args.depth
     ps = ParitySplitting(N, args.radix)
     if args.fma:
-        print(generate_fma_fft(ps, args.fpga))
+        print(generate_fma_fft(ps, args.fpga, args.ctype))
     else:
-        print(generate_fft(ps, args.fpga))
+        print(generate_fft(ps, args.fpga, args.ctype))
 ```
 
 ### Codelets
@@ -159,10 +161,10 @@ These are the codelets for specific radix FFT.
 
 ```{.opencl file=fftsynth/templates/codelets.cl}
 {% if radix == 2%}
-void fft_2(float2 * restrict s0, float2 * restrict s1,{% if fpga %} float2 * restrict s0_in, float2 * restrict s1_in, float2 * restrict s0_out, float2 * restrict s1_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int iw)
+void fft_2({{c_type}} * restrict s0, {{c_type}} * restrict s1,{% if fpga %} {{c_type}} * restrict s0_in, {{c_type}} * restrict s1_in, {{c_type}} * restrict s0_out, {{c_type}} * restrict s1_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int iw)
 {
-    float2 t0, t1, ws0, ws1;
-    __constant float2 *w = W[iw];
+    {{c_type}} t0, t1, ws0, ws1;
+    __constant {{c_type}} *w = W[iw];
 
     {% if fpga %}
     switch (cycle) {
@@ -177,7 +179,7 @@ void fft_2(float2 * restrict s0, float2 * restrict s1,{% if fpga %} float2 * res
         t0 = s0[i0]; t1 = s1[i1];
     }
     switch (cycle) {
-        case 1: SWAP(float2, t0, t1); break;
+        case 1: SWAP({{c_type}}, t0, t1); break;
     }
     {% else %}
     switch (cycle) {
@@ -187,15 +189,15 @@ void fft_2(float2 * restrict s0, float2 * restrict s1,{% if fpga %} float2 * res
     {% endif %}
 
     ws0 = t0;
-    ws1 = (float2) (w[0].x * t1.x - w[0].y * t1.y,
-                    w[0].x * t1.y + w[0].y * t1.x);
+    ws1 = ({{c_type}}) (w[0].even * t1.even - w[0].odd * t1.odd,
+                    w[0].even * t1.odd + w[0].odd * t1.even);
 
     t0 = ws0 + ws1;
     t1 = ws0 - ws1;
 
     {% if fpga %}
     switch (cycle) {
-        case 1: SWAP(float2, t0, t1); break;
+        case 1: SWAP({{c_type}}, t0, t1); break;
     }
     if ( last_iteration )
     {
@@ -214,13 +216,13 @@ void fft_2(float2 * restrict s0, float2 * restrict s1,{% if fpga %} float2 * res
 }
 
 #ifdef TESTING
-__kernel void test_radix_2(__global float2 *x, __global float2 *y, int n) {
+__kernel void test_radix_2(__global {{c_type}} *x, __global {{c_type}} *y, int n) {
     int i = get_global_id(0) * 2;
 
     //n is the number of radix2 ffts to perform
     if (i < 2 * n) {
-        float2 s0 = x[i];
-        float2 s1 = x[i + 1];
+        {{c_type}} s0 = x[i];
+        {{c_type}} s1 = x[i + 1];
 
         fft_2(&s0, &s1, 0, 0, 0, 0);
 
@@ -230,10 +232,10 @@ __kernel void test_radix_2(__global float2 *x, __global float2 *y, int n) {
 #endif // TESTING
 
 {% elif radix == 4 %}
-void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, float2 * restrict s3,{% if fpga %} float2 * restrict s0_in, float2 * restrict s1_in, float2 * restrict s2_in, float2 * restrict s3_in, float2 * restrict s0_out, float2 * restrict s1_out, float2 * restrict s2_out, float2 * restrict s3_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int i2, int i3, int iw)
+void fft_4({{c_type}} * restrict s0, {{c_type}} * restrict s1, {{c_type}} * restrict s2, {{c_type}} * restrict s3,{% if fpga %} {{c_type}} * restrict s0_in, {{c_type}} * restrict s1_in, {{c_type}} * restrict s2_in, {{c_type}} * restrict s3_in, {{c_type}} * restrict s0_out, {{c_type}} * restrict s1_out, {{c_type}} * restrict s2_out, {{c_type}} * restrict s3_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int i2, int i3, int iw)
 {
-    float2 t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;
-    __constant float2 *w = W[iw];
+    {{c_type}} t0, t1, t2, t3, ws0, ws1, ws2, ws3, a, b, c, d;
+    __constant {{c_type}} *w = W[iw];
 
     {% if fpga %}
     switch (cycle) {
@@ -250,9 +252,9 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
         t0 = s0[i0]; t1 = s1[i1]; t2 = s2[i2]; t3 = s3[i3];
     }
     switch (cycle) {
-        case 1: SWAP(float2, t0, t1); SWAP(float2, t1, t2); SWAP(float2, t2, t3); break;
-        case 2: SWAP(float2, t0, t2); SWAP(float2, t1, t3); break;
-        case 3: SWAP(float2, t2, t3); SWAP(float2, t0, t1); SWAP(float2, t0, t2); break;
+        case 1: SWAP({{c_type}}, t0, t1); SWAP({{c_type}}, t1, t2); SWAP({{c_type}}, t2, t3); break;
+        case 2: SWAP({{c_type}}, t0, t2); SWAP({{c_type}}, t1, t3); break;
+        case 3: SWAP({{c_type}}, t2, t3); SWAP({{c_type}}, t0, t1); SWAP({{c_type}}, t0, t2); break;
     }
     {% else %}
     switch (cycle) {
@@ -264,27 +266,27 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
     {% endif %}
 
     ws0 = t0;
-    ws1 = (float2) (w[0].x * t1.x - w[0].y * t1.y,
-                    w[0].x * t1.y + w[0].y * t1.x);
-    ws2 = (float2) (w[1].x * t2.x - w[1].y * t2.y,
-                    w[1].x * t2.y + w[1].y * t2.x);
-    ws3 = (float2) (w[2].x * t3.x - w[2].y * t3.y,
-                    w[2].x * t3.y + w[2].y * t3.x);
+    ws1 = ({{c_type}}) (w[0].even * t1.even - w[0].odd * t1.odd,
+                    w[0].even * t1.odd + w[0].odd * t1.even);
+    ws2 = ({{c_type}}) (w[1].even * t2.even - w[1].odd * t2.odd,
+                    w[1].even * t2.odd + w[1].odd * t2.even);
+    ws3 = ({{c_type}}) (w[2].even * t3.even - w[2].odd * t3.odd,
+                    w[2].even * t3.odd + w[2].odd * t3.even);
 
     a = ws0 + ws2;
     b = ws1 + ws3;
     c = ws0 - ws2;
     d = ws1 - ws3;
     t0 = a + b;
-    t1 = (float2) (c.x + d.y, c.y - d.x);
+    t1 = ({{c_type}}) (c.even + d.odd, c.odd - d.even);
     t2 = a - b;
-    t3 = (float2) (c.x - d.y, c.y + d.x);
+    t3 = ({{c_type}}) (c.even - d.odd, c.odd + d.even);
 
     {% if fpga %}
     switch (cycle) {
-        case 1: SWAP(float2, t2, t3); SWAP(float2, t1, t2); SWAP(float2, t0, t1); break;
-        case 2: SWAP(float2, t1, t3); SWAP(float2, t0, t2); break;
-        case 3: SWAP(float2, t0, t2); SWAP(float2, t0, t1); SWAP(float2, t2, t3); break;
+        case 1: SWAP({{c_type}}, t2, t3); SWAP({{c_type}}, t1, t2); SWAP({{c_type}}, t0, t1); break;
+        case 2: SWAP({{c_type}}, t1, t3); SWAP({{c_type}}, t0, t2); break;
+        case 3: SWAP({{c_type}}, t0, t2); SWAP({{c_type}}, t0, t1); SWAP({{c_type}}, t2, t3); break;
     }
     if ( last_iteration )
     {
@@ -305,15 +307,15 @@ void fft_4(float2 * restrict s0, float2 * restrict s1, float2 * restrict s2, flo
 }
 
 #ifdef TESTING
-__kernel void test_radix_4(__global float2 *x, __global float2 *y, int n) {
+__kernel void test_radix_4(__global {{c_type}} *x, __global {{c_type}} *y, int n) {
     int i = get_global_id(0) * 4;
 
     //n is the number of radix4 ffts to perform
     if (i < 4 * n) {
-        float2 s0 = x[i];
-        float2 s1 = x[i + 1];
-        float2 s2 = x[i + 2];
-        float2 s3 = x[i + 3];
+        {{c_type}} s0 = x[i];
+        {{c_type}} s1 = x[i + 1];
+        {{c_type}} s2 = x[i + 2];
+        {{c_type}} s3 = x[i + 3];
         fft_4(&s0, &s1, &s2, &s3, 0, 0, 0, 0, 0, 0);
 
         y[i] = s0;    y[i + 1] = s1;    y[i + 2] = s2;    y[i + 3] = s3;
@@ -326,13 +328,13 @@ __kernel void test_radix_4(__global float2 *x, __global float2 *y, int n) {
 What follows is the Python function used to generate the OpenCL code.
 
 ```{.python #generate-codelets}
-def generate_codelets(parity_splitting: ParitySplitting, fpga: bool):
+def generate_codelets(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
     """
     Generate OpenCL codelets for FFT.
     """
     template = template_environment.get_template("codelets.cl")
 
-    return template.render(radix=parity_splitting.radix, fpga=fpga)
+    return template.render(radix=parity_splitting.radix, fpga=fpga, c_type=c_type)
 ```
 
 Here we also have a test for the codelets.
@@ -377,7 +379,7 @@ This is the parameterized OpenCL code used to write the preprocessor directives.
 {% if fpga -%}
 #pragma OPENCL EXTENSION cl_intel_channels : enable
 #include <ihc_apint.h>
-channel float2 in_channel, out_channel;
+channel {{c_type}} in_channel, out_channel;
 #define SWAP(type, x, y) do { type temp = x; x = y, y = temp; } while ( false );
 {% endif -%}
 {%if radix == 2 %}
@@ -398,13 +400,13 @@ channel float2 in_channel, out_channel;
 What follows is the Python function used to generate the OpenCL code.
 
 ```{.python #generate-preprocessor}
-def generate_preprocessor(parity_splitting: ParitySplitting, fpga: bool):
+def generate_preprocessor(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
     """
     Generate the preprocessor directives necessary for the FFT.
     """
     template = template_environment.get_template("preprocessor.cl")
 
-    return template.render(radix=parity_splitting.radix, fpga=fpga)
+    return template.render(radix=parity_splitting.radix, fpga=fpga, c_type=c_type)
 ```
 
 ### FPGA specific code
@@ -413,7 +415,7 @@ This is the parameterized OpenCL code used to write the FPGA specific functions.
 
 ```{.opencl file=fftsynth/templates/fpga.cl}
 __kernel __attribute__((max_global_work_dim(0)))
-void source(__global const volatile float2 * in, unsigned count)
+void source(__global const volatile {{c_type}} * in, unsigned count)
 {
     #pragma ii 1
     for ( unsigned i = 0; i < count; i++ )
@@ -423,7 +425,7 @@ void source(__global const volatile float2 * in, unsigned count)
 }
 
 __kernel __attribute__((max_global_work_dim(0)))
-void sink(__global float2 *out, unsigned count)
+void sink(__global {{c_type}} *out, unsigned count)
 {
     #pragma ii 1
     for ( unsigned i = 0; i < count; i++ )
@@ -616,7 +618,7 @@ def test_parity(parity_splitting: ParitySplitting):
 ## FFT kernel
 
 ``` {.python #generate-fft-functions}
-def generate_fft_functions(parity_splitting: ParitySplitting, fpga: bool):
+def generate_fft_functions(parity_splitting: ParitySplitting, fpga: bool, c_type: str):
     """
     Generate outer and inner loop for OpenCL FFT.
     """
@@ -636,7 +638,8 @@ def generate_fft_functions(parity_splitting: ParitySplitting, fpga: bool):
                            fpga=fpga,
                            depth_type=depth_type,
                            m_type=m_type,
-                           n_type=n_type)
+                           n_type=n_type,
+                           c_type=c_type)
 ```
 
 ### Inner loop
@@ -645,7 +648,7 @@ Here we have `k` being the index of the outer loop.
 The next bit is only  implemented for radix-2 and radix-4.
 
 ```{.opencl file=fftsynth/templates/fft.cl}
-void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %}{% if fpga %},{% for i in range(radix) %} float2 * restrict s{{ i }}_in,{% endfor %}{% for i in range(radix) %} float2 * restrict s{{ i }}_out{%- if not loop.last %},{% endif %}{% endfor %}{% endif %})
+void fft_{{ N }}_ps({% for i in range(radix) %} {{c_type}} * restrict s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %}{% if fpga %},{% for i in range(radix) %} {{c_type}} * restrict s{{ i }}_in,{% endfor %}{% for i in range(radix) %} {{c_type}} * restrict s{{ i }}_out{%- if not loop.last %},{% endif %}{% endfor %}{% endif %})
 {
     int wp = 0;
 
@@ -684,7 +687,7 @@ void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if
 FMA version.
 
 ```{.opencl file=fftsynth/templates/fma-fft.cl}
-void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %}{% if fpga %},{% for i in range(radix) %} float2 * restrict s{{ i }}_in,{% endfor %}{% for i in range(radix) %} float2 * restrict s{{ i }}_out{%- if not loop.last %},{% endif %}{% endfor %}{% endif %})
+void fft_{{ N }}_ps({% for i in range(radix) %} {{c_type}} * restrict s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %}{% if fpga %},{% for i in range(radix) %} {{c_type}} * restrict s{{ i }}_in,{% endfor %}{% for i in range(radix) %} {{c_type}} * restrict s{{ i }}_out{%- if not loop.last %},{% endif %}{% endfor %}{% endif %})
 {
     int wp = 0;
 
@@ -726,16 +729,16 @@ The outer kernel reads the data, puts it in the correct parity-channel and then 
 
 ```{.opencl file=fftsynth/templates/fft.cl}
 __kernel {%if fpga %}__attribute__((autorun)) __attribute__((max_global_work_dim(0))){% endif %}
-void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global float2 * restrict y{% endif %})
+void fft_{{ N }}({% if not fpga %}__global const {{c_type}} * restrict x, __global {{c_type}} * restrict y{% endif %})
 {
     {% if fpga -%}
     while ( true )
     {
     {% endif -%}
     {%- for i in range(radix) %}
-    float2 s{{ i }}[{{ M }}];
+    {{c_type}} s{{ i }}[{{ M }}];
     {% if fpga -%}
-    float2 s{{ i }}_in[{{ M }}], s{{ i }}_out[{{ M }}];
+    {{c_type}} s{{ i }}_in[{{ M }}], s{{ i }}_out[{{ M }}];
     {%- endif -%}
     {%- endfor %}
 
@@ -745,7 +748,7 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
         int p = parity_{{ radix }}(i);
 
         {% if fpga -%}
-        float2 x = read_channel_intel(in_channel);
+        {{c_type}} x = read_channel_intel(in_channel);
         {% endif -%}
         switch ( p )
         {
@@ -771,7 +774,7 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
     {
         int p = parity_{{ radix }}(i);
         {% if fpga -%}
-        float2 y;
+        {{c_type}} y;
         {% endif -%}
 
         switch ( p )
@@ -800,16 +803,16 @@ FMA version.
 
 ```{.opencl file=fftsynth/templates/fma-fft.cl}
 __kernel {%if fpga %}__attribute__((autorun)) __attribute__((max_global_work_dim(0))){% endif %}
-void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global float2 * restrict y{% endif %})
+void fft_{{ N }}({% if not fpga %}__global const {{c_type}} * restrict x, __global {{c_type}} * restrict y{% endif %})
 {
     {% if fpga -%}
     while ( true )
     {
     {% endif -%}
     {%- for i in range(radix) %}
-    float2 s{{ i }}[{{ M }}];
+    {{c_type}} s{{ i }}[{{ M }}];
     {% if fpga -%}
-    float2 s{{ i }}_in[{{ M }}], s{{ i }}_out[{{ M }}];
+    {{c_type}} s{{ i }}_in[{{ M }}], s{{ i }}_out[{{ M }}];
     {%- endif -%}
     {%- endfor %}
 
@@ -819,7 +822,7 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
         int p = parity_{{ radix }}(i);
 
         {% if fpga -%}
-        float2 x = read_channel_intel(in_channel);
+        {{c_type}} x = read_channel_intel(in_channel);
         {% endif -%}
         switch ( p )
         {
@@ -845,9 +848,9 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
     {
         int p = parity_{{ radix }}(i);
         {% if fpga -%}
-        float2 y;
+        {{c_type}} y;
         {% endif -%}
-        
+
         switch ( p )
         {
             {%- if fpga -%}

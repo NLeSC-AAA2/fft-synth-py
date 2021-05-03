@@ -1,6 +1,6 @@
 /* ~\~ language=OpenCL filename=fftsynth/templates/fft.cl */
 /* ~\~ begin <<lit/code-generator.md|fftsynth/templates/fft.cl>>[0] */
-void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %}{% if fpga %},{% for i in range(radix) %} float2 * restrict s{{ i }}_in,{% endfor %}{% for i in range(radix) %} float2 * restrict s{{ i }}_out{%- if not loop.last %},{% endif %}{% endfor %}{% endif %})
+void fft_{{ N }}_ps({% for i in range(radix) %} {{c_type}} * restrict s{{ i }}{%- if not loop.last %},{% endif %}{% endfor %}{% if fpga %},{% for i in range(radix) %} {{c_type}} * restrict s{{ i }}_in,{% endfor %}{% for i in range(radix) %} {{c_type}} * restrict s{{ i }}_out{%- if not loop.last %},{% endif %}{% endfor %}{% endif %})
 {
     int wp = 0;
 
@@ -37,16 +37,16 @@ void fft_{{ N }}_ps({% for i in range(radix) %} float2 * restrict s{{ i }}{%- if
 /* ~\~ end */
 /* ~\~ begin <<lit/code-generator.md|fftsynth/templates/fft.cl>>[1] */
 __kernel {%if fpga %}__attribute__((autorun)) __attribute__((max_global_work_dim(0))){% endif %}
-void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global float2 * restrict y{% endif %})
+void fft_{{ N }}({% if not fpga %}__global const {{c_type}} * restrict x, __global {{c_type}} * restrict y{% endif %})
 {
     {% if fpga -%}
     while ( true )
     {
     {% endif -%}
     {%- for i in range(radix) %}
-    float2 s{{ i }}[{{ M }}];
+    {{c_type}} s{{ i }}[{{ M }}];
     {% if fpga -%}
-    float2 s{{ i }}_in[{{ M }}], s{{ i }}_out[{{ M }}];
+    {{c_type}} s{{ i }}_in[{{ M }}], s{{ i }}_out[{{ M }}];
     {%- endif -%}
     {%- endfor %}
 
@@ -56,7 +56,7 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
         int p = parity_{{ radix }}(i);
 
         {% if fpga -%}
-        float2 x = read_channel_intel(in_channel);
+        {{c_type}} x = read_channel_intel(in_channel);
         {% endif -%}
         switch ( p )
         {
@@ -82,7 +82,7 @@ void fft_{{ N }}({% if not fpga %}__global const float2 * restrict x, __global f
     {
         int p = parity_{{ radix }}(i);
         {% if fpga -%}
-        float2 y;
+        {{c_type}} y;
         {% endif -%}
 
         switch ( p )

@@ -51,13 +51,13 @@ def generate_twiddle_array(parity_splitting: ParitySplitting):
 
 
 # ~\~ begin <<lit/code-generator.md|generate-fpga-functions>>[0]
-def generate_fpga_functions():
+def generate_fpga_functions(c_type: str = "float2"):
     """
     Generate OpenCL code for FPGA functions.
     """
     template = template_environment.get_template("fpga.cl")
 
-    return template.render()
+    return template.render(c_type=c_type)
 # ~\~ end
 
 
@@ -157,7 +157,7 @@ def generate_fft(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "f
                                                      generate_codelets(parity_splitting, fpga, c_type),
                                                      generate_fft_functions(parity_splitting, fpga, c_type))
     if fpga:
-        code = "{}\n{}\n".format(code, generate_fpga_functions())
+        code = "{}\n{}\n".format(code, generate_fpga_functions(c_type=c_type))
     return code
 
 
@@ -230,7 +230,7 @@ def generate_fma_fft(parity_splitting: ParitySplitting, fpga: bool, c_type: str 
                                                      generate_fma_codelets(parity_splitting, fpga, c_type=c_type),
                                                      generate_fma_fft_functions(parity_splitting, fpga, c_type=c_type))
     if fpga:
-        code = "{}\n{}\n".format(code, generate_fpga_functions())
+        code = "{}\n{}\n".format(code, generate_fpga_functions(c_type=c_type))
     return code
 
 

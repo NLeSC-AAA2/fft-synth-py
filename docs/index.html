@@ -983,7 +983,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>                                                     generate_codelets(parity_splitting, fpga, c_type),</span>
 <span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>                                                     generate_fft_functions(parity_splitting, fpga, c_type))</span>
 <span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> fpga:</span>
-<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>        code <span class="op">=</span> <span class="st">&quot;</span><span class="sc">{}</span><span class="ch">\n</span><span class="sc">{}</span><span class="ch">\n</span><span class="st">&quot;</span>.<span class="bu">format</span>(code, generate_fpga_functions())</span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>        code <span class="op">=</span> <span class="st">&quot;</span><span class="sc">{}</span><span class="ch">\n</span><span class="sc">{}</span><span class="ch">\n</span><span class="st">&quot;</span>.<span class="bu">format</span>(code, generate_fpga_functions(c_type<span class="op">=</span>c_type))</span>
 <span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> code</span>
 <span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a></span>
@@ -1056,7 +1056,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a>                                                     generate_fma_codelets(parity_splitting, fpga, c_type<span class="op">=</span>c_type),</span>
 <span id="cb9-128"><a href="#cb9-128" aria-hidden="true" tabindex="-1"></a>                                                     generate_fma_fft_functions(parity_splitting, fpga, c_type<span class="op">=</span>c_type))</span>
 <span id="cb9-129"><a href="#cb9-129" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> fpga:</span>
-<span id="cb9-130"><a href="#cb9-130" aria-hidden="true" tabindex="-1"></a>        code <span class="op">=</span> <span class="st">&quot;</span><span class="sc">{}</span><span class="ch">\n</span><span class="sc">{}</span><span class="ch">\n</span><span class="st">&quot;</span>.<span class="bu">format</span>(code, generate_fpga_functions())</span>
+<span id="cb9-130"><a href="#cb9-130" aria-hidden="true" tabindex="-1"></a>        code <span class="op">=</span> <span class="st">&quot;</span><span class="sc">{}</span><span class="ch">\n</span><span class="sc">{}</span><span class="ch">\n</span><span class="st">&quot;</span>.<span class="bu">format</span>(code, generate_fpga_functions(c_type<span class="op">=</span>c_type))</span>
 <span id="cb9-131"><a href="#cb9-131" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> code</span>
 <span id="cb9-132"><a href="#cb9-132" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-133"><a href="#cb9-133" aria-hidden="true" tabindex="-1"></a></span>
@@ -1354,13 +1354,13 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>What follows is the Python function used to generate the OpenCL code.</p>
 <div class="annotated-code">
 <p><span><em>«generate-fpga-functions»=</em></span></p>
-<div class="sourceCode" id="generate-fpga-functions"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-fpga-functions-1"><a href="#generate-fpga-functions-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_fpga_functions():</span>
+<div class="sourceCode" id="generate-fpga-functions"><pre class="sourceCode python"><code class="sourceCode python"><span id="generate-fpga-functions-1"><a href="#generate-fpga-functions-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_fpga_functions(c_type: <span class="bu">str</span> <span class="op">=</span> <span class="st">&quot;float2&quot;</span>):</span>
 <span id="generate-fpga-functions-2"><a href="#generate-fpga-functions-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
 <span id="generate-fpga-functions-3"><a href="#generate-fpga-functions-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Generate OpenCL code for FPGA functions.</span></span>
 <span id="generate-fpga-functions-4"><a href="#generate-fpga-functions-4" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
 <span id="generate-fpga-functions-5"><a href="#generate-fpga-functions-5" aria-hidden="true" tabindex="-1"></a>    template <span class="op">=</span> template_environment.get_template(<span class="st">&quot;fpga.cl&quot;</span>)</span>
 <span id="generate-fpga-functions-6"><a href="#generate-fpga-functions-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="generate-fpga-functions-7"><a href="#generate-fpga-functions-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> template.render()</span></code></pre></div>
+<span id="generate-fpga-functions-7"><a href="#generate-fpga-functions-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> template.render(c_type<span class="op">=</span>c_type)</span></code></pre></div>
 </div>
 <h2 id="testing-1">Testing</h2>
 <p>To test we need to define small <code>__kernel</code> functions.</p>

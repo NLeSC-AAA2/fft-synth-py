@@ -1323,25 +1323,27 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <p>This is the parameterized OpenCL code used to write the FPGA specific functions.</p>
 <div class="annotated-code">
 <p><span><em>«fftsynth/templates/fpga.cl»=</em></span></p>
-<div class="sourceCode" id="cb16" data-file="fftsynth/templates/fpga.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="kw">__kernel</span> __attribute__((max_global_work_dim(<span class="dv">0</span>)))</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="dt">void</span> source(<span class="kw">__global</span> <span class="dt">const</span> <span class="dt">volatile</span> {{c_type}} * in, <span class="dt">unsigned</span> count)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true"></a>{</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true"></a>    <span class="ot">#pragma ii 1</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true"></a>    <span class="kw">for</span> ( <span class="dt">unsigned</span> i = <span class="dv">0</span>; i &lt; count; i++ )</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true"></a>    {</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true"></a>        write_channel_intel(in_channel, in[i]);</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true"></a>    }</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true"></a>}</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true"></a></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true"></a><span class="kw">__kernel</span> __attribute__((max_global_work_dim(<span class="dv">0</span>)))</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true"></a><span class="dt">void</span> sink(<span class="kw">__global</span> {{c_type}} *out, <span class="dt">unsigned</span> count)</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true"></a>{</span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true"></a>    <span class="ot">#pragma ii 1</span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true"></a>    <span class="kw">for</span> ( <span class="dt">unsigned</span> i = <span class="dv">0</span>; i &lt; count; i++ )</span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true"></a>    {</span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true"></a>        out[i] = read_channel_intel(out_channel);</span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true"></a>    }</span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb16" data-file="fftsynth/templates/fpga.cl"><pre class="sourceCode opencl"><code class="sourceCode opencl"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="kw">__kernel</span> __attribute__((max_global_work_dim(<span class="dv">0</span>)))</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true"></a><span class="dt">void</span> source(<span class="kw">__global</span> <span class="dt">const</span> <span class="dt">volatile</span> {{c_type}} * in, <span class="dt">unsigned</span> count)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true"></a>{</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true"></a>    <span class="ot">#pragma ii 1</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true"></a>    <span class="kw">for</span> ( <span class="dt">unsigned</span> i = <span class="dv">0</span>; i &lt; count; i++ )</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true"></a>    {</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true"></a>        write_channel_intel(in_channel, in[i]);</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true"></a>    }</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true"></a>}</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true"></a><span class="kw">__kernel</span> __attribute__((max_global_work_dim(<span class="dv">0</span>)))</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true"></a><span class="dt">void</span> sink(<span class="kw">__global</span> {{c_type}} *out, <span class="dt">unsigned</span> count)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true"></a>{</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true"></a>    <span class="ot">#pragma ii 1</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true"></a>    <span class="kw">for</span> ( <span class="dt">unsigned</span> i = <span class="dv">0</span>; i &lt; count; i++ )</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true"></a>    {</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true"></a>        out[i] = read_channel_intel(out_channel);</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true"></a>    }</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true"></a>}</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span></code></pre></div>
 </div>
 <p>What follows is the Python function used to generate the OpenCL code.</p>
 <div class="annotated-code">

@@ -416,6 +416,7 @@ def generate_preprocessor(parity_splitting: ParitySplitting, fpga: bool, c_type:
 This is the parameterized OpenCL code used to write the FPGA specific functions.
 
 ```{.opencl file=fftsynth/templates/fpga.cl}
+#ifdef TESTING
 __kernel __attribute__((max_global_work_dim(0)))
 void source(__global const volatile {{c_type}} * in, unsigned count)
 {
@@ -435,6 +436,7 @@ void sink(__global {{c_type}} *out, unsigned count)
         out[i] = read_channel_intel(out_channel);
     }
 }
+#endif // TESTING
 ```
 
 What follows is the Python function used to generate the OpenCL code.

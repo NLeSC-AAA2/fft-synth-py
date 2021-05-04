@@ -66,8 +66,8 @@ void fft_2({{c_type}} * restrict s0, {{c_type}} * restrict s1,{% if fpga %} {{c_
     }
     {% endif %}
 
-    a = ({{c_type}}) (-w[0].odd * t1.odd + t0.even, w[0].odd * t1.even + t0.odd);
-    a += ({{c_type}}) (w[0].even * t1.even, w[0].even * t1.odd);
+    a.even = -w[0].odd * t1.odd + t0.even + w[0].even * t1.even;
+    a.odd = w[0].odd * t1.even + t0.odd + w[0].even * t1.odd;
     b = 2 * t0 - a;
 
     t0 = a;
@@ -239,29 +239,27 @@ void fft_4({{c_type}} * restrict s0, {{c_type}} * restrict s1, {{c_type}} * rest
    // https://www.cs.utexas.edu/users/flame/pubs/LAC_fft.pdf
    // contains serious errors in the FMA-optimized radix-4 pseudocode
    // finally corrected based on the pseudocode reported in karner1998top
-    a = t0;     b = t2;     c = t1;     d = t3;
 
-    b = ({{c_type}}) (a.even - w[1].even * b.even + w[1].odd * b.odd,
-                  a.odd - w[1].even * b.odd - w[1].odd * b.even);
-    a = ({{c_type}}) (2*a.even - b.even,
-                  2*a.odd - b.odd);
-    d = ({{c_type}}) (c.even - w[1].even * d.even + w[1].odd * d.odd,
-                  c.odd - w[1].even * d.odd - w[1].odd * d.even);
-    c = ({{c_type}}) (2*c.even - d.even,
-                  2*c.odd - d.odd);
-
-    c = ({{c_type}}) (a.even - w[0].even * c.even + w[0].odd * c.odd,
-                  a.odd - w[0].even * c.odd - w[0].odd * c.even);
+    b.even = t0.even - w[1].even * t2.even + w[1].odd * t2.odd;
+    b.odd = t0.odd - w[1].even * t2.odd - w[1].odd * t2.even;
+    a.even = 2 * t0.even - b.even;
+    a.odd = 2 * t0.odd - b.odd;
+    d.even = t1.even - w[1].even * t3.even + w[1].odd * t3.odd;
+    d.odd = t1.odd - w[1].even * t3.odd - w[1].odd * t3.even;
+    c.even = 2 * t1.even - d.even;
+    c.odd = 2 * t1.odd - d.odd;
     t2 = c;
-    t0 = ({{c_type}}) (2*a.even - c.even,
-                    2*a.odd - c.odd);
-
-    //d = b - i*w0*d
-    d = ({{c_type}}) (b.even + w[0].even * d.odd + w[0].odd * d.even,
-                  b.odd - w[0].even * d.even + w[0].odd * d.odd);
+    c.even = a.even - w[0].even * t2.even + w[0].odd * t2.odd;
+    c.odd = a.odd - w[0].even * t2.odd - w[0].odd * t2.even;
+    t2 = c;
+    t0.even = 2 * a.even - c.even;
+    t0.odd = 2 * a.odd - c.odd;
     t1 = d;
-    t3 = ({{c_type}}) (2*b.even - d.even,
-                    2*b.odd - d.odd);
+    d.even = b.even + w[0].even * t1.odd + w[0].odd * t1.even;
+    d.odd = b.odd - w[0].even * t1.even + w[0].odd * t1.odd;
+    t1 = d;
+    t3.even = 2 * b.even - d.even;
+    t3.odd = 2 * b.odd - d.odd;
 
     {% if fpga %}
     switch (cycle) {

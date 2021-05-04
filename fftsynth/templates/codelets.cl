@@ -29,8 +29,8 @@ void fft_2({{c_type}} * restrict s0, {{c_type}} * restrict s1,{% if fpga %} {{c_
     {% endif %}
 
     ws0 = t0;
-    ws1 = ({{c_type}}) (w[0].even * t1.even - w[0].odd * t1.odd,
-                    w[0].even * t1.odd + w[0].odd * t1.even);
+    ws1.even = w[0].even * t1.even - w[0].odd * t1.odd;
+    ws1.odd = w[0].even * t1.odd + w[0].odd * t1.even;
 
     t0 = ws0 + ws1;
     t1 = ws0 - ws1;
@@ -106,21 +106,23 @@ void fft_4({{c_type}} * restrict s0, {{c_type}} * restrict s1, {{c_type}} * rest
     {% endif %}
 
     ws0 = t0;
-    ws1 = ({{c_type}}) (w[0].even * t1.even - w[0].odd * t1.odd,
-                    w[0].even * t1.odd + w[0].odd * t1.even);
-    ws2 = ({{c_type}}) (w[1].even * t2.even - w[1].odd * t2.odd,
-                    w[1].even * t2.odd + w[1].odd * t2.even);
-    ws3 = ({{c_type}}) (w[2].even * t3.even - w[2].odd * t3.odd,
-                    w[2].even * t3.odd + w[2].odd * t3.even);
+    ws1.even = w[0].even * t1.even - w[0].odd * t1.odd;
+    ws1.odd = w[0].even * t1.odd + w[0].odd * t1.even;
+    ws2.even = w[1].even * t2.even - w[1].odd * t2.odd;
+    ws2.odd = w[1].even * t2.odd + w[1].odd * t2.even;
+    ws3.even = w[2].even * t3.even - w[2].odd * t3.odd;
+    ws3.odd = w[2].even * t3.odd + w[2].odd * t3.even;
 
     a = ws0 + ws2;
     b = ws1 + ws3;
     c = ws0 - ws2;
     d = ws1 - ws3;
     t0 = a + b;
-    t1 = ({{c_type}}) (c.even + d.odd, c.odd - d.even);
+    t1.even = c.even + d.odd;
+    t1.odd = c.odd - d.even;
     t2 = a - b;
-    t3 = ({{c_type}}) (c.even - d.odd, c.odd + d.even);
+    t3.even = c.even - d.odd;
+    t3.odd = c.odd + d.even;
 
     {% if fpga %}
     switch (cycle) {

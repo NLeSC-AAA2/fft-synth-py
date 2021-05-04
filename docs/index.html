@@ -479,8 +479,8 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="fma-radix2-31"><a href="#fma-radix2-31" aria-hidden="true"></a>    }</span>
 <span id="fma-radix2-32"><a href="#fma-radix2-32" aria-hidden="true"></a>    {% endif %}</span>
 <span id="fma-radix2-33"><a href="#fma-radix2-33" aria-hidden="true"></a></span>
-<span id="fma-radix2-34"><a href="#fma-radix2-34" aria-hidden="true"></a>    a = ({{c_type}}) (-w[<span class="dv">0</span>].odd * t1.odd + t0.even, w[<span class="dv">0</span>].odd * t1.even + t0.odd);</span>
-<span id="fma-radix2-35"><a href="#fma-radix2-35" aria-hidden="true"></a>    a += ({{c_type}}) (w[<span class="dv">0</span>].even * t1.even, w[<span class="dv">0</span>].even * t1.odd);</span>
+<span id="fma-radix2-34"><a href="#fma-radix2-34" aria-hidden="true"></a>    a.even = -w[<span class="dv">0</span>].odd * t1.odd + t0.even + w[<span class="dv">0</span>].even * t1.even;</span>
+<span id="fma-radix2-35"><a href="#fma-radix2-35" aria-hidden="true"></a>    a.odd = w[<span class="dv">0</span>].odd * t1.even + t0.odd + w[<span class="dv">0</span>].even * t1.odd;</span>
 <span id="fma-radix2-36"><a href="#fma-radix2-36" aria-hidden="true"></a>    b = <span class="dv">2</span> * t0 - a;</span>
 <span id="fma-radix2-37"><a href="#fma-radix2-37" aria-hidden="true"></a></span>
 <span id="fma-radix2-38"><a href="#fma-radix2-38" aria-hidden="true"></a>    t0 = a;</span>
@@ -651,155 +651,153 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-137"><a href="#cb10-137" aria-hidden="true"></a>   <span class="co">// https://www.cs.utexas.edu/users/flame/pubs/LAC_fft.pdf</span></span>
 <span id="cb10-138"><a href="#cb10-138" aria-hidden="true"></a>   <span class="co">// contains serious errors in the FMA-optimized radix-4 pseudocode</span></span>
 <span id="cb10-139"><a href="#cb10-139" aria-hidden="true"></a>   <span class="co">// finally corrected based on the pseudocode reported in karner1998top</span></span>
-<span id="cb10-140"><a href="#cb10-140" aria-hidden="true"></a>    a = t0;     b = t2;     c = t1;     d = t3;</span>
-<span id="cb10-141"><a href="#cb10-141" aria-hidden="true"></a></span>
-<span id="cb10-142"><a href="#cb10-142" aria-hidden="true"></a>    b = ({{c_type}}) (a.even - w[<span class="dv">1</span>].even * b.even + w[<span class="dv">1</span>].odd * b.odd,</span>
-<span id="cb10-143"><a href="#cb10-143" aria-hidden="true"></a>                  a.odd - w[<span class="dv">1</span>].even * b.odd - w[<span class="dv">1</span>].odd * b.even);</span>
-<span id="cb10-144"><a href="#cb10-144" aria-hidden="true"></a>    a = ({{c_type}}) (<span class="dv">2</span>*a.even - b.even,</span>
-<span id="cb10-145"><a href="#cb10-145" aria-hidden="true"></a>                  <span class="dv">2</span>*a.odd - b.odd);</span>
-<span id="cb10-146"><a href="#cb10-146" aria-hidden="true"></a>    d = ({{c_type}}) (c.even - w[<span class="dv">1</span>].even * d.even + w[<span class="dv">1</span>].odd * d.odd,</span>
-<span id="cb10-147"><a href="#cb10-147" aria-hidden="true"></a>                  c.odd - w[<span class="dv">1</span>].even * d.odd - w[<span class="dv">1</span>].odd * d.even);</span>
-<span id="cb10-148"><a href="#cb10-148" aria-hidden="true"></a>    c = ({{c_type}}) (<span class="dv">2</span>*c.even - d.even,</span>
-<span id="cb10-149"><a href="#cb10-149" aria-hidden="true"></a>                  <span class="dv">2</span>*c.odd - d.odd);</span>
-<span id="cb10-150"><a href="#cb10-150" aria-hidden="true"></a></span>
-<span id="cb10-151"><a href="#cb10-151" aria-hidden="true"></a>    c = ({{c_type}}) (a.even - w[<span class="dv">0</span>].even * c.even + w[<span class="dv">0</span>].odd * c.odd,</span>
-<span id="cb10-152"><a href="#cb10-152" aria-hidden="true"></a>                  a.odd - w[<span class="dv">0</span>].even * c.odd - w[<span class="dv">0</span>].odd * c.even);</span>
-<span id="cb10-153"><a href="#cb10-153" aria-hidden="true"></a>    t2 = c;</span>
-<span id="cb10-154"><a href="#cb10-154" aria-hidden="true"></a>    t0 = ({{c_type}}) (<span class="dv">2</span>*a.even - c.even,</span>
-<span id="cb10-155"><a href="#cb10-155" aria-hidden="true"></a>                    <span class="dv">2</span>*a.odd - c.odd);</span>
-<span id="cb10-156"><a href="#cb10-156" aria-hidden="true"></a></span>
-<span id="cb10-157"><a href="#cb10-157" aria-hidden="true"></a>    <span class="co">//d = b - i*w0*d</span></span>
-<span id="cb10-158"><a href="#cb10-158" aria-hidden="true"></a>    d = ({{c_type}}) (b.even + w[<span class="dv">0</span>].even * d.odd + w[<span class="dv">0</span>].odd * d.even,</span>
-<span id="cb10-159"><a href="#cb10-159" aria-hidden="true"></a>                  b.odd - w[<span class="dv">0</span>].even * d.even + w[<span class="dv">0</span>].odd * d.odd);</span>
-<span id="cb10-160"><a href="#cb10-160" aria-hidden="true"></a>    t1 = d;</span>
-<span id="cb10-161"><a href="#cb10-161" aria-hidden="true"></a>    t3 = ({{c_type}}) (<span class="dv">2</span>*b.even - d.even,</span>
-<span id="cb10-162"><a href="#cb10-162" aria-hidden="true"></a>                    <span class="dv">2</span>*b.odd - d.odd);</span>
-<span id="cb10-163"><a href="#cb10-163" aria-hidden="true"></a></span>
-<span id="cb10-164"><a href="#cb10-164" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
-<span id="cb10-165"><a href="#cb10-165" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb10-166"><a href="#cb10-166" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP({{c_type}}, t2, t3); SWAP({{c_type}}, t1, t2); SWAP({{c_type}}, t0, t1); <span class="kw">break</span>;</span>
-<span id="cb10-167"><a href="#cb10-167" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP({{c_type}}, t1, t3); SWAP({{c_type}}, t0, t2); <span class="kw">break</span>;</span>
-<span id="cb10-168"><a href="#cb10-168" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP({{c_type}}, t0, t2); SWAP({{c_type}}, t0, t1); SWAP({{c_type}}, t2, t3); <span class="kw">break</span>;</span>
-<span id="cb10-169"><a href="#cb10-169" aria-hidden="true"></a>    }</span>
-<span id="cb10-170"><a href="#cb10-170" aria-hidden="true"></a>    <span class="kw">if</span> ( last_iteration )</span>
-<span id="cb10-171"><a href="#cb10-171" aria-hidden="true"></a>    {</span>
-<span id="cb10-172"><a href="#cb10-172" aria-hidden="true"></a>        s0_out[i0] = t0; s1_out[i1] = t1; s2_out[i2] = t2; s3_out[i3] = t3;</span>
-<span id="cb10-173"><a href="#cb10-173" aria-hidden="true"></a>    }</span>
-<span id="cb10-174"><a href="#cb10-174" aria-hidden="true"></a>    <span class="kw">else</span></span>
-<span id="cb10-175"><a href="#cb10-175" aria-hidden="true"></a>    {</span>
-<span id="cb10-176"><a href="#cb10-176" aria-hidden="true"></a>        s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;</span>
-<span id="cb10-177"><a href="#cb10-177" aria-hidden="true"></a>    }</span>
-<span id="cb10-178"><a href="#cb10-178" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
-<span id="cb10-179"><a href="#cb10-179" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb10-180"><a href="#cb10-180" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; <span class="kw">break</span>;</span>
-<span id="cb10-181"><a href="#cb10-181" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: s1[i0] = t0; s2[i1] = t1; s3[i2] = t2; s0[i3] = t3; <span class="kw">break</span>;</span>
-<span id="cb10-182"><a href="#cb10-182" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: s2[i0] = t0; s3[i1] = t1; s0[i2] = t2; s1[i3] = t3; <span class="kw">break</span>;</span>
-<span id="cb10-183"><a href="#cb10-183" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: s3[i0] = t0; s0[i1] = t1; s1[i2] = t2; s2[i3] = t3; <span class="kw">break</span>;</span>
-<span id="cb10-184"><a href="#cb10-184" aria-hidden="true"></a>    }</span>
-<span id="cb10-185"><a href="#cb10-185" aria-hidden="true"></a>    {% endif %}</span>
-<span id="cb10-186"><a href="#cb10-186" aria-hidden="true"></a>}</span>
-<span id="cb10-187"><a href="#cb10-187" aria-hidden="true"></a>{% endif %}</span>
-<span id="cb10-188"><a href="#cb10-188" aria-hidden="true"></a></span>
-<span id="cb10-189"><a href="#cb10-189" aria-hidden="true"></a></span>
-<span id="cb10-190"><a href="#cb10-190" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">5</span> %}</span>
-<span id="cb10-191"><a href="#cb10-191" aria-hidden="true"></a><span class="dt">void</span> fft_5({{c_type}} * <span class="dt">restrict</span> s0, {{c_type}} * <span class="dt">restrict</span> s1, {{c_type}} * <span class="dt">restrict</span> s2, {{c_type}} * <span class="dt">restrict</span> s3, {{c_type}} * <span class="dt">restrict</span> s4,{% <span class="kw">if</span> fpga %} {{c_type}} * <span class="dt">restrict</span> s0_in, {{c_type}} * <span class="dt">restrict</span> s1_in, {{c_type}} * <span class="dt">restrict</span> s2_in, {{c_type}} * <span class="dt">restrict</span> s3_in, {{c_type}} * <span class="dt">restrict</span> s4_in, {{c_type}} * <span class="dt">restrict</span> s0_out, {{c_type}} * <span class="dt">restrict</span> s1_out, {{c_type}} * <span class="dt">restrict</span> s2_out, {{c_type}} * <span class="dt">restrict</span> s3_out, {{c_type}} * <span class="dt">restrict</span> s4_out, <span class="dt">bool</span> first_iteration, <span class="dt">bool</span> last_iteration,{% endif %} <span class="dt">int</span> cycle, <span class="dt">int</span> i0, <span class="dt">int</span> i1, <span class="dt">int</span> i2, <span class="dt">int</span> i3, <span class="dt">int</span> i4, <span class="dt">int</span> iw)</span>
-<span id="cb10-192"><a href="#cb10-192" aria-hidden="true"></a> {</span>
-<span id="cb10-193"><a href="#cb10-193" aria-hidden="true"></a></span>
-<span id="cb10-194"><a href="#cb10-194" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c1 = <span class="fl">0.25</span>;                  <span class="co">// 1/4</span></span>
-<span id="cb10-195"><a href="#cb10-195" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c2 = <span class="fl">0.5590169943749475</span>;    <span class="co">// sqrt(5)/4</span></span>
-<span id="cb10-196"><a href="#cb10-196" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c3 = <span class="fl">0.6180339887498949</span>;    <span class="co">// sqrt( (5-sqrt(5))/(5+sqrt(5)) )</span></span>
-<span id="cb10-197"><a href="#cb10-197" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c4 = <span class="fl">0.9510565162951535</span>;    <span class="co">// 1/2 * np.sqrt(5/2 + np.sqrt(5)/2)</span></span>
-<span id="cb10-198"><a href="#cb10-198" aria-hidden="true"></a></span>
-<span id="cb10-199"><a href="#cb10-199" aria-hidden="true"></a>    {{c_type}} z0, z1, z2;</span>
-<span id="cb10-200"><a href="#cb10-200" aria-hidden="true"></a>    {{c_type}} s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;</span>
-<span id="cb10-201"><a href="#cb10-201" aria-hidden="true"></a>    {{c_type}} q1, q2;</span>
-<span id="cb10-202"><a href="#cb10-202" aria-hidden="true"></a></span>
-<span id="cb10-203"><a href="#cb10-203" aria-hidden="true"></a>    <span class="co">//z0 = t0</span></span>
-<span id="cb10-204"><a href="#cb10-204" aria-hidden="true"></a>    z0 = t0;</span>
-<span id="cb10-205"><a href="#cb10-205" aria-hidden="true"></a></span>
-<span id="cb10-206"><a href="#cb10-206" aria-hidden="true"></a>    <span class="co">//z1 = w0*t1</span></span>
-<span id="cb10-207"><a href="#cb10-207" aria-hidden="true"></a>    z1 = ({{c_type}}) (w0.even * t1.even - w0.odd * t1.odd,</span>
-<span id="cb10-208"><a href="#cb10-208" aria-hidden="true"></a>                   w0.even * t1.odd + w0.odd * t1.even);</span>
-<span id="cb10-209"><a href="#cb10-209" aria-hidden="true"></a></span>
-<span id="cb10-210"><a href="#cb10-210" aria-hidden="true"></a>    <span class="co">//z2 = w1*t2</span></span>
-<span id="cb10-211"><a href="#cb10-211" aria-hidden="true"></a>    z2 = ({{c_type}}) (w1.even * t2.even - w1.odd * t2.odd,</span>
-<span id="cb10-212"><a href="#cb10-212" aria-hidden="true"></a>                   w1.even * t2.odd + w1.odd * t2.even);</span>
-<span id="cb10-213"><a href="#cb10-213" aria-hidden="true"></a></span>
-<span id="cb10-214"><a href="#cb10-214" aria-hidden="true"></a>    <span class="co">//s1 = z1 - w3*t4</span></span>
-<span id="cb10-215"><a href="#cb10-215" aria-hidden="true"></a>    s1 = ({{c_type}}) (z1.even - w3.even * t4.even + w3.odd * t4.odd,</span>
-<span id="cb10-216"><a href="#cb10-216" aria-hidden="true"></a>                   z1.odd - w3.even * t4.odd - w3.odd * t4.even);</span>
-<span id="cb10-217"><a href="#cb10-217" aria-hidden="true"></a></span>
-<span id="cb10-218"><a href="#cb10-218" aria-hidden="true"></a>    <span class="co">//s2 = 2*z1-s1</span></span>
-<span id="cb10-219"><a href="#cb10-219" aria-hidden="true"></a>    s2 = ({{c_type}}) (<span class="dv">2</span>*z1.even - s1.even,</span>
-<span id="cb10-220"><a href="#cb10-220" aria-hidden="true"></a>                   <span class="dv">2</span>*z1.odd - s1.odd);</span>
-<span id="cb10-221"><a href="#cb10-221" aria-hidden="true"></a></span>
-<span id="cb10-222"><a href="#cb10-222" aria-hidden="true"></a>    <span class="co">//s3 = z2 - w2*t3</span></span>
-<span id="cb10-223"><a href="#cb10-223" aria-hidden="true"></a>    s3 = ({{c_type}}) (z2.even - w2.even * t3.even + w2.odd * t3.odd,</span>
-<span id="cb10-224"><a href="#cb10-224" aria-hidden="true"></a>                   z2.odd - w2.even * t3.odd - w2.odd * t3.even);</span>
-<span id="cb10-225"><a href="#cb10-225" aria-hidden="true"></a></span>
-<span id="cb10-226"><a href="#cb10-226" aria-hidden="true"></a>    <span class="co">//s4 = 2*z2 - s3</span></span>
-<span id="cb10-227"><a href="#cb10-227" aria-hidden="true"></a>    s4 = ({{c_type}}) (<span class="dv">2</span>*z2.even - s3.even,</span>
-<span id="cb10-228"><a href="#cb10-228" aria-hidden="true"></a>                   <span class="dv">2</span>*z2.odd - s3.odd);</span>
-<span id="cb10-229"><a href="#cb10-229" aria-hidden="true"></a></span>
-<span id="cb10-230"><a href="#cb10-230" aria-hidden="true"></a>    <span class="co">//s5 = s2+s4</span></span>
-<span id="cb10-231"><a href="#cb10-231" aria-hidden="true"></a>    s5 = ({{c_type}}) (s2.even + s4.even,</span>
-<span id="cb10-232"><a href="#cb10-232" aria-hidden="true"></a>                   s2.odd + s4.odd);</span>
-<span id="cb10-233"><a href="#cb10-233" aria-hidden="true"></a></span>
-<span id="cb10-234"><a href="#cb10-234" aria-hidden="true"></a>    <span class="co">//s6 = s2-s4</span></span>
-<span id="cb10-235"><a href="#cb10-235" aria-hidden="true"></a>    s6 = ({{c_type}}) (s2.even - s4.even,</span>
-<span id="cb10-236"><a href="#cb10-236" aria-hidden="true"></a>                   s2.odd - s4.odd);</span>
-<span id="cb10-237"><a href="#cb10-237" aria-hidden="true"></a></span>
-<span id="cb10-238"><a href="#cb10-238" aria-hidden="true"></a>    <span class="co">//s7 = z0 - c1*s5</span></span>
-<span id="cb10-239"><a href="#cb10-239" aria-hidden="true"></a>    s7 = ({{c_type}}) (z0.even - c1*s5.even,</span>
-<span id="cb10-240"><a href="#cb10-240" aria-hidden="true"></a>                   z0.odd - c1*s5.odd);</span>
-<span id="cb10-241"><a href="#cb10-241" aria-hidden="true"></a></span>
-<span id="cb10-242"><a href="#cb10-242" aria-hidden="true"></a>    <span class="co">//s8 = s7 - c2*s6</span></span>
-<span id="cb10-243"><a href="#cb10-243" aria-hidden="true"></a>    s8 = ({{c_type}}) (s7.even - c2*s6.even,</span>
-<span id="cb10-244"><a href="#cb10-244" aria-hidden="true"></a>                   s7.odd - c2*s6.odd);</span>
-<span id="cb10-245"><a href="#cb10-245" aria-hidden="true"></a></span>
-<span id="cb10-246"><a href="#cb10-246" aria-hidden="true"></a>    <span class="co">//s9 = 2*s7 - s8</span></span>
-<span id="cb10-247"><a href="#cb10-247" aria-hidden="true"></a>    s9 = ({{c_type}}) (<span class="dv">2</span>*s7.even - s8.even,</span>
-<span id="cb10-248"><a href="#cb10-248" aria-hidden="true"></a>                   <span class="dv">2</span>*s7.odd - s8.odd);</span>
-<span id="cb10-249"><a href="#cb10-249" aria-hidden="true"></a></span>
-<span id="cb10-250"><a href="#cb10-250" aria-hidden="true"></a>    <span class="co">//s10 = s1 + c3*s3</span></span>
-<span id="cb10-251"><a href="#cb10-251" aria-hidden="true"></a>    s10 = ({{c_type}}) (s1.even + c3*s3.even,</span>
-<span id="cb10-252"><a href="#cb10-252" aria-hidden="true"></a>                    s1.odd + c3*s3.odd);</span>
-<span id="cb10-253"><a href="#cb10-253" aria-hidden="true"></a></span>
-<span id="cb10-254"><a href="#cb10-254" aria-hidden="true"></a>    <span class="co">//s11 = c3*s1 - s3</span></span>
-<span id="cb10-255"><a href="#cb10-255" aria-hidden="true"></a>    s11 = ({{c_type}}) (c3*s1.even - s3.even,</span>
-<span id="cb10-256"><a href="#cb10-256" aria-hidden="true"></a>                    c3*s1.odd - s3.odd);</span>
-<span id="cb10-257"><a href="#cb10-257" aria-hidden="true"></a></span>
-<span id="cb10-258"><a href="#cb10-258" aria-hidden="true"></a>    <span class="co">// *x0 = z0 + s5</span></span>
-<span id="cb10-259"><a href="#cb10-259" aria-hidden="true"></a>    *x0 = ({{c_type}}) (z0.even + s5.even,</span>
-<span id="cb10-260"><a href="#cb10-260" aria-hidden="true"></a>                    z0.odd + s5.odd);</span>
-<span id="cb10-261"><a href="#cb10-261" aria-hidden="true"></a></span>
-<span id="cb10-262"><a href="#cb10-262" aria-hidden="true"></a>    <span class="co">//q1 = s9 - i*c4*s10</span></span>
-<span id="cb10-263"><a href="#cb10-263" aria-hidden="true"></a>    q1 = ({{c_type}}) (s9.even - c4*s10.odd,</span>
-<span id="cb10-264"><a href="#cb10-264" aria-hidden="true"></a>                   s9.odd + c4*s10.even);</span>
-<span id="cb10-265"><a href="#cb10-265" aria-hidden="true"></a></span>
-<span id="cb10-266"><a href="#cb10-266" aria-hidden="true"></a>    <span class="co">// *x1 = 2*s9 - q1</span></span>
-<span id="cb10-267"><a href="#cb10-267" aria-hidden="true"></a>    *x1 = ({{c_type}}) (<span class="dv">2</span>*s9.even - q1.even,</span>
-<span id="cb10-268"><a href="#cb10-268" aria-hidden="true"></a>                    <span class="dv">2</span>*s9.odd - q1.odd);</span>
-<span id="cb10-269"><a href="#cb10-269" aria-hidden="true"></a></span>
-<span id="cb10-270"><a href="#cb10-270" aria-hidden="true"></a>    <span class="co">//q2 = s8 - i*c4*s11</span></span>
-<span id="cb10-271"><a href="#cb10-271" aria-hidden="true"></a>    q2 = ({{c_type}}) (s8.even - c4*s11.odd,</span>
-<span id="cb10-272"><a href="#cb10-272" aria-hidden="true"></a>                   s8.odd + c4*s11.even);</span>
-<span id="cb10-273"><a href="#cb10-273" aria-hidden="true"></a></span>
-<span id="cb10-274"><a href="#cb10-274" aria-hidden="true"></a>    <span class="co">// *x2 = 2*s8-q2</span></span>
-<span id="cb10-275"><a href="#cb10-275" aria-hidden="true"></a>    *x2 = ({{c_type}}) (<span class="dv">2</span>*s8.even - q2.even,</span>
-<span id="cb10-276"><a href="#cb10-276" aria-hidden="true"></a>                    <span class="dv">2</span>*s8.odd - q2.odd);</span>
-<span id="cb10-277"><a href="#cb10-277" aria-hidden="true"></a></span>
-<span id="cb10-278"><a href="#cb10-278" aria-hidden="true"></a>    <span class="co">// *x3 = q2</span></span>
-<span id="cb10-279"><a href="#cb10-279" aria-hidden="true"></a>    *x3 = q2;</span>
-<span id="cb10-280"><a href="#cb10-280" aria-hidden="true"></a></span>
-<span id="cb10-281"><a href="#cb10-281" aria-hidden="true"></a>    <span class="co">// *x4 = q1 </span></span>
-<span id="cb10-282"><a href="#cb10-282" aria-hidden="true"></a>    *x4 = q1;</span>
-<span id="cb10-283"><a href="#cb10-283" aria-hidden="true"></a></span>
-<span id="cb10-284"><a href="#cb10-284" aria-hidden="true"></a>    <span class="kw">return</span> <span class="fl">0.0</span>;</span>
-<span id="cb10-285"><a href="#cb10-285" aria-hidden="true"></a>}</span>
-<span id="cb10-286"><a href="#cb10-286" aria-hidden="true"></a>{% endif %}</span>
-<span id="cb10-287"><a href="#cb10-287" aria-hidden="true"></a></span>
-<span id="cb10-288"><a href="#cb10-288" aria-hidden="true"></a>&lt;&lt;fma-codelet-tests&gt;&gt;</span></code></pre></div>
+<span id="cb10-140"><a href="#cb10-140" aria-hidden="true"></a></span>
+<span id="cb10-141"><a href="#cb10-141" aria-hidden="true"></a>    b.even = t0.even - w[<span class="dv">1</span>].even * t2.even + w[<span class="dv">1</span>].odd * t2.odd;</span>
+<span id="cb10-142"><a href="#cb10-142" aria-hidden="true"></a>    b.odd = t0.odd - w[<span class="dv">1</span>].even * t2.odd - w[<span class="dv">1</span>].odd * t2.even;</span>
+<span id="cb10-143"><a href="#cb10-143" aria-hidden="true"></a>    a.even = <span class="dv">2</span> * t0.even - b.even;</span>
+<span id="cb10-144"><a href="#cb10-144" aria-hidden="true"></a>    a.odd = <span class="dv">2</span> * t0.odd - b.odd;</span>
+<span id="cb10-145"><a href="#cb10-145" aria-hidden="true"></a>    d.even = t1.even - w[<span class="dv">1</span>].even * t3.even + w[<span class="dv">1</span>].odd * t3.odd;</span>
+<span id="cb10-146"><a href="#cb10-146" aria-hidden="true"></a>    d.odd = t1.odd - w[<span class="dv">1</span>].even * t3.odd - w[<span class="dv">1</span>].odd * t3.even;</span>
+<span id="cb10-147"><a href="#cb10-147" aria-hidden="true"></a>    c.even = <span class="dv">2</span> * t1.even - d.even;</span>
+<span id="cb10-148"><a href="#cb10-148" aria-hidden="true"></a>    c.odd = <span class="dv">2</span> * t1.odd - d.odd;</span>
+<span id="cb10-149"><a href="#cb10-149" aria-hidden="true"></a>    t2 = c;</span>
+<span id="cb10-150"><a href="#cb10-150" aria-hidden="true"></a>    c.even = a.even - w[<span class="dv">0</span>].even * t2.even + w[<span class="dv">0</span>].odd * t2.odd;</span>
+<span id="cb10-151"><a href="#cb10-151" aria-hidden="true"></a>    c.odd = a.odd - w[<span class="dv">0</span>].even * t2.odd - w[<span class="dv">0</span>].odd * t2.even;</span>
+<span id="cb10-152"><a href="#cb10-152" aria-hidden="true"></a>    t2 = c;</span>
+<span id="cb10-153"><a href="#cb10-153" aria-hidden="true"></a>    t0.even = <span class="dv">2</span> * a.even - c.even;</span>
+<span id="cb10-154"><a href="#cb10-154" aria-hidden="true"></a>    t0.odd = <span class="dv">2</span> * a.odd - c.odd;</span>
+<span id="cb10-155"><a href="#cb10-155" aria-hidden="true"></a>    t1 = d;</span>
+<span id="cb10-156"><a href="#cb10-156" aria-hidden="true"></a>    d.even = b.even + w[<span class="dv">0</span>].even * t1.odd + w[<span class="dv">0</span>].odd * t1.even;</span>
+<span id="cb10-157"><a href="#cb10-157" aria-hidden="true"></a>    d.odd = b.odd - w[<span class="dv">0</span>].even * t1.even + w[<span class="dv">0</span>].odd * t1.odd;</span>
+<span id="cb10-158"><a href="#cb10-158" aria-hidden="true"></a>    t1 = d;</span>
+<span id="cb10-159"><a href="#cb10-159" aria-hidden="true"></a>    t3.even = <span class="dv">2</span> * b.even - d.even;</span>
+<span id="cb10-160"><a href="#cb10-160" aria-hidden="true"></a>    t3.odd = <span class="dv">2</span> * b.odd - d.odd;</span>
+<span id="cb10-161"><a href="#cb10-161" aria-hidden="true"></a></span>
+<span id="cb10-162"><a href="#cb10-162" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
+<span id="cb10-163"><a href="#cb10-163" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb10-164"><a href="#cb10-164" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP({{c_type}}, t2, t3); SWAP({{c_type}}, t1, t2); SWAP({{c_type}}, t0, t1); <span class="kw">break</span>;</span>
+<span id="cb10-165"><a href="#cb10-165" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP({{c_type}}, t1, t3); SWAP({{c_type}}, t0, t2); <span class="kw">break</span>;</span>
+<span id="cb10-166"><a href="#cb10-166" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP({{c_type}}, t0, t2); SWAP({{c_type}}, t0, t1); SWAP({{c_type}}, t2, t3); <span class="kw">break</span>;</span>
+<span id="cb10-167"><a href="#cb10-167" aria-hidden="true"></a>    }</span>
+<span id="cb10-168"><a href="#cb10-168" aria-hidden="true"></a>    <span class="kw">if</span> ( last_iteration )</span>
+<span id="cb10-169"><a href="#cb10-169" aria-hidden="true"></a>    {</span>
+<span id="cb10-170"><a href="#cb10-170" aria-hidden="true"></a>        s0_out[i0] = t0; s1_out[i1] = t1; s2_out[i2] = t2; s3_out[i3] = t3;</span>
+<span id="cb10-171"><a href="#cb10-171" aria-hidden="true"></a>    }</span>
+<span id="cb10-172"><a href="#cb10-172" aria-hidden="true"></a>    <span class="kw">else</span></span>
+<span id="cb10-173"><a href="#cb10-173" aria-hidden="true"></a>    {</span>
+<span id="cb10-174"><a href="#cb10-174" aria-hidden="true"></a>        s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;</span>
+<span id="cb10-175"><a href="#cb10-175" aria-hidden="true"></a>    }</span>
+<span id="cb10-176"><a href="#cb10-176" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
+<span id="cb10-177"><a href="#cb10-177" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb10-178"><a href="#cb10-178" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb10-179"><a href="#cb10-179" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: s1[i0] = t0; s2[i1] = t1; s3[i2] = t2; s0[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb10-180"><a href="#cb10-180" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: s2[i0] = t0; s3[i1] = t1; s0[i2] = t2; s1[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb10-181"><a href="#cb10-181" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: s3[i0] = t0; s0[i1] = t1; s1[i2] = t2; s2[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb10-182"><a href="#cb10-182" aria-hidden="true"></a>    }</span>
+<span id="cb10-183"><a href="#cb10-183" aria-hidden="true"></a>    {% endif %}</span>
+<span id="cb10-184"><a href="#cb10-184" aria-hidden="true"></a>}</span>
+<span id="cb10-185"><a href="#cb10-185" aria-hidden="true"></a>{% endif %}</span>
+<span id="cb10-186"><a href="#cb10-186" aria-hidden="true"></a></span>
+<span id="cb10-187"><a href="#cb10-187" aria-hidden="true"></a></span>
+<span id="cb10-188"><a href="#cb10-188" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">5</span> %}</span>
+<span id="cb10-189"><a href="#cb10-189" aria-hidden="true"></a><span class="dt">void</span> fft_5({{c_type}} * <span class="dt">restrict</span> s0, {{c_type}} * <span class="dt">restrict</span> s1, {{c_type}} * <span class="dt">restrict</span> s2, {{c_type}} * <span class="dt">restrict</span> s3, {{c_type}} * <span class="dt">restrict</span> s4,{% <span class="kw">if</span> fpga %} {{c_type}} * <span class="dt">restrict</span> s0_in, {{c_type}} * <span class="dt">restrict</span> s1_in, {{c_type}} * <span class="dt">restrict</span> s2_in, {{c_type}} * <span class="dt">restrict</span> s3_in, {{c_type}} * <span class="dt">restrict</span> s4_in, {{c_type}} * <span class="dt">restrict</span> s0_out, {{c_type}} * <span class="dt">restrict</span> s1_out, {{c_type}} * <span class="dt">restrict</span> s2_out, {{c_type}} * <span class="dt">restrict</span> s3_out, {{c_type}} * <span class="dt">restrict</span> s4_out, <span class="dt">bool</span> first_iteration, <span class="dt">bool</span> last_iteration,{% endif %} <span class="dt">int</span> cycle, <span class="dt">int</span> i0, <span class="dt">int</span> i1, <span class="dt">int</span> i2, <span class="dt">int</span> i3, <span class="dt">int</span> i4, <span class="dt">int</span> iw)</span>
+<span id="cb10-190"><a href="#cb10-190" aria-hidden="true"></a> {</span>
+<span id="cb10-191"><a href="#cb10-191" aria-hidden="true"></a></span>
+<span id="cb10-192"><a href="#cb10-192" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c1 = <span class="fl">0.25</span>;                  <span class="co">// 1/4</span></span>
+<span id="cb10-193"><a href="#cb10-193" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c2 = <span class="fl">0.5590169943749475</span>;    <span class="co">// sqrt(5)/4</span></span>
+<span id="cb10-194"><a href="#cb10-194" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c3 = <span class="fl">0.6180339887498949</span>;    <span class="co">// sqrt( (5-sqrt(5))/(5+sqrt(5)) )</span></span>
+<span id="cb10-195"><a href="#cb10-195" aria-hidden="true"></a>    <span class="dt">const</span> <span class="dt">float</span> c4 = <span class="fl">0.9510565162951535</span>;    <span class="co">// 1/2 * np.sqrt(5/2 + np.sqrt(5)/2)</span></span>
+<span id="cb10-196"><a href="#cb10-196" aria-hidden="true"></a></span>
+<span id="cb10-197"><a href="#cb10-197" aria-hidden="true"></a>    {{c_type}} z0, z1, z2;</span>
+<span id="cb10-198"><a href="#cb10-198" aria-hidden="true"></a>    {{c_type}} s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11;</span>
+<span id="cb10-199"><a href="#cb10-199" aria-hidden="true"></a>    {{c_type}} q1, q2;</span>
+<span id="cb10-200"><a href="#cb10-200" aria-hidden="true"></a></span>
+<span id="cb10-201"><a href="#cb10-201" aria-hidden="true"></a>    <span class="co">//z0 = t0</span></span>
+<span id="cb10-202"><a href="#cb10-202" aria-hidden="true"></a>    z0 = t0;</span>
+<span id="cb10-203"><a href="#cb10-203" aria-hidden="true"></a></span>
+<span id="cb10-204"><a href="#cb10-204" aria-hidden="true"></a>    <span class="co">//z1 = w0*t1</span></span>
+<span id="cb10-205"><a href="#cb10-205" aria-hidden="true"></a>    z1 = ({{c_type}}) (w0.even * t1.even - w0.odd * t1.odd,</span>
+<span id="cb10-206"><a href="#cb10-206" aria-hidden="true"></a>                   w0.even * t1.odd + w0.odd * t1.even);</span>
+<span id="cb10-207"><a href="#cb10-207" aria-hidden="true"></a></span>
+<span id="cb10-208"><a href="#cb10-208" aria-hidden="true"></a>    <span class="co">//z2 = w1*t2</span></span>
+<span id="cb10-209"><a href="#cb10-209" aria-hidden="true"></a>    z2 = ({{c_type}}) (w1.even * t2.even - w1.odd * t2.odd,</span>
+<span id="cb10-210"><a href="#cb10-210" aria-hidden="true"></a>                   w1.even * t2.odd + w1.odd * t2.even);</span>
+<span id="cb10-211"><a href="#cb10-211" aria-hidden="true"></a></span>
+<span id="cb10-212"><a href="#cb10-212" aria-hidden="true"></a>    <span class="co">//s1 = z1 - w3*t4</span></span>
+<span id="cb10-213"><a href="#cb10-213" aria-hidden="true"></a>    s1 = ({{c_type}}) (z1.even - w3.even * t4.even + w3.odd * t4.odd,</span>
+<span id="cb10-214"><a href="#cb10-214" aria-hidden="true"></a>                   z1.odd - w3.even * t4.odd - w3.odd * t4.even);</span>
+<span id="cb10-215"><a href="#cb10-215" aria-hidden="true"></a></span>
+<span id="cb10-216"><a href="#cb10-216" aria-hidden="true"></a>    <span class="co">//s2 = 2*z1-s1</span></span>
+<span id="cb10-217"><a href="#cb10-217" aria-hidden="true"></a>    s2 = ({{c_type}}) (<span class="dv">2</span>*z1.even - s1.even,</span>
+<span id="cb10-218"><a href="#cb10-218" aria-hidden="true"></a>                   <span class="dv">2</span>*z1.odd - s1.odd);</span>
+<span id="cb10-219"><a href="#cb10-219" aria-hidden="true"></a></span>
+<span id="cb10-220"><a href="#cb10-220" aria-hidden="true"></a>    <span class="co">//s3 = z2 - w2*t3</span></span>
+<span id="cb10-221"><a href="#cb10-221" aria-hidden="true"></a>    s3 = ({{c_type}}) (z2.even - w2.even * t3.even + w2.odd * t3.odd,</span>
+<span id="cb10-222"><a href="#cb10-222" aria-hidden="true"></a>                   z2.odd - w2.even * t3.odd - w2.odd * t3.even);</span>
+<span id="cb10-223"><a href="#cb10-223" aria-hidden="true"></a></span>
+<span id="cb10-224"><a href="#cb10-224" aria-hidden="true"></a>    <span class="co">//s4 = 2*z2 - s3</span></span>
+<span id="cb10-225"><a href="#cb10-225" aria-hidden="true"></a>    s4 = ({{c_type}}) (<span class="dv">2</span>*z2.even - s3.even,</span>
+<span id="cb10-226"><a href="#cb10-226" aria-hidden="true"></a>                   <span class="dv">2</span>*z2.odd - s3.odd);</span>
+<span id="cb10-227"><a href="#cb10-227" aria-hidden="true"></a></span>
+<span id="cb10-228"><a href="#cb10-228" aria-hidden="true"></a>    <span class="co">//s5 = s2+s4</span></span>
+<span id="cb10-229"><a href="#cb10-229" aria-hidden="true"></a>    s5 = ({{c_type}}) (s2.even + s4.even,</span>
+<span id="cb10-230"><a href="#cb10-230" aria-hidden="true"></a>                   s2.odd + s4.odd);</span>
+<span id="cb10-231"><a href="#cb10-231" aria-hidden="true"></a></span>
+<span id="cb10-232"><a href="#cb10-232" aria-hidden="true"></a>    <span class="co">//s6 = s2-s4</span></span>
+<span id="cb10-233"><a href="#cb10-233" aria-hidden="true"></a>    s6 = ({{c_type}}) (s2.even - s4.even,</span>
+<span id="cb10-234"><a href="#cb10-234" aria-hidden="true"></a>                   s2.odd - s4.odd);</span>
+<span id="cb10-235"><a href="#cb10-235" aria-hidden="true"></a></span>
+<span id="cb10-236"><a href="#cb10-236" aria-hidden="true"></a>    <span class="co">//s7 = z0 - c1*s5</span></span>
+<span id="cb10-237"><a href="#cb10-237" aria-hidden="true"></a>    s7 = ({{c_type}}) (z0.even - c1*s5.even,</span>
+<span id="cb10-238"><a href="#cb10-238" aria-hidden="true"></a>                   z0.odd - c1*s5.odd);</span>
+<span id="cb10-239"><a href="#cb10-239" aria-hidden="true"></a></span>
+<span id="cb10-240"><a href="#cb10-240" aria-hidden="true"></a>    <span class="co">//s8 = s7 - c2*s6</span></span>
+<span id="cb10-241"><a href="#cb10-241" aria-hidden="true"></a>    s8 = ({{c_type}}) (s7.even - c2*s6.even,</span>
+<span id="cb10-242"><a href="#cb10-242" aria-hidden="true"></a>                   s7.odd - c2*s6.odd);</span>
+<span id="cb10-243"><a href="#cb10-243" aria-hidden="true"></a></span>
+<span id="cb10-244"><a href="#cb10-244" aria-hidden="true"></a>    <span class="co">//s9 = 2*s7 - s8</span></span>
+<span id="cb10-245"><a href="#cb10-245" aria-hidden="true"></a>    s9 = ({{c_type}}) (<span class="dv">2</span>*s7.even - s8.even,</span>
+<span id="cb10-246"><a href="#cb10-246" aria-hidden="true"></a>                   <span class="dv">2</span>*s7.odd - s8.odd);</span>
+<span id="cb10-247"><a href="#cb10-247" aria-hidden="true"></a></span>
+<span id="cb10-248"><a href="#cb10-248" aria-hidden="true"></a>    <span class="co">//s10 = s1 + c3*s3</span></span>
+<span id="cb10-249"><a href="#cb10-249" aria-hidden="true"></a>    s10 = ({{c_type}}) (s1.even + c3*s3.even,</span>
+<span id="cb10-250"><a href="#cb10-250" aria-hidden="true"></a>                    s1.odd + c3*s3.odd);</span>
+<span id="cb10-251"><a href="#cb10-251" aria-hidden="true"></a></span>
+<span id="cb10-252"><a href="#cb10-252" aria-hidden="true"></a>    <span class="co">//s11 = c3*s1 - s3</span></span>
+<span id="cb10-253"><a href="#cb10-253" aria-hidden="true"></a>    s11 = ({{c_type}}) (c3*s1.even - s3.even,</span>
+<span id="cb10-254"><a href="#cb10-254" aria-hidden="true"></a>                    c3*s1.odd - s3.odd);</span>
+<span id="cb10-255"><a href="#cb10-255" aria-hidden="true"></a></span>
+<span id="cb10-256"><a href="#cb10-256" aria-hidden="true"></a>    <span class="co">// *x0 = z0 + s5</span></span>
+<span id="cb10-257"><a href="#cb10-257" aria-hidden="true"></a>    *x0 = ({{c_type}}) (z0.even + s5.even,</span>
+<span id="cb10-258"><a href="#cb10-258" aria-hidden="true"></a>                    z0.odd + s5.odd);</span>
+<span id="cb10-259"><a href="#cb10-259" aria-hidden="true"></a></span>
+<span id="cb10-260"><a href="#cb10-260" aria-hidden="true"></a>    <span class="co">//q1 = s9 - i*c4*s10</span></span>
+<span id="cb10-261"><a href="#cb10-261" aria-hidden="true"></a>    q1 = ({{c_type}}) (s9.even - c4*s10.odd,</span>
+<span id="cb10-262"><a href="#cb10-262" aria-hidden="true"></a>                   s9.odd + c4*s10.even);</span>
+<span id="cb10-263"><a href="#cb10-263" aria-hidden="true"></a></span>
+<span id="cb10-264"><a href="#cb10-264" aria-hidden="true"></a>    <span class="co">// *x1 = 2*s9 - q1</span></span>
+<span id="cb10-265"><a href="#cb10-265" aria-hidden="true"></a>    *x1 = ({{c_type}}) (<span class="dv">2</span>*s9.even - q1.even,</span>
+<span id="cb10-266"><a href="#cb10-266" aria-hidden="true"></a>                    <span class="dv">2</span>*s9.odd - q1.odd);</span>
+<span id="cb10-267"><a href="#cb10-267" aria-hidden="true"></a></span>
+<span id="cb10-268"><a href="#cb10-268" aria-hidden="true"></a>    <span class="co">//q2 = s8 - i*c4*s11</span></span>
+<span id="cb10-269"><a href="#cb10-269" aria-hidden="true"></a>    q2 = ({{c_type}}) (s8.even - c4*s11.odd,</span>
+<span id="cb10-270"><a href="#cb10-270" aria-hidden="true"></a>                   s8.odd + c4*s11.even);</span>
+<span id="cb10-271"><a href="#cb10-271" aria-hidden="true"></a></span>
+<span id="cb10-272"><a href="#cb10-272" aria-hidden="true"></a>    <span class="co">// *x2 = 2*s8-q2</span></span>
+<span id="cb10-273"><a href="#cb10-273" aria-hidden="true"></a>    *x2 = ({{c_type}}) (<span class="dv">2</span>*s8.even - q2.even,</span>
+<span id="cb10-274"><a href="#cb10-274" aria-hidden="true"></a>                    <span class="dv">2</span>*s8.odd - q2.odd);</span>
+<span id="cb10-275"><a href="#cb10-275" aria-hidden="true"></a></span>
+<span id="cb10-276"><a href="#cb10-276" aria-hidden="true"></a>    <span class="co">// *x3 = q2</span></span>
+<span id="cb10-277"><a href="#cb10-277" aria-hidden="true"></a>    *x3 = q2;</span>
+<span id="cb10-278"><a href="#cb10-278" aria-hidden="true"></a></span>
+<span id="cb10-279"><a href="#cb10-279" aria-hidden="true"></a>    <span class="co">// *x4 = q1 </span></span>
+<span id="cb10-280"><a href="#cb10-280" aria-hidden="true"></a>    *x4 = q1;</span>
+<span id="cb10-281"><a href="#cb10-281" aria-hidden="true"></a></span>
+<span id="cb10-282"><a href="#cb10-282" aria-hidden="true"></a>    <span class="kw">return</span> <span class="fl">0.0</span>;</span>
+<span id="cb10-283"><a href="#cb10-283" aria-hidden="true"></a>}</span>
+<span id="cb10-284"><a href="#cb10-284" aria-hidden="true"></a>{% endif %}</span>
+<span id="cb10-285"><a href="#cb10-285" aria-hidden="true"></a></span>
+<span id="cb10-286"><a href="#cb10-286" aria-hidden="true"></a>&lt;&lt;fma-codelet-tests&gt;&gt;</span></code></pre></div>
 </div>
 </div>
 <h2 id="testing">Testing</h2>
@@ -1103,8 +1101,8 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-27"><a href="#cb13-27" aria-hidden="true"></a>    {% endif %}</span>
 <span id="cb13-28"><a href="#cb13-28" aria-hidden="true"></a></span>
 <span id="cb13-29"><a href="#cb13-29" aria-hidden="true"></a>    ws0 = t0;</span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true"></a>    ws1 = ({{c_type}}) (w[<span class="dv">0</span>].even * t1.even - w[<span class="dv">0</span>].odd * t1.odd,</span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true"></a>                    w[<span class="dv">0</span>].even * t1.odd + w[<span class="dv">0</span>].odd * t1.even);</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true"></a>    ws1.even = w[<span class="dv">0</span>].even * t1.even - w[<span class="dv">0</span>].odd * t1.odd;</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true"></a>    ws1.odd = w[<span class="dv">0</span>].even * t1.odd + w[<span class="dv">0</span>].odd * t1.even;</span>
 <span id="cb13-32"><a href="#cb13-32" aria-hidden="true"></a></span>
 <span id="cb13-33"><a href="#cb13-33" aria-hidden="true"></a>    t0 = ws0 + ws1;</span>
 <span id="cb13-34"><a href="#cb13-34" aria-hidden="true"></a>    t1 = ws0 - ws1;</span>
@@ -1180,63 +1178,65 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-104"><a href="#cb13-104" aria-hidden="true"></a>    {% endif %}</span>
 <span id="cb13-105"><a href="#cb13-105" aria-hidden="true"></a></span>
 <span id="cb13-106"><a href="#cb13-106" aria-hidden="true"></a>    ws0 = t0;</span>
-<span id="cb13-107"><a href="#cb13-107" aria-hidden="true"></a>    ws1 = ({{c_type}}) (w[<span class="dv">0</span>].even * t1.even - w[<span class="dv">0</span>].odd * t1.odd,</span>
-<span id="cb13-108"><a href="#cb13-108" aria-hidden="true"></a>                    w[<span class="dv">0</span>].even * t1.odd + w[<span class="dv">0</span>].odd * t1.even);</span>
-<span id="cb13-109"><a href="#cb13-109" aria-hidden="true"></a>    ws2 = ({{c_type}}) (w[<span class="dv">1</span>].even * t2.even - w[<span class="dv">1</span>].odd * t2.odd,</span>
-<span id="cb13-110"><a href="#cb13-110" aria-hidden="true"></a>                    w[<span class="dv">1</span>].even * t2.odd + w[<span class="dv">1</span>].odd * t2.even);</span>
-<span id="cb13-111"><a href="#cb13-111" aria-hidden="true"></a>    ws3 = ({{c_type}}) (w[<span class="dv">2</span>].even * t3.even - w[<span class="dv">2</span>].odd * t3.odd,</span>
-<span id="cb13-112"><a href="#cb13-112" aria-hidden="true"></a>                    w[<span class="dv">2</span>].even * t3.odd + w[<span class="dv">2</span>].odd * t3.even);</span>
+<span id="cb13-107"><a href="#cb13-107" aria-hidden="true"></a>    ws1.even = w[<span class="dv">0</span>].even * t1.even - w[<span class="dv">0</span>].odd * t1.odd;</span>
+<span id="cb13-108"><a href="#cb13-108" aria-hidden="true"></a>    ws1.odd = w[<span class="dv">0</span>].even * t1.odd + w[<span class="dv">0</span>].odd * t1.even;</span>
+<span id="cb13-109"><a href="#cb13-109" aria-hidden="true"></a>    ws2.even = w[<span class="dv">1</span>].even * t2.even - w[<span class="dv">1</span>].odd * t2.odd;</span>
+<span id="cb13-110"><a href="#cb13-110" aria-hidden="true"></a>    ws2.odd = w[<span class="dv">1</span>].even * t2.odd + w[<span class="dv">1</span>].odd * t2.even;</span>
+<span id="cb13-111"><a href="#cb13-111" aria-hidden="true"></a>    ws3.even = w[<span class="dv">2</span>].even * t3.even - w[<span class="dv">2</span>].odd * t3.odd;</span>
+<span id="cb13-112"><a href="#cb13-112" aria-hidden="true"></a>    ws3.odd = w[<span class="dv">2</span>].even * t3.odd + w[<span class="dv">2</span>].odd * t3.even;</span>
 <span id="cb13-113"><a href="#cb13-113" aria-hidden="true"></a></span>
 <span id="cb13-114"><a href="#cb13-114" aria-hidden="true"></a>    a = ws0 + ws2;</span>
 <span id="cb13-115"><a href="#cb13-115" aria-hidden="true"></a>    b = ws1 + ws3;</span>
 <span id="cb13-116"><a href="#cb13-116" aria-hidden="true"></a>    c = ws0 - ws2;</span>
 <span id="cb13-117"><a href="#cb13-117" aria-hidden="true"></a>    d = ws1 - ws3;</span>
 <span id="cb13-118"><a href="#cb13-118" aria-hidden="true"></a>    t0 = a + b;</span>
-<span id="cb13-119"><a href="#cb13-119" aria-hidden="true"></a>    t1 = ({{c_type}}) (c.even + d.odd, c.odd - d.even);</span>
-<span id="cb13-120"><a href="#cb13-120" aria-hidden="true"></a>    t2 = a - b;</span>
-<span id="cb13-121"><a href="#cb13-121" aria-hidden="true"></a>    t3 = ({{c_type}}) (c.even - d.odd, c.odd + d.even);</span>
-<span id="cb13-122"><a href="#cb13-122" aria-hidden="true"></a></span>
-<span id="cb13-123"><a href="#cb13-123" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
-<span id="cb13-124"><a href="#cb13-124" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb13-125"><a href="#cb13-125" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP({{c_type}}, t2, t3); SWAP({{c_type}}, t1, t2); SWAP({{c_type}}, t0, t1); <span class="kw">break</span>;</span>
-<span id="cb13-126"><a href="#cb13-126" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP({{c_type}}, t1, t3); SWAP({{c_type}}, t0, t2); <span class="kw">break</span>;</span>
-<span id="cb13-127"><a href="#cb13-127" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP({{c_type}}, t0, t2); SWAP({{c_type}}, t0, t1); SWAP({{c_type}}, t2, t3); <span class="kw">break</span>;</span>
-<span id="cb13-128"><a href="#cb13-128" aria-hidden="true"></a>    }</span>
-<span id="cb13-129"><a href="#cb13-129" aria-hidden="true"></a>    <span class="kw">if</span> ( last_iteration )</span>
-<span id="cb13-130"><a href="#cb13-130" aria-hidden="true"></a>    {</span>
-<span id="cb13-131"><a href="#cb13-131" aria-hidden="true"></a>        s0_out[i0] = t0; s1_out[i1] = t1; s2_out[i2] = t2; s3_out[i3] = t3;</span>
-<span id="cb13-132"><a href="#cb13-132" aria-hidden="true"></a>    }</span>
-<span id="cb13-133"><a href="#cb13-133" aria-hidden="true"></a>    <span class="kw">else</span></span>
-<span id="cb13-134"><a href="#cb13-134" aria-hidden="true"></a>    {</span>
-<span id="cb13-135"><a href="#cb13-135" aria-hidden="true"></a>        s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;</span>
-<span id="cb13-136"><a href="#cb13-136" aria-hidden="true"></a>    }</span>
-<span id="cb13-137"><a href="#cb13-137" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
-<span id="cb13-138"><a href="#cb13-138" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
-<span id="cb13-139"><a href="#cb13-139" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; <span class="kw">break</span>;</span>
-<span id="cb13-140"><a href="#cb13-140" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: s1[i0] = t0; s2[i1] = t1; s3[i2] = t2; s0[i3] = t3; <span class="kw">break</span>;</span>
-<span id="cb13-141"><a href="#cb13-141" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: s2[i0] = t0; s3[i1] = t1; s0[i2] = t2; s1[i3] = t3; <span class="kw">break</span>;</span>
-<span id="cb13-142"><a href="#cb13-142" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: s3[i0] = t0; s0[i1] = t1; s1[i2] = t2; s2[i3] = t3; <span class="kw">break</span>;</span>
-<span id="cb13-143"><a href="#cb13-143" aria-hidden="true"></a>    }</span>
-<span id="cb13-144"><a href="#cb13-144" aria-hidden="true"></a>    {% endif %}</span>
-<span id="cb13-145"><a href="#cb13-145" aria-hidden="true"></a>}</span>
-<span id="cb13-146"><a href="#cb13-146" aria-hidden="true"></a></span>
-<span id="cb13-147"><a href="#cb13-147" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
-<span id="cb13-148"><a href="#cb13-148" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_4(<span class="kw">__global</span> {{c_type}} *x, <span class="kw">__global</span> {{c_type}} *y, <span class="dt">int</span> n) {</span>
-<span id="cb13-149"><a href="#cb13-149" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>) * <span class="dv">4</span>;</span>
-<span id="cb13-150"><a href="#cb13-150" aria-hidden="true"></a></span>
-<span id="cb13-151"><a href="#cb13-151" aria-hidden="true"></a>    <span class="co">//n is the number of radix4 ffts to perform</span></span>
-<span id="cb13-152"><a href="#cb13-152" aria-hidden="true"></a>    <span class="kw">if</span> (i &lt; <span class="dv">4</span> * n) {</span>
-<span id="cb13-153"><a href="#cb13-153" aria-hidden="true"></a>        {{c_type}} s0 = x[i];</span>
-<span id="cb13-154"><a href="#cb13-154" aria-hidden="true"></a>        {{c_type}} s1 = x[i + <span class="dv">1</span>];</span>
-<span id="cb13-155"><a href="#cb13-155" aria-hidden="true"></a>        {{c_type}} s2 = x[i + <span class="dv">2</span>];</span>
-<span id="cb13-156"><a href="#cb13-156" aria-hidden="true"></a>        {{c_type}} s3 = x[i + <span class="dv">3</span>];</span>
-<span id="cb13-157"><a href="#cb13-157" aria-hidden="true"></a>        fft_4(&amp;s0, &amp;s1, &amp;s2, &amp;s3, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>);</span>
-<span id="cb13-158"><a href="#cb13-158" aria-hidden="true"></a></span>
-<span id="cb13-159"><a href="#cb13-159" aria-hidden="true"></a>        y[i] = s0;    y[i + <span class="dv">1</span>] = s1;    y[i + <span class="dv">2</span>] = s2;    y[i + <span class="dv">3</span>] = s3;</span>
-<span id="cb13-160"><a href="#cb13-160" aria-hidden="true"></a>    }</span>
-<span id="cb13-161"><a href="#cb13-161" aria-hidden="true"></a>}</span>
-<span id="cb13-162"><a href="#cb13-162" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span>
-<span id="cb13-163"><a href="#cb13-163" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
+<span id="cb13-119"><a href="#cb13-119" aria-hidden="true"></a>    t1.even = c.even + d.odd;</span>
+<span id="cb13-120"><a href="#cb13-120" aria-hidden="true"></a>    t1.odd = c.odd - d.even;</span>
+<span id="cb13-121"><a href="#cb13-121" aria-hidden="true"></a>    t2 = a - b;</span>
+<span id="cb13-122"><a href="#cb13-122" aria-hidden="true"></a>    t3.even = c.even - d.odd;</span>
+<span id="cb13-123"><a href="#cb13-123" aria-hidden="true"></a>    t3.odd = c.odd + d.even;</span>
+<span id="cb13-124"><a href="#cb13-124" aria-hidden="true"></a></span>
+<span id="cb13-125"><a href="#cb13-125" aria-hidden="true"></a>    {% <span class="kw">if</span> fpga %}</span>
+<span id="cb13-126"><a href="#cb13-126" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-127"><a href="#cb13-127" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: SWAP({{c_type}}, t2, t3); SWAP({{c_type}}, t1, t2); SWAP({{c_type}}, t0, t1); <span class="kw">break</span>;</span>
+<span id="cb13-128"><a href="#cb13-128" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: SWAP({{c_type}}, t1, t3); SWAP({{c_type}}, t0, t2); <span class="kw">break</span>;</span>
+<span id="cb13-129"><a href="#cb13-129" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: SWAP({{c_type}}, t0, t2); SWAP({{c_type}}, t0, t1); SWAP({{c_type}}, t2, t3); <span class="kw">break</span>;</span>
+<span id="cb13-130"><a href="#cb13-130" aria-hidden="true"></a>    }</span>
+<span id="cb13-131"><a href="#cb13-131" aria-hidden="true"></a>    <span class="kw">if</span> ( last_iteration )</span>
+<span id="cb13-132"><a href="#cb13-132" aria-hidden="true"></a>    {</span>
+<span id="cb13-133"><a href="#cb13-133" aria-hidden="true"></a>        s0_out[i0] = t0; s1_out[i1] = t1; s2_out[i2] = t2; s3_out[i3] = t3;</span>
+<span id="cb13-134"><a href="#cb13-134" aria-hidden="true"></a>    }</span>
+<span id="cb13-135"><a href="#cb13-135" aria-hidden="true"></a>    <span class="kw">else</span></span>
+<span id="cb13-136"><a href="#cb13-136" aria-hidden="true"></a>    {</span>
+<span id="cb13-137"><a href="#cb13-137" aria-hidden="true"></a>        s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3;</span>
+<span id="cb13-138"><a href="#cb13-138" aria-hidden="true"></a>    }</span>
+<span id="cb13-139"><a href="#cb13-139" aria-hidden="true"></a>    {% <span class="kw">else</span> %}</span>
+<span id="cb13-140"><a href="#cb13-140" aria-hidden="true"></a>    <span class="kw">switch</span> (cycle) {</span>
+<span id="cb13-141"><a href="#cb13-141" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">0</span>: s0[i0] = t0; s1[i1] = t1; s2[i2] = t2; s3[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb13-142"><a href="#cb13-142" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">1</span>: s1[i0] = t0; s2[i1] = t1; s3[i2] = t2; s0[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb13-143"><a href="#cb13-143" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">2</span>: s2[i0] = t0; s3[i1] = t1; s0[i2] = t2; s1[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb13-144"><a href="#cb13-144" aria-hidden="true"></a>        <span class="kw">case</span> <span class="dv">3</span>: s3[i0] = t0; s0[i1] = t1; s1[i2] = t2; s2[i3] = t3; <span class="kw">break</span>;</span>
+<span id="cb13-145"><a href="#cb13-145" aria-hidden="true"></a>    }</span>
+<span id="cb13-146"><a href="#cb13-146" aria-hidden="true"></a>    {% endif %}</span>
+<span id="cb13-147"><a href="#cb13-147" aria-hidden="true"></a>}</span>
+<span id="cb13-148"><a href="#cb13-148" aria-hidden="true"></a></span>
+<span id="cb13-149"><a href="#cb13-149" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
+<span id="cb13-150"><a href="#cb13-150" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_4(<span class="kw">__global</span> {{c_type}} *x, <span class="kw">__global</span> {{c_type}} *y, <span class="dt">int</span> n) {</span>
+<span id="cb13-151"><a href="#cb13-151" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>) * <span class="dv">4</span>;</span>
+<span id="cb13-152"><a href="#cb13-152" aria-hidden="true"></a></span>
+<span id="cb13-153"><a href="#cb13-153" aria-hidden="true"></a>    <span class="co">//n is the number of radix4 ffts to perform</span></span>
+<span id="cb13-154"><a href="#cb13-154" aria-hidden="true"></a>    <span class="kw">if</span> (i &lt; <span class="dv">4</span> * n) {</span>
+<span id="cb13-155"><a href="#cb13-155" aria-hidden="true"></a>        {{c_type}} s0 = x[i];</span>
+<span id="cb13-156"><a href="#cb13-156" aria-hidden="true"></a>        {{c_type}} s1 = x[i + <span class="dv">1</span>];</span>
+<span id="cb13-157"><a href="#cb13-157" aria-hidden="true"></a>        {{c_type}} s2 = x[i + <span class="dv">2</span>];</span>
+<span id="cb13-158"><a href="#cb13-158" aria-hidden="true"></a>        {{c_type}} s3 = x[i + <span class="dv">3</span>];</span>
+<span id="cb13-159"><a href="#cb13-159" aria-hidden="true"></a>        fft_4(&amp;s0, &amp;s1, &amp;s2, &amp;s3, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>);</span>
+<span id="cb13-160"><a href="#cb13-160" aria-hidden="true"></a></span>
+<span id="cb13-161"><a href="#cb13-161" aria-hidden="true"></a>        y[i] = s0;    y[i + <span class="dv">1</span>] = s1;    y[i + <span class="dv">2</span>] = s2;    y[i + <span class="dv">3</span>] = s3;</span>
+<span id="cb13-162"><a href="#cb13-162" aria-hidden="true"></a>    }</span>
+<span id="cb13-163"><a href="#cb13-163" aria-hidden="true"></a>}</span>
+<span id="cb13-164"><a href="#cb13-164" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span>
+<span id="cb13-165"><a href="#cb13-165" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
 </div>
 <p>What follows is the Python function used to generate the OpenCL code.</p>
 <div class="annotated-code">

@@ -356,7 +356,7 @@ def test_radix(radix):
     x = numpy.random.normal(size=(n, radix, 2)).astype(numpy.float32)
     y = numpy.zeros_like(x)
 
-    y_ref = numpy.fft.fft(x[..., 0]+1j*x[..., 1])
+    y_ref = numpy.fft.fft(x[..., 0] + 1j * x[..., 1])
 
     parity_splitting = parity.ParitySplitting(radix * n, radix)
     codelets = "{}\n{}\n{}".format(generator.generate_preprocessor(parity_splitting, False),

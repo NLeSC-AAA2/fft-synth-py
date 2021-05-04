@@ -1268,7 +1268,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb14-14"><a href="#cb14-14" aria-hidden="true"></a>    x <span class="op">=</span> numpy.random.normal(size<span class="op">=</span>(n, radix, <span class="dv">2</span>)).astype(numpy.float32)</span>
 <span id="cb14-15"><a href="#cb14-15" aria-hidden="true"></a>    y <span class="op">=</span> numpy.zeros_like(x)</span>
 <span id="cb14-16"><a href="#cb14-16" aria-hidden="true"></a></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true"></a>    y_ref <span class="op">=</span> numpy.fft.fft(x[..., <span class="dv">0</span>]<span class="op">+</span><span class="ot">1j</span><span class="op">*</span>x[..., <span class="dv">1</span>])</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true"></a>    y_ref <span class="op">=</span> numpy.fft.fft(x[..., <span class="dv">0</span>] <span class="op">+</span> <span class="ot">1j</span> <span class="op">*</span> x[..., <span class="dv">1</span>])</span>
 <span id="cb14-18"><a href="#cb14-18" aria-hidden="true"></a></span>
 <span id="cb14-19"><a href="#cb14-19" aria-hidden="true"></a>    parity_splitting <span class="op">=</span> parity.ParitySplitting(radix <span class="op">*</span> n, radix)</span>
 <span id="cb14-20"><a href="#cb14-20" aria-hidden="true"></a>    codelets <span class="op">=</span> <span class="st">&quot;</span><span class="sc">{}</span><span class="ch">\n</span><span class="sc">{}</span><span class="ch">\n</span><span class="sc">{}</span><span class="st">&quot;</span>.<span class="bu">format</span>(generator.generate_preprocessor(parity_splitting, <span class="va">False</span>),</span>
@@ -1874,7 +1874,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 
 <footer class="py-4 bg-dark text-white-50 footer"><div class="container">
 Generated from the Entangled Bootstrap template.<br />
-2021-05-03 — version: 0.1.0
+2021-05-04 — version: 0.1.0
 </div></footer>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

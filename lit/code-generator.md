@@ -215,7 +215,7 @@ void fft_2({{c_type}} * restrict s0, {{c_type}} * restrict s1,{% if fpga %} {{c_
     {% endif %}
 }
 
-#ifdef TESTING
+#ifdef TESTING_RADIX
 __kernel void test_radix_2(__global {{c_type}} *x, __global {{c_type}} *y, int n) {
     int i = get_global_id(0) * 2;
 
@@ -229,7 +229,7 @@ __kernel void test_radix_2(__global {{c_type}} *x, __global {{c_type}} *y, int n
         y[i] = s0; y[i + 1] = s1;
     }
 }
-#endif // TESTING
+#endif // TESTING_RADIX
 
 {% elif radix == 4 %}
 void fft_4({{c_type}} * restrict s0, {{c_type}} * restrict s1, {{c_type}} * restrict s2, {{c_type}} * restrict s3,{% if fpga %} {{c_type}} * restrict s0_in, {{c_type}} * restrict s1_in, {{c_type}} * restrict s2_in, {{c_type}} * restrict s3_in, {{c_type}} * restrict s0_out, {{c_type}} * restrict s1_out, {{c_type}} * restrict s2_out, {{c_type}} * restrict s3_out, bool first_iteration, bool last_iteration,{% endif %} int cycle, int i0, int i1, int i2, int i3, int iw)
@@ -308,7 +308,7 @@ void fft_4({{c_type}} * restrict s0, {{c_type}} * restrict s1, {{c_type}} * rest
     {% endif %}
 }
 
-#ifdef TESTING
+#ifdef TESTING_RADIX
 __kernel void test_radix_4(__global {{c_type}} *x, __global {{c_type}} *y, int n) {
     int i = get_global_id(0) * 4;
 
@@ -323,7 +323,7 @@ __kernel void test_radix_4(__global {{c_type}} *x, __global {{c_type}} *y, int n
         y[i] = s0;    y[i + 1] = s1;    y[i + 2] = s2;    y[i + 3] = s3;
     }
 }
-#endif // TESTING
+#endif // TESTING_RADIX
 {% endif %}
 ```
 
@@ -365,7 +365,7 @@ def test_radix(radix):
                                    generator.generate_twiddle_array(parity_splitting),
                                    generator.generate_codelets(parity_splitting, False))
     args = [x, y, n]
-    answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {}, compiler_options=["-DTESTING"])
+    answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {}, compiler_options=["-DTESTING_RADIX"])
 
     y = answer[1]
     y = y[..., 0] + 1j * y[..., 1]

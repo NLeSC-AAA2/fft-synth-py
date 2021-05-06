@@ -347,7 +347,7 @@ void fft_5({{c_type}} * restrict s0, {{c_type}} * restrict s1, {{c_type}} * rest
 {% endif %}
 
 /* ~\~ begin <<lit/fma-codelets.md|fma-codelet-tests>>[0] */
-#ifdef TESTING
+#ifdef TESTING_RADIX
 
 {% if radix == 2 %}
 __kernel void test_radix_2(__global {{c_type}} *x, __global {{c_type}} *y, int n)
@@ -421,6 +421,6 @@ __kernel void test_radix_5(__global {{c_type}} *x, __global {{c_type}} *y, int n
     }
 }
 {% endif %}
-#endif // TESTING
+#endif // TESTING_RADIX
 /* ~\~ end */
 /* ~\~ end */

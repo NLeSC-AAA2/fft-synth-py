@@ -804,7 +804,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div class="fold-block">
 <button class="btn btn-outline-primary btn-sm fold-toggle" type="button" data-toggle="collapse" data-target="#fma-codelet-tests-container" aria-controls="fma-codelet-tests-container">&lt;&lt;fma-codelet-tests&gt;&gt;=</button>
 <div id="fma-codelet-tests-container" class="collapse">
-<div class="sourceCode" id="fma-codelet-tests" style="max-height: 50vh"><pre class="sourceCode opencl bootstrap-fold overflow-auto"><code class="sourceCode opencl"><span id="fma-codelet-tests-1"><a href="#fma-codelet-tests-1" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
+<div class="sourceCode" id="fma-codelet-tests" style="max-height: 50vh"><pre class="sourceCode opencl bootstrap-fold overflow-auto"><code class="sourceCode opencl"><span id="fma-codelet-tests-1"><a href="#fma-codelet-tests-1" aria-hidden="true"></a><span class="ot">#ifdef TESTING_RADIX</span></span>
 <span id="fma-codelet-tests-2"><a href="#fma-codelet-tests-2" aria-hidden="true"></a></span>
 <span id="fma-codelet-tests-3"><a href="#fma-codelet-tests-3" aria-hidden="true"></a>{% <span class="kw">if</span> radix == <span class="dv">2</span> %}</span>
 <span id="fma-codelet-tests-4"><a href="#fma-codelet-tests-4" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_2(<span class="kw">__global</span> {{c_type}} *x, <span class="kw">__global</span> {{c_type}} *y, <span class="dt">int</span> n)</span>
@@ -878,7 +878,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="fma-codelet-tests-72"><a href="#fma-codelet-tests-72" aria-hidden="true"></a>    }</span>
 <span id="fma-codelet-tests-73"><a href="#fma-codelet-tests-73" aria-hidden="true"></a>}</span>
 <span id="fma-codelet-tests-74"><a href="#fma-codelet-tests-74" aria-hidden="true"></a>{% endif %}</span>
-<span id="fma-codelet-tests-75"><a href="#fma-codelet-tests-75" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span></code></pre></div>
+<span id="fma-codelet-tests-75"><a href="#fma-codelet-tests-75" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// TESTING_RADIX</span></span></code></pre></div>
 </div>
 </div>
 <div class="annotated-code">
@@ -905,7 +905,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb11-20"><a href="#cb11-20" aria-hidden="true"></a>    codelets <span class="op">=</span> <span class="st">&quot;</span><span class="sc">{}</span><span class="ch">\n</span><span class="sc">{}</span><span class="st">&quot;</span>.<span class="bu">format</span>(generator.generate_preprocessor(parity_splitting, <span class="va">False</span>),</span>
 <span id="cb11-21"><a href="#cb11-21" aria-hidden="true"></a>                               generator.generate_fma_codelets(parity_splitting, <span class="va">False</span>))</span>
 <span id="cb11-22"><a href="#cb11-22" aria-hidden="true"></a>    args <span class="op">=</span> [x, y, n]</span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true"></a>    answer <span class="op">=</span> run_kernel(<span class="ss">f&quot;test_radix_</span><span class="sc">{</span>radix<span class="sc">}</span><span class="ss">&quot;</span>, codelets, <span class="dv">1</span>, args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>, <span class="st">&quot;-DTESTING_RADIX&quot;</span>])</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true"></a>    answer <span class="op">=</span> run_kernel(<span class="ss">f&quot;test_radix_</span><span class="sc">{</span>radix<span class="sc">}</span><span class="ss">&quot;</span>, codelets, <span class="dv">1</span>, args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING_RADIX&quot;</span>])</span>
 <span id="cb11-24"><a href="#cb11-24" aria-hidden="true"></a></span>
 <span id="cb11-25"><a href="#cb11-25" aria-hidden="true"></a>    y <span class="op">=</span> answer[<span class="dv">1</span>]</span>
 <span id="cb11-26"><a href="#cb11-26" aria-hidden="true"></a>    y <span class="op">=</span> y[..., <span class="dv">0</span>] <span class="op">+</span> <span class="ot">1j</span> <span class="op">*</span> y[..., <span class="dv">1</span>]</span>
@@ -1127,7 +1127,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-53"><a href="#cb13-53" aria-hidden="true"></a>    {% endif %}</span>
 <span id="cb13-54"><a href="#cb13-54" aria-hidden="true"></a>}</span>
 <span id="cb13-55"><a href="#cb13-55" aria-hidden="true"></a></span>
-<span id="cb13-56"><a href="#cb13-56" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true"></a><span class="ot">#ifdef TESTING_RADIX</span></span>
 <span id="cb13-57"><a href="#cb13-57" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_2(<span class="kw">__global</span> {{c_type}} *x, <span class="kw">__global</span> {{c_type}} *y, <span class="dt">int</span> n) {</span>
 <span id="cb13-58"><a href="#cb13-58" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>) * <span class="dv">2</span>;</span>
 <span id="cb13-59"><a href="#cb13-59" aria-hidden="true"></a></span>
@@ -1141,7 +1141,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-67"><a href="#cb13-67" aria-hidden="true"></a>        y[i] = s0; y[i + <span class="dv">1</span>] = s1;</span>
 <span id="cb13-68"><a href="#cb13-68" aria-hidden="true"></a>    }</span>
 <span id="cb13-69"><a href="#cb13-69" aria-hidden="true"></a>}</span>
-<span id="cb13-70"><a href="#cb13-70" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span>
+<span id="cb13-70"><a href="#cb13-70" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// TESTING_RADIX</span></span>
 <span id="cb13-71"><a href="#cb13-71" aria-hidden="true"></a></span>
 <span id="cb13-72"><a href="#cb13-72" aria-hidden="true"></a>{% elif radix == <span class="dv">4</span> %}</span>
 <span id="cb13-73"><a href="#cb13-73" aria-hidden="true"></a><span class="dt">void</span> fft_4({{c_type}} * <span class="dt">restrict</span> s0, {{c_type}} * <span class="dt">restrict</span> s1, {{c_type}} * <span class="dt">restrict</span> s2, {{c_type}} * <span class="dt">restrict</span> s3,{% <span class="kw">if</span> fpga %} {{c_type}} * <span class="dt">restrict</span> s0_in, {{c_type}} * <span class="dt">restrict</span> s1_in, {{c_type}} * <span class="dt">restrict</span> s2_in, {{c_type}} * <span class="dt">restrict</span> s3_in, {{c_type}} * <span class="dt">restrict</span> s0_out, {{c_type}} * <span class="dt">restrict</span> s1_out, {{c_type}} * <span class="dt">restrict</span> s2_out, {{c_type}} * <span class="dt">restrict</span> s3_out, <span class="dt">bool</span> first_iteration, <span class="dt">bool</span> last_iteration,{% endif %} <span class="dt">int</span> cycle, <span class="dt">int</span> i0, <span class="dt">int</span> i1, <span class="dt">int</span> i2, <span class="dt">int</span> i3, <span class="dt">int</span> iw)</span>
@@ -1220,7 +1220,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-146"><a href="#cb13-146" aria-hidden="true"></a>    {% endif %}</span>
 <span id="cb13-147"><a href="#cb13-147" aria-hidden="true"></a>}</span>
 <span id="cb13-148"><a href="#cb13-148" aria-hidden="true"></a></span>
-<span id="cb13-149"><a href="#cb13-149" aria-hidden="true"></a><span class="ot">#ifdef TESTING</span></span>
+<span id="cb13-149"><a href="#cb13-149" aria-hidden="true"></a><span class="ot">#ifdef TESTING_RADIX</span></span>
 <span id="cb13-150"><a href="#cb13-150" aria-hidden="true"></a><span class="kw">__kernel</span> <span class="dt">void</span> test_radix_4(<span class="kw">__global</span> {{c_type}} *x, <span class="kw">__global</span> {{c_type}} *y, <span class="dt">int</span> n) {</span>
 <span id="cb13-151"><a href="#cb13-151" aria-hidden="true"></a>    <span class="dt">int</span> i = get_global_id(<span class="dv">0</span>) * <span class="dv">4</span>;</span>
 <span id="cb13-152"><a href="#cb13-152" aria-hidden="true"></a></span>
@@ -1235,7 +1235,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-161"><a href="#cb13-161" aria-hidden="true"></a>        y[i] = s0;    y[i + <span class="dv">1</span>] = s1;    y[i + <span class="dv">2</span>] = s2;    y[i + <span class="dv">3</span>] = s3;</span>
 <span id="cb13-162"><a href="#cb13-162" aria-hidden="true"></a>    }</span>
 <span id="cb13-163"><a href="#cb13-163" aria-hidden="true"></a>}</span>
-<span id="cb13-164"><a href="#cb13-164" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// </span><span class="al">TESTING</span></span>
+<span id="cb13-164"><a href="#cb13-164" aria-hidden="true"></a><span class="ot">#endif </span><span class="co">// TESTING_RADIX</span></span>
 <span id="cb13-165"><a href="#cb13-165" aria-hidden="true"></a>{% endif %}</span></code></pre></div>
 </div>
 <p>What follows is the Python function used to generate the OpenCL code.</p>
@@ -1275,7 +1275,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb14-21"><a href="#cb14-21" aria-hidden="true"></a>                                   generator.generate_twiddle_array(parity_splitting),</span>
 <span id="cb14-22"><a href="#cb14-22" aria-hidden="true"></a>                                   generator.generate_codelets(parity_splitting, <span class="va">False</span>))</span>
 <span id="cb14-23"><a href="#cb14-23" aria-hidden="true"></a>    args <span class="op">=</span> [x, y, n]</span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true"></a>    answer <span class="op">=</span> run_kernel(<span class="ss">f&quot;test_radix_</span><span class="sc">{</span>radix<span class="sc">}</span><span class="ss">&quot;</span>, codelets, <span class="dv">1</span>, args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING&quot;</span>])</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true"></a>    answer <span class="op">=</span> run_kernel(<span class="ss">f&quot;test_radix_</span><span class="sc">{</span>radix<span class="sc">}</span><span class="ss">&quot;</span>, codelets, <span class="dv">1</span>, args, {}, compiler_options<span class="op">=</span>[<span class="st">&quot;-DTESTING_RADIX&quot;</span>])</span>
 <span id="cb14-25"><a href="#cb14-25" aria-hidden="true"></a></span>
 <span id="cb14-26"><a href="#cb14-26" aria-hidden="true"></a>    y <span class="op">=</span> answer[<span class="dv">1</span>]</span>
 <span id="cb14-27"><a href="#cb14-27" aria-hidden="true"></a>    y <span class="op">=</span> y[..., <span class="dv">0</span>] <span class="op">+</span> <span class="ot">1j</span> <span class="op">*</span> y[..., <span class="dv">1</span>]</span>
@@ -1874,7 +1874,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 
 <footer class="py-4 bg-dark text-white-50 footer"><div class="container">
 Generated from the Entangled Bootstrap template.<br />
-2021-05-04 — version: 0.1.0
+2021-05-06 — version: 0.1.0
 </div></footer>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

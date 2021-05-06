@@ -23,7 +23,7 @@ def test_radix(radix):
                                    generator.generate_twiddle_array(parity_splitting),
                                    generator.generate_codelets(parity_splitting, False))
     args = [x, y, n]
-    answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {}, compiler_options=["-DTESTING"])
+    answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {}, compiler_options=["-DTESTING_RADIX"])
 
     y = answer[1]
     y = y[..., 0] + 1j * y[..., 1]

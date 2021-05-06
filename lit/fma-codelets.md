@@ -391,7 +391,7 @@ void fft_5({{c_type}} * restrict s0, {{c_type}} * restrict s1, {{c_type}} * rest
 ## Testing
 
 ``` {.opencl .bootstrap-fold #fma-codelet-tests}
-#ifdef TESTING
+#ifdef TESTING_RADIX
 
 {% if radix == 2 %}
 __kernel void test_radix_2(__global {{c_type}} *x, __global {{c_type}} *y, int n)
@@ -465,7 +465,7 @@ __kernel void test_radix_5(__global {{c_type}} *x, __global {{c_type}} *y, int n
     }
 }
 {% endif %}
-#endif // TESTING
+#endif // TESTING_RADIX
 ```
 
 ``` {.python file=test/test_fma_codelets.py}
@@ -491,7 +491,7 @@ def test_radix(radix):
     codelets = "{}\n{}".format(generator.generate_preprocessor(parity_splitting, False),
                                generator.generate_fma_codelets(parity_splitting, False))
     args = [x, y, n]
-    answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {}, compiler_options=["-DTESTING", "-DTESTING_RADIX"])
+    answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {}, compiler_options=["-DTESTING_RADIX"])
 
     y = answer[1]
     y = y[..., 0] + 1j * y[..., 1]

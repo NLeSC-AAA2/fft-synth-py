@@ -42,32 +42,37 @@ def test_transpose(parity_splitting: ParitySplitting):
 # ~\~ end
 
 # ~\~ begin <<lit/code-generator.md|test-fft>>[0]
-@pytest.mark.parametrize('parity_splitting', cases)
-def test_fft(parity_splitting: ParitySplitting):
-    kernel = generate_fft(parity_splitting, False)
+c_types = [f"float{n}" for n in [2, 4, 8]]
+test_matrix = [(p, c) for p in cases for c in c_types]
 
-    x = np.random.normal(size=(parity_splitting.N, 2)).astype(np.float32)
+@pytest.mark.parametrize('parity_splitting,c_type', test_matrix)
+def test_fft(parity_splitting: ParitySplitting, c_type: str):
+    kernel = generate_fft(parity_splitting, False, c_type=c_type)
+
+    m = {'float2': 1, 'float4': 2, 'float8': 4}[c_type]
+    x = np.random.normal(size=(parity_splitting.N, m, 2)).astype(np.float32)
     y = np.zeros_like(x)
 
     results = run_kernel(
         f"fft_{parity_splitting.N}", kernel, parity_splitting.N, [x, y], {}, compiler_options=["-DTESTING"])
-    y_ref = np.fft.fft(x[:, 0] + 1j * x[:, 1])
-    y = results[1][:, 0] + 1j * results[1][:, 1]
+    y_ref = np.fft.fft(x[..., 0] + 1j * x[..., 1], axis=0)
+    y = results[1][..., 0] + 1j * results[1][..., 1]
     np.testing.assert_almost_equal(y, y_ref, decimal=4)
 # ~\~ end
 
 # ~\~ begin <<lit/code-generator.md|test-fft-fma>>[0]
-@pytest.mark.parametrize('parity_splitting', cases)
-def test_fft_fma(parity_splitting: ParitySplitting):
-    kernel = generate_fma_fft(parity_splitting, False)
+@pytest.mark.parametrize('parity_splitting,c_type', test_matrix)
+def test_fft_fma(parity_splitting: ParitySplitting, c_type: str):
+    kernel = generate_fma_fft(parity_splitting, False, c_type=c_type)
 
-    x = np.random.normal(size=(parity_splitting.N, 2)).astype(np.float32)
+    m = {'float2': 1, 'float4': 2, 'float8': 4}[c_type]
+    x = np.random.normal(size=(parity_splitting.N, m, 2)).astype(np.float32)
     y = np.zeros_like(x)
 
     results = run_kernel(
         f"fft_{parity_splitting.N}", kernel, parity_splitting.N, [x, y], {}, compiler_options=["-DTESTING"])
-    y_ref = np.fft.fft(x[:, 0] + 1j * x[:, 1])
-    y = results[1][:, 0] + 1j * results[1][:, 1]
+    y_ref = np.fft.fft(x[..., 0] + 1j * x[..., 1], axis=0)
+    y = results[1][..., 0] + 1j * results[1][..., 1]
     np.testing.assert_almost_equal(y, y_ref, decimal=4)
 # ~\~ end
 

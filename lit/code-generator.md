@@ -349,21 +349,24 @@ from fftsynth import generator, parity
 from kernel_tuner import run_kernel     # type: ignore
 
 
-@pytest.mark.parametrize('radix', [2, 4])
-def test_radix(radix):
+@pytest.mark.parametrize('radix,c_type', [(2,'float2'), (4,'float2'),
+                                          (2, 'float4'), (4,'float4'),
+                                          (2, 'float8'), (4,'float8')])
+def test_radix(radix, c_type):
     # this test runs 256 instances of the radix n function
     # it does not use twiddle factors, so as a test
     # it's not to be relied upon fully
     n = numpy.int32(256)
-    x = numpy.random.normal(size=(n, radix, 2)).astype(numpy.float32)
+    m = {'float2': 1, 'float4': 2, 'float8': 4}[c_type]
+    x = numpy.random.normal(size=(n, radix, m, 2)).astype(numpy.float32)
     y = numpy.zeros_like(x)
 
-    y_ref = numpy.fft.fft(x[..., 0] + 1j * x[..., 1])
+    y_ref = numpy.fft.fft(x[..., 0] + 1j * x[..., 1], axis=1)
 
     parity_splitting = parity.ParitySplitting(radix * n, radix)
-    codelets = "{}\n{}\n{}".format(generator.generate_preprocessor(parity_splitting, False),
+    codelets = "{}\n{}\n{}".format(generator.generate_preprocessor(parity_splitting, False, c_type=c_type),
                                    generator.generate_twiddle_array(parity_splitting),
-                                   generator.generate_codelets(parity_splitting, False))
+                                   generator.generate_codelets(parity_splitting, False, c_type=c_type))
     args = [x, y, n]
     answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {}, compiler_options=["-DTESTING_RADIX"])
 
@@ -482,32 +485,37 @@ cases = [
 ```
 
 ```{.python #test-fft}
-@pytest.mark.parametrize('parity_splitting', cases)
-def test_fft(parity_splitting: ParitySplitting):
-    kernel = generate_fft(parity_splitting, False)
+c_types = [f"float{n}" for n in [2, 4, 8]]
+test_matrix = [(p, c) for p in cases for c in c_types]
 
-    x = np.random.normal(size=(parity_splitting.N, 2)).astype(np.float32)
+@pytest.mark.parametrize('parity_splitting,c_type', test_matrix)
+def test_fft(parity_splitting: ParitySplitting, c_type: str):
+    kernel = generate_fft(parity_splitting, False, c_type=c_type)
+
+    m = {'float2': 1, 'float4': 2, 'float8': 4}[c_type]
+    x = np.random.normal(size=(parity_splitting.N, m, 2)).astype(np.float32)
     y = np.zeros_like(x)
 
     results = run_kernel(
         f"fft_{parity_splitting.N}", kernel, parity_splitting.N, [x, y], {}, compiler_options=["-DTESTING"])
-    y_ref = np.fft.fft(x[:, 0] + 1j * x[:, 1])
-    y = results[1][:, 0] + 1j * results[1][:, 1]
+    y_ref = np.fft.fft(x[..., 0] + 1j * x[..., 1], axis=0)
+    y = results[1][..., 0] + 1j * results[1][..., 1]
     np.testing.assert_almost_equal(y, y_ref, decimal=4)
 ```
 
 ```{.python #test-fft-fma}
-@pytest.mark.parametrize('parity_splitting', cases)
-def test_fft_fma(parity_splitting: ParitySplitting):
-    kernel = generate_fma_fft(parity_splitting, False)
+@pytest.mark.parametrize('parity_splitting,c_type', test_matrix)
+def test_fft_fma(parity_splitting: ParitySplitting, c_type: str):
+    kernel = generate_fma_fft(parity_splitting, False, c_type=c_type)
 
-    x = np.random.normal(size=(parity_splitting.N, 2)).astype(np.float32)
+    m = {'float2': 1, 'float4': 2, 'float8': 4}[c_type]
+    x = np.random.normal(size=(parity_splitting.N, m, 2)).astype(np.float32)
     y = np.zeros_like(x)
 
     results = run_kernel(
         f"fft_{parity_splitting.N}", kernel, parity_splitting.N, [x, y], {}, compiler_options=["-DTESTING"])
-    y_ref = np.fft.fft(x[:, 0] + 1j * x[:, 1])
-    y = results[1][:, 0] + 1j * results[1][:, 1]
+    y_ref = np.fft.fft(x[..., 0] + 1j * x[..., 1], axis=0)
+    y = results[1][..., 0] + 1j * results[1][..., 1]
     np.testing.assert_almost_equal(y, y_ref, decimal=4)
 ```
 

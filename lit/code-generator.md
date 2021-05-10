@@ -487,11 +487,11 @@ cases = [
 
 ```{.python #test-fft}
 c_types = [f"float{n}" for n in [2, 4, 8]]
-test_matrix = [(p, c) for p in cases for c in c_types]
+test_matrix = [(p, c, d) for p in cases for c in c_types for d in [True]]
 
-@pytest.mark.parametrize('parity_splitting,c_type', test_matrix)
-def test_fft(parity_splitting: ParitySplitting, c_type: str):
-    kernel = generate_fft(parity_splitting, False, True, c_type=c_type)
+@pytest.mark.parametrize('parity_splitting, c_type, forward', test_matrix)
+def test_fft(parity_splitting: ParitySplitting, c_type: str, forward: bool):
+    kernel = generate_fft(parity_splitting, False, forward, c_type=c_type)
 
     m = {'float2': 1, 'float4': 2, 'float8': 4}[c_type]
     x = np.random.normal(size=(parity_splitting.N, m, 2)).astype(np.float32)
@@ -499,15 +499,19 @@ def test_fft(parity_splitting: ParitySplitting, c_type: str):
 
     results = run_kernel(
         f"fft_{parity_splitting.N}", kernel, parity_splitting.N, [x, y], {}, compiler_options=["-DTESTING"])
-    y_ref = np.fft.fft(x[..., 0] + 1j * x[..., 1], axis=0)
-    y = results[1][..., 0] + 1j * results[1][..., 1]
+    if forward:
+        y_ref = np.fft.fft(x[..., 0] + 1j * x[..., 1], axis=0)
+        y = results[1][..., 0] + 1j * results[1][..., 1]
+    else:
+        y_ref = np.fft.ifft(x[..., 0] + 1j * x[..., 1], axis=0) * parity_splitting.N
+        y = results[1][..., 0] + 1j * results[1][..., 1]
     np.testing.assert_almost_equal(y, y_ref, decimal=4)
 ```
 
 ```{.python #test-fft-fma}
-@pytest.mark.parametrize('parity_splitting,c_type', test_matrix)
-def test_fft_fma(parity_splitting: ParitySplitting, c_type: str):
-    kernel = generate_fma_fft(parity_splitting, False, True, c_type=c_type)
+@pytest.mark.parametrize('parity_splitting, c_type, forward', test_matrix)
+def test_fft_fma(parity_splitting: ParitySplitting, c_type: str, forward: bool):
+    kernel = generate_fma_fft(parity_splitting, False, forward, c_type=c_type)
 
     m = {'float2': 1, 'float4': 2, 'float8': 4}[c_type]
     x = np.random.normal(size=(parity_splitting.N, m, 2)).astype(np.float32)
@@ -515,8 +519,12 @@ def test_fft_fma(parity_splitting: ParitySplitting, c_type: str):
 
     results = run_kernel(
         f"fft_{parity_splitting.N}", kernel, parity_splitting.N, [x, y], {}, compiler_options=["-DTESTING"])
-    y_ref = np.fft.fft(x[..., 0] + 1j * x[..., 1], axis=0)
-    y = results[1][..., 0] + 1j * results[1][..., 1]
+    if forward:
+        y_ref = np.fft.fft(x[..., 0] + 1j * x[..., 1], axis=0)
+        y = results[1][..., 0] + 1j * results[1][..., 1]
+    else:
+        y_ref = np.fft.ifft(x[..., 0] + 1j * x[..., 1], axis=0) * parity_splitting.N
+        y = results[1][..., 0] + 1j * results[1][..., 1]
     np.testing.assert_almost_equal(y, y_ref, decimal=4)
 ```
 

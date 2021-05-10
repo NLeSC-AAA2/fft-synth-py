@@ -7,9 +7,9 @@ from fftsynth import generator, parity
 from kernel_tuner import run_kernel     # type: ignore
 
 
-@pytest.mark.parametrize('radix,c_type', [(2,'float2'), (4,'float2'),
-                                          (2, 'float4'), (4,'float4'),
-                                          (2, 'float8'), (4,'float8')])
+@pytest.mark.parametrize('radix,c_type', [(2, 'float2'), (4, 'float2'),
+                                          (2, 'float4'), (4, 'float4'),
+                                          (2, 'float8'), (4, 'float8')])
 def test_radix(radix, c_type):
     # this test runs 256 instances of the radix n function
     # it does not use twiddle factors, so as a test

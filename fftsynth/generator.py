@@ -251,7 +251,7 @@ if __name__ == "__main__":
     N = args.radix**args.depth
     ps = ParitySplitting(N, args.radix)
     if args.fma:
-        print(generate_fma_fft(ps, args.fpga, not args.forward, args.ctype))
+        print(generate_fma_fft(ps, args.fpga, not args.backward, args.ctype))
     else:
-        print(generate_fft(ps, args.fpga, not args.forward, args.ctype))
+        print(generate_fft(ps, args.fpga, not args.backward, args.ctype))
 # ~\~ end

@@ -23,7 +23,7 @@ def test_radix(radix, c_type):
 
     parity_splitting = parity.ParitySplitting(radix * n, radix)
     codelets = "{}\n{}\n{}".format(generator.generate_preprocessor(parity_splitting, False, c_type=c_type),
-                                   generator.generate_twiddle_array(parity_splitting),
+                                   generator.generate_twiddle_array(parity_splitting, True),
                                    generator.generate_codelets(parity_splitting, False, c_type=c_type))
     args = [x, y, n]
     answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {}, compiler_options=["-DTESTING_RADIX"])

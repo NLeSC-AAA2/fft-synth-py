@@ -47,7 +47,7 @@ test_matrix = [(p, c) for p in cases for c in c_types]
 
 @pytest.mark.parametrize('parity_splitting,c_type', test_matrix)
 def test_fft(parity_splitting: ParitySplitting, c_type: str):
-    kernel = generate_fft(parity_splitting, False, c_type=c_type)
+    kernel = generate_fft(parity_splitting, False, True, c_type=c_type)
 
     m = {'float2': 1, 'float4': 2, 'float8': 4}[c_type]
     x = np.random.normal(size=(parity_splitting.N, m, 2)).astype(np.float32)
@@ -63,7 +63,7 @@ def test_fft(parity_splitting: ParitySplitting, c_type: str):
 # ~\~ begin <<lit/code-generator.md|test-fft-fma>>[0]
 @pytest.mark.parametrize('parity_splitting,c_type', test_matrix)
 def test_fft_fma(parity_splitting: ParitySplitting, c_type: str):
-    kernel = generate_fma_fft(parity_splitting, False, c_type=c_type)
+    kernel = generate_fma_fft(parity_splitting, False, True, c_type=c_type)
 
     m = {'float2': 1, 'float4': 2, 'float8': 4}[c_type]
     x = np.random.normal(size=(parity_splitting.N, m, 2)).astype(np.float32)

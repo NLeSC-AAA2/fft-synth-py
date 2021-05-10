@@ -28,7 +28,7 @@ def generate_preprocessor(parity_splitting: ParitySplitting, fpga: bool, c_type:
 
 
 # ~\~ begin <<lit/code-generator.md|generate-twiddle-array>>[0]
-def generate_twiddle_array(parity_splitting: ParitySplitting):
+def generate_twiddle_array(parity_splitting: ParitySplitting, forward: bool):
     """
     Generate OpenCL constant array for twiddle factors
     """
@@ -38,7 +38,7 @@ def generate_twiddle_array(parity_splitting: ParitySplitting):
 
     n = parity_splitting.radix
     for k in range(parity_splitting.depth - 1):
-        w = make_twiddle(parity_splitting.radix, n).conj()
+        w = make_twiddle(parity_splitting.radix, n, forward).conj()
         w_r_x = (numpy.ones(shape=[parity_splitting.M // n, parity_splitting.radix, n]) * w) \
             .transpose([0, 2, 1]) \
             .reshape([-1, parity_splitting.radix])[perm]
@@ -144,12 +144,12 @@ def generate_codelets(parity_splitting: ParitySplitting, fpga: bool, c_type: str
 # ~\~ end
 
 
-def generate_fft(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
+def generate_fft(parity_splitting: ParitySplitting, fpga: bool, forward: bool, c_type: str = "float2"):
     """
     Generate the complete OpenCL FFT code.
     """
     code = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(generate_preprocessor(parity_splitting, fpga, c_type),
-                                                     generate_twiddle_array(parity_splitting),
+                                                     generate_twiddle_array(parity_splitting, forward),
                                                      generate_parity_function(parity_splitting),
                                                      generate_transpose_function(parity_splitting),
                                                      generate_ipow_function(parity_splitting),
@@ -161,7 +161,7 @@ def generate_fft(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "f
     return code
 
 
-def generate_fma_twiddle_array(parity_splitting: ParitySplitting):
+def generate_fma_twiddle_array(parity_splitting: ParitySplitting, forward: bool):
     """
     Generate OpenCL constant array for twiddle factors (FMA version).
     """
@@ -171,7 +171,7 @@ def generate_fma_twiddle_array(parity_splitting: ParitySplitting):
 
     n = parity_splitting.radix
     for k in range(parity_splitting.depth - 1):
-        w = make_twiddle(parity_splitting.radix, n).conj()
+        w = make_twiddle(parity_splitting.radix, n, forward).conj()
         w_r_x = (numpy.ones(shape=[parity_splitting.M // n, parity_splitting.radix, n]) * w) \
             .transpose([0, 2, 1]) \
             .reshape([-1, parity_splitting.radix])[perm]
@@ -217,12 +217,12 @@ def generate_fma_fft_functions(parity_splitting: ParitySplitting, fpga: bool, c_
                            c_type=c_type)
 
 
-def generate_fma_fft(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
+def generate_fma_fft(parity_splitting: ParitySplitting, fpga: bool, forward: bool, c_type: str = "float2"):
     """
     Generate the complete OpenCL FFT code (FMA version).
     """
     code = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(generate_preprocessor(parity_splitting, fpga, c_type=c_type),
-                                                     generate_fma_twiddle_array(parity_splitting),
+                                                     generate_fma_twiddle_array(parity_splitting, forward),
                                                      generate_parity_function(parity_splitting),
                                                      generate_transpose_function(parity_splitting),
                                                      generate_ipow_function(parity_splitting),
@@ -240,9 +240,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate an OpenCL FFT kernel")
     parser.add_argument("--radix", type=int, default=4, help="FFT radix")
     parser.add_argument("--depth", type=int, default=3, help="FFT depth")
-    parser.add_argument("--fpga", action="store_true")
-    parser.add_argument("--fma", action="store_true")
+    parser.add_argument("--fpga", action="store_true", help="Enable FPGA specific optimizations")
+    parser.add_argument("--fma", action="store_true", help="Enable fused multiply add")
     parser.add_argument("--ctype", type=str, default="float2", help="complex type")
+    parser.add_argument("--backward", action="store_true", help="Enable backward FFT")
     args = parser.parse_args()
     print("/* FFT")
     print(f" * command: python -m fftsynth.generator {' '.join(sys.argv[1:])}")
@@ -250,7 +251,7 @@ if __name__ == "__main__":
     N = args.radix**args.depth
     ps = ParitySplitting(N, args.radix)
     if args.fma:
-        print(generate_fma_fft(ps, args.fpga, args.ctype))
+        print(generate_fma_fft(ps, args.fpga, not args.forward, args.ctype))
     else:
-        print(generate_fft(ps, args.fpga, args.ctype))
+        print(generate_fft(ps, args.fpga, not args.forward, args.ctype))
 # ~\~ end

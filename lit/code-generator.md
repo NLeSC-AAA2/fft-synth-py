@@ -44,12 +44,12 @@ def get_n_twiddles(radix):
 <<generate-codelets>>
 
 
-def generate_fft(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
+def generate_fft(parity_splitting: ParitySplitting, fpga: bool, forward: bool, c_type: str = "float2"):
     """
     Generate the complete OpenCL FFT code.
     """
     code = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(generate_preprocessor(parity_splitting, fpga, c_type),
-                                                     generate_twiddle_array(parity_splitting),
+                                                     generate_twiddle_array(parity_splitting, forward),
                                                      generate_parity_function(parity_splitting),
                                                      generate_transpose_function(parity_splitting),
                                                      generate_ipow_function(parity_splitting),
@@ -117,12 +117,12 @@ def generate_fma_fft_functions(parity_splitting: ParitySplitting, fpga: bool, c_
                            c_type=c_type)
 
 
-def generate_fma_fft(parity_splitting: ParitySplitting, fpga: bool, c_type: str = "float2"):
+def generate_fma_fft(parity_splitting: ParitySplitting, fpga: bool, forward: bool, c_type: str = "float2"):
     """
     Generate the complete OpenCL FFT code (FMA version).
     """
     code = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(generate_preprocessor(parity_splitting, fpga, c_type=c_type),
-                                                     generate_fma_twiddle_array(parity_splitting),
+                                                     generate_fma_twiddle_array(parity_splitting, forward),
                                                      generate_parity_function(parity_splitting),
                                                      generate_transpose_function(parity_splitting),
                                                      generate_ipow_function(parity_splitting),
@@ -140,9 +140,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate an OpenCL FFT kernel")
     parser.add_argument("--radix", type=int, default=4, help="FFT radix")
     parser.add_argument("--depth", type=int, default=3, help="FFT depth")
-    parser.add_argument("--fpga", action="store_true")
-    parser.add_argument("--fma", action="store_true")
+    parser.add_argument("--fpga", action="store_true", help="Enable FPGA specific optimizations")
+    parser.add_argument("--fma", action="store_true", help="Enable fused multiply add")
     parser.add_argument("--ctype", type=str, default="float2", help="complex type")
+    parser.add_argument("--backward", action="store_true", help="Enable backward FFT")
     args = parser.parse_args()
     print("/* FFT")
     print(f" * command: python -m fftsynth.generator {' '.join(sys.argv[1:])}")
@@ -150,9 +151,9 @@ if __name__ == "__main__":
     N = args.radix**args.depth
     ps = ParitySplitting(N, args.radix)
     if args.fma:
-        print(generate_fma_fft(ps, args.fpga, args.ctype))
+        print(generate_fma_fft(ps, args.fpga, not args.backward, args.ctype))
     else:
-        print(generate_fft(ps, args.fpga, args.ctype))
+        print(generate_fft(ps, args.fpga, not args.backward, args.ctype))
 ```
 
 ### Codelets
@@ -349,9 +350,9 @@ from fftsynth import generator, parity
 from kernel_tuner import run_kernel     # type: ignore
 
 
-@pytest.mark.parametrize('radix,c_type', [(2,'float2'), (4,'float2'),
-                                          (2, 'float4'), (4,'float4'),
-                                          (2, 'float8'), (4,'float8')])
+@pytest.mark.parametrize('radix,c_type', [(2, 'float2'), (4, 'float2'),
+                                          (2, 'float4'), (4, 'float4'),
+                                          (2, 'float8'), (4, 'float8')])
 def test_radix(radix, c_type):
     # this test runs 256 instances of the radix n function
     # it does not use twiddle factors, so as a test
@@ -365,7 +366,7 @@ def test_radix(radix, c_type):
 
     parity_splitting = parity.ParitySplitting(radix * n, radix)
     codelets = "{}\n{}\n{}".format(generator.generate_preprocessor(parity_splitting, False, c_type=c_type),
-                                   generator.generate_twiddle_array(parity_splitting),
+                                   generator.generate_twiddle_array(parity_splitting, True),
                                    generator.generate_codelets(parity_splitting, False, c_type=c_type))
     args = [x, y, n]
     answer = run_kernel(f"test_radix_{radix}", codelets, 1, args, {}, compiler_options=["-DTESTING_RADIX"])
@@ -490,7 +491,7 @@ test_matrix = [(p, c) for p in cases for c in c_types]
 
 @pytest.mark.parametrize('parity_splitting,c_type', test_matrix)
 def test_fft(parity_splitting: ParitySplitting, c_type: str):
-    kernel = generate_fft(parity_splitting, False, c_type=c_type)
+    kernel = generate_fft(parity_splitting, False, True, c_type=c_type)
 
     m = {'float2': 1, 'float4': 2, 'float8': 4}[c_type]
     x = np.random.normal(size=(parity_splitting.N, m, 2)).astype(np.float32)
@@ -506,7 +507,7 @@ def test_fft(parity_splitting: ParitySplitting, c_type: str):
 ```{.python #test-fft-fma}
 @pytest.mark.parametrize('parity_splitting,c_type', test_matrix)
 def test_fft_fma(parity_splitting: ParitySplitting, c_type: str):
-    kernel = generate_fma_fft(parity_splitting, False, c_type=c_type)
+    kernel = generate_fma_fft(parity_splitting, False, True, c_type=c_type)
 
     m = {'float2': 1, 'float4': 2, 'float8': 4}[c_type]
     x = np.random.normal(size=(parity_splitting.N, m, 2)).astype(np.float32)
@@ -908,7 +909,7 @@ __constant float2 W[{{ W.shape[0] - radix }}][{{ radix - 1 }}] = {
 What follows is the Python function used to generate the OpenCL code.
 
 ``` {.python #generate-twiddle-array}
-def generate_twiddle_array(parity_splitting: ParitySplitting):
+def generate_twiddle_array(parity_splitting: ParitySplitting, forward: bool):
     """
     Generate OpenCL constant array for twiddle factors
     """
@@ -918,7 +919,7 @@ def generate_twiddle_array(parity_splitting: ParitySplitting):
 
     n = parity_splitting.radix
     for k in range(parity_splitting.depth - 1):
-        w = make_twiddle(parity_splitting.radix, n).conj()
+        w = make_twiddle(parity_splitting.radix, n, forward).conj()
         w_r_x = (numpy.ones(shape=[parity_splitting.M // n, parity_splitting.radix, n]) * w) \
             .transpose([0, 2, 1]) \
             .reshape([-1, parity_splitting.radix])[perm]

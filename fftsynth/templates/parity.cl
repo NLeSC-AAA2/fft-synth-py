@@ -14,10 +14,10 @@ inline int parity_{{ radix }}(int i)
 /* ~\~ end */
 /* ~\~ begin <<lit/code-generator.md|fftsynth/templates/parity.cl>>[1] */
 #ifdef TESTING
-__kernel void test_parity_{{ radix }}(__global const int * x, __global int * y)
+__kernel void test_parity_{{ radix }}(__global const int * restrict x, __global int * restrict y)
 {
     int i = get_global_id(0);
-    
+
     y[i] = parity_{{ radix }}(x[i]);
 }
 #endif // TESTING
